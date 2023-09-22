@@ -2,11 +2,15 @@ package com.example.animeapp.db
 
 import androidx.room.TypeConverter
 import com.example.animeapp.data.datamodels.Aired
+import com.example.animeapp.data.datamodels.Author
 import com.example.animeapp.data.datamodels.Broadcast
+import com.example.animeapp.data.datamodels.Demographic
 import com.example.animeapp.data.datamodels.Genre
 import com.example.animeapp.data.datamodels.Images
 import com.example.animeapp.data.datamodels.Licensor
 import com.example.animeapp.data.datamodels.Producer
+import com.example.animeapp.data.datamodels.Published
+import com.example.animeapp.data.datamodels.Serialization
 import com.example.animeapp.data.datamodels.Studio
 import com.example.animeapp.data.datamodels.Theme
 import com.example.animeapp.data.datamodels.Title
@@ -208,5 +212,55 @@ class Converters {
         val gson = Gson()
         val type = object : TypeToken<List<Theme>>() {}.type
         return gson.fromJson(themeListJson, type)
+    }
+    @TypeConverter
+    fun fromPublished(published: Published): String {
+        return Gson().toJson(published)
+    }
+
+    @TypeConverter
+    fun toPublished(publishedJson: String): Published {
+        return Gson().fromJson(publishedJson, Published::class.java)
+    }
+
+    @TypeConverter
+    fun fromAuthorList(authors: List<Author>?): String? {
+        val gson = Gson()
+        val type = object : TypeToken<List<Author>>() {}.type
+        return gson.toJson(authors, type)
+    }
+
+    @TypeConverter
+    fun toAuthorList(authorJson: String?): List<Author>? {
+        val gson = Gson()
+        val type = object : TypeToken<List<Author>>() {}.type
+        return gson.fromJson(authorJson, type)
+    }
+    @TypeConverter
+    fun fromSerializationList(serializations: List<Serialization>?): String? {
+        val gson = Gson()
+        val type = object : TypeToken<List<Serialization>>() {}.type
+        return gson.toJson(serializations, type)
+    }
+
+    @TypeConverter
+    fun toSerializationList(serializationsJson: String?): List<Serialization>? {
+        val gson = Gson()
+        val type = object : TypeToken<List<Serialization>>() {}.type
+        return gson.fromJson(serializationsJson, type)
+    }
+
+    @TypeConverter
+    fun fromDemographicList(demographics: List<Demographic>?): String? {
+        val gson = Gson()
+        val type = object : TypeToken<List<Demographic>>() {}.type
+        return gson.toJson(demographics, type)
+    }
+
+    @TypeConverter
+    fun toDemographicList(demographicsJson: String?): List<Demographic>? {
+        val gson = Gson()
+        val type = object : TypeToken<List<Demographic>>() {}.type
+        return gson.fromJson(demographicsJson, type)
     }
 }

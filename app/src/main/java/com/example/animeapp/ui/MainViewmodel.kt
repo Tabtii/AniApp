@@ -22,7 +22,7 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
 
     val animeList : LiveData<List<AnimeData>> = repository.animeList
     val charList : LiveData<List<Character>> = repository.charList
-   /* val mangaList : LiveData<List<MangaData>> = repository*/
+    val mangaList : LiveData<List<MangaData>> = repository.mangaList
 
     init {
         loadList()
@@ -33,6 +33,7 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getAnimeList()
             repository.getCharList()
+            repository.getMangaList()
         }
     }
 

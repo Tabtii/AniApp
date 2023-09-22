@@ -7,8 +7,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.Character
+import com.example.animeapp.data.datamodels.MangaData
 
-@Database(entities = [AnimeData::class, Character::class], version = 1)
+@Database(entities = [AnimeData::class, Character::class, MangaData::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AnimeDatabase : RoomDatabase() {
     abstract val dao: AnimeDAO

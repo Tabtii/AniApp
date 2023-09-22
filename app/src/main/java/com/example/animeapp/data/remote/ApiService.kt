@@ -4,6 +4,7 @@ import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.AnimeInfo
 import com.example.animeapp.data.datamodels.CharacterData
 import com.example.animeapp.data.datamodels.MangaData
+import com.example.animeapp.data.datamodels.MangaInfo
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -36,7 +37,7 @@ interface ApiService {
     suspend fun getAllCharacter() : CharacterData
 
     @GET("manga")
-    suspend fun getAllManga() : MangaData
+    suspend fun getAllManga() : MangaInfo
 }
 object AnimeApi {
     val retrofitService: ApiService by lazy { retrofit.create(ApiService::class.java) }

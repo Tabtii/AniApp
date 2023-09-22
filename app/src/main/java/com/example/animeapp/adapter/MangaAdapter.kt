@@ -24,9 +24,9 @@ class MangaAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val item = dataset.get(position)
+        val item = dataset[position]
         val imageUrl =
-            item.images.jpg.image_url // Hier sollte imageUrl die URL oder der Pfad zur Datei sein
+            item.images?.jpg?.image_url // Hier sollte imageUrl die URL oder der Pfad zur Datei sein
         Picasso.get().load(imageUrl).into(holder.binding.IVMangaImage)
         holder.binding.TVMangaName.text = item.title
 

@@ -1,28 +1,38 @@
 package com.example.animeapp.data
 
 
-import com.example.animeapp.data.datamodels.AnimeData
-import com.example.animeapp.data.datamodels.Character
+import android.util.Log
+
 import com.example.animeapp.data.remote.ApiService
 import com.example.animeapp.db.AnimeDatabase
 
 
 class AppRepository(private val api: ApiService, private val db: AnimeDatabase) {
 
-    val animeList = db.dao.getAllAnime()
-    lateinit var apiAniList: List<AnimeData>
-
+    var animeList = db.dao.getAllAnime()
     val charList = db.dao.getAllChar()
-    lateinit var apiCharList: List<Character>
+    val mangaList = db.dao.getAllManga()
+
 
     suspend fun getAnimeList() {
-        apiAniList = api.getAllAnime().data
-        db.dao.insertFacts(apiAniList)
+
+        if (animeList.value.isNullOrEmpty()) {
+            Log.d("AppRepository", "$animeList")
+            db.dao.insertFacts(api.getAllAnime().data)
+        }
+        animeList = db.dao.getAllAnime()
     }
 
     suspend fun getCharList(){
-        apiCharList = api.getAllCharacter().data
-        db.dao.insertChars(apiCharList)
+       if(charList.value.isNullOrEmpty()) {
+           db.dao.insertChars(api.getAllCharacter().data)
+       }
+    }
+
+    suspend fun getMangaList(){
+        if(mangaList.value.isNullOrEmpty()) {
+            db.dao.insertManga(api.getAllManga().data)
+        }
     }
 
 }

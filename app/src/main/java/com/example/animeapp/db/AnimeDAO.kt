@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.Character
+import com.example.animeapp.data.datamodels.MangaData
+
 @Dao
 interface AnimeDAO {
     @Query("SELECT * FROM anime_table")
@@ -20,4 +22,10 @@ interface AnimeDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertChars(charList: List<Character>)
+
+    @Query("SELECT * FROM manga_table")
+    fun getAllManga(): LiveData<List<MangaData>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertManga(charList: List<MangaData>)
 }

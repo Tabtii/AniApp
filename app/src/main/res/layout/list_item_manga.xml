@@ -26,11 +26,12 @@
 
         <TextView
             android:id="@+id/TVMangaName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
             android:text="MANGA"
+            android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="@+id/IVMangaImage"
             app:layout_constraintStart_toStartOf="@+id/IVMangaImage"
             app:layout_constraintTop_toBottomOf="@+id/IVMangaImage" />
