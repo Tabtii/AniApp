@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.animeapp.data.AppRepository
 import com.example.animeapp.data.datamodels.AnimeData
+import com.example.animeapp.data.datamodels.Character
+import com.example.animeapp.data.datamodels.MangaData
 import com.example.animeapp.data.remote.AnimeApi
 import com.example.animeapp.db.getDatabase
 
@@ -19,8 +21,8 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
 
 
     val animeList : LiveData<List<AnimeData>> = repository.animeList
-
-
+    val charList : LiveData<List<Character>> = repository.charList
+   /* val mangaList : LiveData<List<MangaData>> = repository*/
 
     init {
         loadList()
@@ -30,6 +32,7 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
     fun loadList() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getAnimeList()
+            repository.getCharList()
         }
     }
 
