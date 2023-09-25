@@ -9,11 +9,7 @@ data class CharacterData(
 )
 
 
-data class PaginationItems(
-    val count: Int,
-    val total: Int,
-    val per_page: Int
-)
+
 @Entity(tableName = "char_table")
 data class Character(
     @PrimaryKey

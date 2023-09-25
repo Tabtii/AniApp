@@ -1,11 +1,10 @@
 package com.example.animeapp.ui
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.example.animeapp.data.AppRepository
+import com.example.animeapp.data.repo.AppRepository
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.Character
 import com.example.animeapp.data.datamodels.MangaData

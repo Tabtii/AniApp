@@ -8,8 +8,9 @@ import androidx.room.TypeConverters
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.Character
 import com.example.animeapp.data.datamodels.MangaData
+import com.example.animeapp.data.datamodels.Pagination
 
-@Database(entities = [AnimeData::class, Character::class, MangaData::class], version = 1)
+@Database(entities = [AnimeData::class, Character::class, MangaData::class, Pagination::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AnimeDatabase : RoomDatabase() {
     abstract val dao: AnimeDAO
@@ -27,7 +28,7 @@ fun getDatabase(context: Context): AnimeDatabase {
             INSTANCE = Room.databaseBuilder(
                 context.applicationContext,
                 AnimeDatabase::class.java,
-                "anime_table"
+                "app_table"
             )
                 .build()
         }

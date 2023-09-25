@@ -5,19 +5,31 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.example.animeapp.R
+import com.example.animeapp.adapter.Adapter
+import com.example.animeapp.adapter.CharAdapter
+import com.example.animeapp.databinding.FragmentCharacterBinding
+import com.example.animeapp.databinding.FragmentThisSeasonBinding
 
 
 class ThisSeasonFragment : Fragment() {
 
 
+    private val viewModel: MainViewmodel by activityViewModels()
+    private lateinit var binding: FragmentThisSeasonBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_this_season, container, false)
+        binding = FragmentThisSeasonBinding.inflate(inflater, container, false)
+
+        return binding.root
     }
 
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.recyclerView.adapter = Adapter(viewModel.animeList.value!!)
+    }
 }

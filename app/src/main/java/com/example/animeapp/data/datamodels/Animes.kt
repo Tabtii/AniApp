@@ -9,11 +9,7 @@ data class AnimeInfo(
     val data: List<AnimeData>
 )
 
-data class Items(
-    val count: Int,
-    val total: Int,
-    val per_page: Int
-)
+
 
 @Entity(tableName = "anime_table")
 data class AnimeData(

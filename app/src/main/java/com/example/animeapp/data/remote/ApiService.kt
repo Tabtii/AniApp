@@ -10,6 +10,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 
 // Die Konstante enthält die URL der API
@@ -31,14 +32,31 @@ interface ApiService {
 
 
     @GET("anime")
-    suspend fun getAllAnime() : AnimeInfo
+    suspend fun getAllAnime(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): AnimeInfo
 
     @GET("characters")
-    suspend fun getAllCharacter() : CharacterData
+    suspend fun getAllCharacter(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): CharacterData
 
     @GET("manga")
-    suspend fun getAllManga() : MangaInfo
+    suspend fun getAllManga(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): MangaInfo
+
+    @GET("seasons/now")
+    suspend fun getSeasonNow(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): AnimeInfo
+
 }
+
 object AnimeApi {
     val retrofitService: ApiService by lazy { retrofit.create(ApiService::class.java) }
 }

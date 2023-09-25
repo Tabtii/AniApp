@@ -13,7 +13,6 @@ import com.example.animeapp.data.datamodels.Published
 import com.example.animeapp.data.datamodels.Serialization
 import com.example.animeapp.data.datamodels.Studio
 import com.example.animeapp.data.datamodels.Theme
-import com.example.animeapp.data.datamodels.Title
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

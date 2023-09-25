@@ -28,4 +28,5 @@ interface AnimeDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertManga(charList: List<MangaData>)
+
 }
