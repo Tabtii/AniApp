@@ -9,8 +9,6 @@ import android.view.ViewGroup
 
 import androidx.fragment.app.activityViewModels
 import com.example.animeapp.adapter.Adapter
-import com.example.animeapp.adapter.CharAdapter
-import com.example.animeapp.adapter.MangaAdapter
 import com.example.animeapp.databinding.FragmentHomeBinding
 
 
@@ -26,7 +24,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
 
-        viewmodel.loadList()
+
 
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -40,17 +38,8 @@ class HomeFragment : Fragment() {
         binding.RvManga.setHasFixedSize(true)
         binding.RvFavorite.setHasFixedSize(true)
 
-        viewmodel.animeList.observe(viewLifecycleOwner) { anime ->
-            Log.d("ApiTest2", "${anime}")
-            binding.RvAnime.adapter = Adapter(anime)
-        }
 
-        viewmodel.charList.observe(viewLifecycleOwner){char ->
-            binding.RvCharakter.adapter = CharAdapter(char)
-        }
 
-        viewmodel.mangaList.observe(viewLifecycleOwner){
-            binding.RvManga.adapter = MangaAdapter(it)
-        }
+
     }
 }

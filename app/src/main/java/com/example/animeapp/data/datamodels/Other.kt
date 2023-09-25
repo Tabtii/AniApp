@@ -19,7 +19,7 @@ data class Theme(
 @Entity(tableName = "paging_table")
 data class Pagination(
     @PrimaryKey(autoGenerate = true)
-    val id : Long,
+    val id : Long = 1,
     val last_visible_page: Int,
     val has_next_page: Boolean,
     val current_page: Int,

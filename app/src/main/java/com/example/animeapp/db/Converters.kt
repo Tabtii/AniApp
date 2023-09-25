@@ -7,12 +7,14 @@ import com.example.animeapp.data.datamodels.Broadcast
 import com.example.animeapp.data.datamodels.Demographic
 import com.example.animeapp.data.datamodels.Genre
 import com.example.animeapp.data.datamodels.Images
+import com.example.animeapp.data.datamodels.Items
 import com.example.animeapp.data.datamodels.Licensor
 import com.example.animeapp.data.datamodels.Producer
 import com.example.animeapp.data.datamodels.Published
 import com.example.animeapp.data.datamodels.Serialization
 import com.example.animeapp.data.datamodels.Studio
 import com.example.animeapp.data.datamodels.Theme
+import com.example.animeapp.data.datamodels.Title
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -261,5 +263,15 @@ class Converters {
         val gson = Gson()
         val type = object : TypeToken<List<Demographic>>() {}.type
         return gson.fromJson(demographicsJson, type)
+    }
+
+    @TypeConverter
+    fun fromItems(items: Items): String {
+        return Gson().toJson(items)
+    }
+
+    @TypeConverter
+    fun toItems(itemsJson: String): Items {
+        return Gson().fromJson(itemsJson, Items::class.java)
     }
 }

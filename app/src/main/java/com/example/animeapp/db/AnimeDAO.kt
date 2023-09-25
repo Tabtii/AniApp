@@ -8,12 +8,15 @@ import androidx.room.Query
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.Character
 import com.example.animeapp.data.datamodels.MangaData
+import retrofit2.http.GET
 
 @Dao
 interface AnimeDAO {
     @Query("SELECT * FROM anime_table")
     fun getAllAnime(): LiveData<List<AnimeData>>
 
+    @Query("SELECT * FROM anime_table WHERE mal_id = :id")
+    fun getAnimeByID(id: Int): AnimeData
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertFacts(animeList: List<AnimeData>)
 
@@ -28,5 +31,11 @@ interface AnimeDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertManga(charList: List<MangaData>)
+
+    @Query("SELECT * FROM anime_table WHERE year = :year AND season = :currentSeason")
+    fun getSeasonNow(year: Int,currentSeason: String): LiveData<List<AnimeData>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertSeasonNow(charList: List<AnimeData>)
 
 }
