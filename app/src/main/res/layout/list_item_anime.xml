@@ -22,6 +22,9 @@
             android:id="@+id/IVAnimeImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -44,6 +47,53 @@
             app:layout_constraintTop_toTopOf="@+id/IVAnimeImage"
             tools:layout_conversion_absoluteHeight="60dp"
             tools:layout_conversion_absoluteWidth="120dp" />
+
+        <TextView
+            android:id="@+id/ScoreTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Score:"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toEndOf="@+id/IVAnimeImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/TVScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="N/A"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/ScoreTV"
+            app:layout_constraintStart_toEndOf="@+id/ScoreTV"
+            app:layout_constraintTop_toTopOf="@+id/ScoreTV" />
+
+        <TextView
+            android:id="@+id/TVGenre"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="N/A"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/GenreTV"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/GenreTV"
+            app:layout_constraintTop_toTopOf="@+id/GenreTV" />
+
+        <TextView
+            android:id="@+id/GenreTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="Genre:"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/IVAnimeImage" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

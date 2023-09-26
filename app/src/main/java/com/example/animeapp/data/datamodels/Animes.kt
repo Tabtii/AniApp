@@ -17,6 +17,7 @@ data class AnimeData(
     val mal_id: Int,
     val url: String?,
     val images: Images?,
+    val trailer: Trailer?,
     val approved: Boolean?,
     val titles: List<Title>?,
     val title: String?,
@@ -100,6 +101,19 @@ data class Studio(
     val url: String
 )
 
+data class Trailer(
+    val youtube_id: String?,
+    val embed_url: String?,
+    val images: TrailerImages?
+)
+
+data class TrailerImages(
+    val image_url: String?,
+    val small_image_url: String?,
+    val medium_image_url: String?,
+    val large_image_url: String?,
+    val maximum_image_url: String?
+)
 
 
 

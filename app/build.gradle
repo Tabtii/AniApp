@@ -71,9 +71,12 @@ dependencies {
     //paging
     implementation "androidx.paging:paging-runtime-ktx:3.2.1"
 
-
     //Coil
     implementation "io.coil-kt:coil:2.4.0"
-    implementation 'com.squareup.picasso:picasso:2.71828' // Für Picasso
+
+    // Für Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
 
 }

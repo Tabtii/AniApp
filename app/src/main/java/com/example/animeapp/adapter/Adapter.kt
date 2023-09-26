@@ -19,7 +19,6 @@ class Adapter(
         RecyclerView.ViewHolder(binding.root)
 
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding =
             ListItemAnimeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -32,19 +31,31 @@ class Adapter(
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
+        var genre1 = ""
+        for (genre in item.genres!!){
+            genre1 =  genre1 + " " + genre.name
+        }
         val imageUrl = item.images?.jpg?.image_url
         Picasso.get().load(imageUrl).into(holder.binding.IVAnimeImage)
-        if (item.title_english == null){
+        if (item.title_english == null) {
             holder.binding.TVAnimeName.text = item.title
-        }else{
+        } else {
             holder.binding.TVAnimeName.text = item.title_english
         }
-
-
+        if (item.score != null) {
+            holder.binding.TVScore.text = item.score.toString()
+        } else {
+            holder.binding.TVScore.text = "N/A"
+        }
+        holder.binding.TVGenre.text = genre1
 
         holder.binding.CVAnime.setOnClickListener {
             holder.binding.root.findNavController()
-                .navigate(ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(item.mal_id))
+                .navigate(
+                    ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(
+                        item.mal_id
+                    )
+                )
         }
     }
 

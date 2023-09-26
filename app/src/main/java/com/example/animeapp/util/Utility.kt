@@ -8,7 +8,7 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 private val currentDate = LocalDate.now()
 var currentSeason = ""
-var year = 0
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun Season(): String {

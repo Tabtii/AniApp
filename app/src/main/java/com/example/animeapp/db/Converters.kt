@@ -15,6 +15,8 @@ import com.example.animeapp.data.datamodels.Serialization
 import com.example.animeapp.data.datamodels.Studio
 import com.example.animeapp.data.datamodels.Theme
 import com.example.animeapp.data.datamodels.Title
+import com.example.animeapp.data.datamodels.Trailer
+
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -274,4 +276,14 @@ class Converters {
     fun toItems(itemsJson: String): Items {
         return Gson().fromJson(itemsJson, Items::class.java)
     }
+    @TypeConverter
+    fun fromTrailer(trailer: Trailer): String {
+        return Gson().toJson(trailer)
+    }
+
+    @TypeConverter
+    fun toTrailer(trailerJson: String): Trailer {
+        return Gson().fromJson(trailerJson, Trailer::class.java)
+    }
+
 }

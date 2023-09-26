@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
@@ -14,6 +16,8 @@ import com.example.animeapp.R
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.databinding.FragmentAnimeDetailBinding
 import com.example.animeapp.databinding.FragmentThisSeasonBinding
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +27,6 @@ class AnimeDetailFragment : Fragment() {
     private val viewModel: MainViewmodel by activityViewModels()
     private lateinit var binding: FragmentAnimeDetailBinding
 
-    private lateinit var anime: AnimeData
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +55,65 @@ class AnimeDetailFragment : Fragment() {
             }else{
                 binding.TVAnimeDetailTitle.text = it.title_english
             }
+            binding.TVTitleEng.text= it.title_english
+            binding.TVTitleJap.text = it.title_japanese
+            var season = ""
+            when(it.season){
+                "winter" -> season = "Winter"
+                "spring" -> season = "Spring"
+                "summer" -> season = "Summer"
+                "fall" -> season = "Fall"
+            }
 
+            binding.TVType.text = it.type
+            binding.TVStatus.text = it.status
+            binding.TVEpisodes.text = it.episodes.toString()
+            binding.TVPremiered.text = "$season ${it.year}"
+            binding.TVScoredetail.text = it.score.toString()
+            binding.TVScoredBy.text = "${it.scored_by} users"
+            binding.TVSource.text = it.source
+
+
+            val webView: WebView = binding.WVTrailer
+            // Aktiviere JavaScript im WebView
+            webView.settings.javaScriptEnabled = true
+            // Setze die YouTube-Video-URL
+            val videoUrl = it.trailer?.embed_url
+            if (videoUrl != null) {
+                webView.loadUrl(videoUrl)
+            }
+            // Stelle sicher, dass Links im WebView geöffnet werden
+            webView.webViewClient = WebViewClient()
+
+            var licensors = ""
+            for (licensor in it.licensors!!){
+                licensors =  licensors + " " + licensor.name
+            }
+            binding.TVProducer.text = licensors
+
+            var producer = ""
+            for (produ in it.producers!!){
+                producer =  producer + " " + produ.name
+            }
+            binding.TVProducer.text = producer
+
+            var studios = ""
+            for (studio in it.studios!!){
+                studios =  studios + " " + studio.name
+            }
+            binding.TVStudio.text = studios
+
+            var themes = ""
+            for (theme in it.themes!!){
+                themes =  themes + " " + theme.name
+            }
+
+            binding.TVThemes.text = themes
+            var genre1 = ""
+            for (genre in it.genres!!){
+                genre1 =  genre1 + " " + genre.name
+            }
+            binding.TVGenreDetail.text = genre1
         }
         binding.IBTNBack.setOnClickListener {
             findNavController().navigateUp()
