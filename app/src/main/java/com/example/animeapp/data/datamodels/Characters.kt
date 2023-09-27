@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 data class CharacterData(
+
     val pagination: Pagination,
     val data: List<Character>
 )

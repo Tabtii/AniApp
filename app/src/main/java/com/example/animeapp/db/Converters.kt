@@ -9,6 +9,8 @@ import com.example.animeapp.data.datamodels.Genre
 import com.example.animeapp.data.datamodels.Images
 import com.example.animeapp.data.datamodels.Items
 import com.example.animeapp.data.datamodels.Licensor
+import com.example.animeapp.data.datamodels.MangaData
+import com.example.animeapp.data.datamodels.Pagination
 import com.example.animeapp.data.datamodels.Producer
 import com.example.animeapp.data.datamodels.Published
 import com.example.animeapp.data.datamodels.Serialization
@@ -285,5 +287,45 @@ class Converters {
     fun toTrailer(trailerJson: String): Trailer {
         return Gson().fromJson(trailerJson, Trailer::class.java)
     }
+    fun fromMangaDataList(dataList: List<MangaData>?): String? {
+        val gson = Gson()
+        val type = object : TypeToken<List<MangaData>>() {}.type
+        return gson.toJson(dataList, type)
+    }
 
+    @TypeConverter
+    fun toMangaDataList(dataListJson: String?): List<MangaData>? {
+        val gson = Gson()
+        val type = object : TypeToken<List<MangaData>>() {}.type
+        return gson.fromJson(dataListJson, type)
+    }
+    @TypeConverter
+    fun fromPagination(pagination: Pagination): String {
+        return Gson().toJson(pagination)
+    }
+
+    @TypeConverter
+    fun toPagination(paginationJson: String): Pagination {
+        return Gson().fromJson(paginationJson, Pagination::class.java)
+    }
+
+    @TypeConverter
+    fun fromCharacterList(characterList: List<Character>?): String? {
+        if (characterList == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object : TypeToken<List<Character>>() {}.type
+        return gson.toJson(characterList, type)
+    }
+
+    @TypeConverter
+    fun toCharacterList(characterListJson: String?): List<Character>? {
+        if (characterListJson == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object : TypeToken<List<Character>>() {}.type
+        return gson.fromJson(characterListJson, type)
+    }
 }

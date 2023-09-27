@@ -2,18 +2,19 @@ package com.example.animeapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ExpandableListView.OnChildClickListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.animeapp.data.datamodels.AnimeData
 import androidx.navigation.findNavController
 import com.example.animeapp.R
+import com.example.animeapp.data.datamodels.Pagination
 import com.example.animeapp.databinding.FragmentThisSeasonBinding
 import com.example.animeapp.databinding.ListItemAnimeBinding
 import com.example.animeapp.ui.ThisSeasonFragmentDirections
 import com.squareup.picasso.Picasso
 
 class Adapter(
-    private val dataset: List<AnimeData>
-
+    private val dataset: List<AnimeData>,
 ) : RecyclerView.Adapter<Adapter.ItemViewHolder>() {
     inner class ItemViewHolder(val binding: ListItemAnimeBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -48,7 +49,6 @@ class Adapter(
             holder.binding.TVScore.text = "N/A"
         }
         holder.binding.TVGenre.text = genre1
-
         holder.binding.CVAnime.setOnClickListener {
             holder.binding.root.findNavController()
                 .navigate(
@@ -57,6 +57,7 @@ class Adapter(
                     )
                 )
         }
+
     }
 
 }

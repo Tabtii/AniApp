@@ -11,6 +11,8 @@ import com.example.animeapp.data.repo.AppRepository
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.Character
 import com.example.animeapp.data.datamodels.MangaData
+import com.example.animeapp.data.datamodels.MangaInfo
+import com.example.animeapp.data.datamodels.Pagination
 import com.example.animeapp.data.remote.AnimeApi
 import com.example.animeapp.db.getDatabase
 
@@ -24,20 +26,31 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
     private val repository = AppRepository(AnimeApi.retrofitService, getDatabase(app))
 
 
-    val animeList : LiveData<List<AnimeData>> = repository.animeList
-    val charList : LiveData<List<Character>> = repository.charList
-    val mangaList : LiveData<List<MangaData>> = repository.mangaList
-    val seasonNow : LiveData<List<AnimeData>> = repository.seasonNow
+    val animeList: LiveData<List<AnimeData>> = repository.animeList
+    val charList: LiveData<List<Character>> = repository.charList
+    val mangaList: LiveData<List<MangaData>> = repository.mangaList
+    val seasonNow: LiveData<List<AnimeData>> = repository.seasonNow
+    val paging: LiveData<Pagination> = repository.pageList
     private val _aniDetail = MutableLiveData<AnimeData>()
     val aniDetail: LiveData<AnimeData> = _aniDetail
 
+    init {
+        loadSeasonNow(1)
+    }
 
-   fun loadList() {
+    fun loadnextPage(page: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getSeason()
-
+            repository.getNextPage(page)
         }
     }
+
+    fun loadSeasonNow(page: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getSeason(page)
+        }
+    }
+
+
 
     fun loadAnimeByID(id: Int) {
         viewModelScope.launch {

@@ -1,11 +1,13 @@
 package com.example.animeapp.data.datamodels
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 
 
 data class AnimeInfo(
-    val pagination: Pagination,
+    val pagination: Pagination?,
     val data: List<AnimeData>
 )
 

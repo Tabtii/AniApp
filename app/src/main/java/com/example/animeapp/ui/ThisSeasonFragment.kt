@@ -1,11 +1,13 @@
 package com.example.animeapp.ui
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import com.example.animeapp.R
@@ -26,35 +28,37 @@ class ThisSeasonFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+
         binding = FragmentThisSeasonBinding.inflate(inflater, container, false)
-        viewModel.loadList()
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        when(currentSeason){
-            "winter"-> {
+        when (currentSeason) {
+            "winter" -> {
                 binding.IVSeason.setImageResource(R.drawable.imgbin_anime_mangaka_4chan_png)
                 binding.TVSeason.text = "Winter\n" +
                         "Season\n" +
                         "$year"
             }
-                "spring"->{
-                    binding.IVSeason.setImageResource(R.drawable.imgbin_manga_my_hero_academia_fan_art_anime_png)
-                    binding.TVSeason.text = "Spring\n" +
-                            "Season\n" +
-                            "$year"
 
-                }
-            "summer"->{
+            "spring" -> {
+                binding.IVSeason.setImageResource(R.drawable.imgbin_manga_my_hero_academia_fan_art_anime_png)
+                binding.TVSeason.text = "Spring\n" +
+                        "Season\n" +
+                        "$year"
+
+            }
+
+            "summer" -> {
                 binding.IVSeason.setImageResource(R.drawable.imgbin_monkey_d_luffy_roronoa_zoro_logo_one_piece_character_png)
                 binding.TVSeason.text = "Summer\nSeason\n$year"
 
             }
-            "fall"->{
+
+            "fall" -> {
                 binding.IVSeason.setImageResource(R.drawable.imgbin_re_zero_starting_life_in_another_world_r_e_m_anime_manga_png)
                 binding.TVSeason.text = "Fall\n" +
                         "Season\n" +
@@ -65,8 +69,11 @@ class ThisSeasonFragment : Fragment() {
 
         viewModel.seasonNow.observe(viewLifecycleOwner) { anime ->
             binding.RVSeason.adapter = Adapter(anime)
-        }
 
+        }
+        binding.BTNNext.setOnClickListener {
+            Toast.makeText(requireContext(), "Hello", Toast.LENGTH_SHORT).show()
+        }
 
     }
 }

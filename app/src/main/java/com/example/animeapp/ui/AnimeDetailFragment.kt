@@ -10,17 +10,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import com.example.animeapp.R
-import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.databinding.FragmentAnimeDetailBinding
-import com.example.animeapp.databinding.FragmentThisSeasonBinding
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 
 class AnimeDetailFragment : Fragment() {
