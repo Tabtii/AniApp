@@ -23,4 +23,22 @@
             android:name="IDAnime"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/favFragment"
+        android:name="com.example.animeapp.ui.FavFragment"
+        android:label="fragment_fav"
+        tools:layout="@layout/fragment_fav" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.animeapp.ui.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_animeDetailFragment"
+            app:destination="@id/animeDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fullscreenVideoFragment"
+        android:name="FullscreenVideoFragment"
+        android:label="FullscreenVideoFragment" />
 </navigation>

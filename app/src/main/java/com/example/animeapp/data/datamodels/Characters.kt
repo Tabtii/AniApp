@@ -21,7 +21,9 @@ data class Character(
     val name_kanji: String?,
     val nicknames: List<String>?,
     val favorites: Int?,
-    val about: String?
+    val about: String?,
+    var liked: Boolean = false
+
 )
 
 

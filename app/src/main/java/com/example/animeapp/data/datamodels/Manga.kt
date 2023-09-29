@@ -37,7 +37,9 @@ data class MangaData(
     val genres: List<Genre>?,
     val explicit_genres: List<Any>?,
     val themes: List<Theme>?,
-    val demographics: List<Demographic>?
+    val demographics: List<Demographic>?,
+    var liked: Boolean = false
+
 )
 
 

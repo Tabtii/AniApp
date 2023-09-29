@@ -36,9 +36,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/RvAnime"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="470dp"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -66,6 +66,7 @@
                 android:id="@+id/RvCharakter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -93,6 +94,7 @@
                 android:id="@+id/RvManga"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -101,34 +103,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/TVMangaHeader"
                 tools:listitem="@layout/list_item_manga" />
 
-            <TextView
-                android:id="@+id/TVFavoriteHeader"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="#59FFFFFF"
-                android:text="FAVORITE"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/RvManga" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/RvFavorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/TVFavoriteHeader"
-                tools:listitem="@layout/list_item_anime" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

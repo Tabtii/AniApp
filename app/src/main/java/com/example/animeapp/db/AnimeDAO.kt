@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.Character
 import com.example.animeapp.data.datamodels.MangaData
@@ -17,9 +18,15 @@ interface AnimeDAO {
 
     @Query("SELECT * FROM anime_table WHERE mal_id = :id")
     fun getAnimeByID(id: Int): AnimeData
+
+    @Query("SELECT * FROM anime_table WHERE liked = 1")
+    fun getAnimeLiked(): List<AnimeData>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAnime(animeList: List<AnimeData>)
-
+    @Update
+    fun updateAnime(animeData: AnimeData)
+    @Query("DELETE FROM anime_table")
+    fun deleteAnime()
     @Query("SELECT * FROM char_table")
     fun getAllChar(): LiveData<List<Character>>
 
@@ -42,9 +49,6 @@ interface AnimeDAO {
     fun getAllPaging(): LiveData<Pagination>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPaging(page: Pagination)
-
-    @Query("DELETE FROM anime_table")
-    fun deleteAnime()
 
     @Query("DELETE FROM paging_table")
     fun deletePage()

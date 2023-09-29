@@ -68,11 +68,14 @@ class ThisSeasonFragment : Fragment() {
         }
 
         viewModel.seasonNow.observe(viewLifecycleOwner) { anime ->
-            binding.RVSeason.adapter = Adapter(anime)
+            binding.RVSeason.adapter = Adapter(anime,viewModel)
 
         }
         binding.BTNNext.setOnClickListener {
-            Toast.makeText(requireContext(), "Hello", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Wird schon noch", Toast.LENGTH_SHORT).show()
+        }
+        binding.BTNPrev.setOnClickListener {
+            Toast.makeText(requireContext(), "Kommt noch", Toast.LENGTH_SHORT).show()
         }
 
     }

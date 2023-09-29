@@ -1,53 +1,39 @@
 package com.example.animeapp.adapter
 
-import android.content.ContentValues.TAG
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ExpandableListView.OnChildClickListener
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.recyclerview.widget.RecyclerView
-import com.example.animeapp.data.datamodels.AnimeData
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.animeapp.R
-import com.example.animeapp.data.datamodels.LikedAnimes
+import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.databinding.ListItemAnimeBinding
+import com.example.animeapp.ui.HomeFragmentDirections
 import com.example.animeapp.ui.MainViewmodel
-import com.example.animeapp.ui.ThisSeasonFragmentDirections
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
 
-class Adapter(
+class AnimeLikeAdapder   (
     private val dataset: List<AnimeData>,
     private val viewmodel: MainViewmodel
-) : RecyclerView.Adapter<Adapter.ItemViewHolder>() {
-
-
+) : RecyclerView.Adapter<AnimeLikeAdapder.ItemViewHolder>() {
     inner class ItemViewHolder(val binding: ListItemAnimeBinding) :
         RecyclerView.ViewHolder(binding.root)
+    val database = FirebaseDatabase.getInstance()
+    val reference = database.getReference("Ihr_Datenbankpfad")
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding =
             ListItemAnimeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
         return ItemViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return dataset.size
-    }
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-
-
         val item = dataset[position]
         var genre1 = ""
         for (genre in item.genres!!) {
@@ -68,7 +54,8 @@ class Adapter(
         holder.binding.TVGenre.text = genre1
         holder.binding.CVAnime.setOnClickListener {
 
-                it.findNavController().navigate(ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(item.mal_id))
+                it.findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAnimeDetailFragment(item.mal_id))
+
 
         }
         when (item.liked) {
@@ -89,19 +76,26 @@ class Adapter(
                 false -> {
                     holder.binding.IBTNLike.setImageResource(R.drawable.star)
                     item.liked = true
-                    viewmodel.markAnimeAsLiked(item)
                     viewmodel.updateAnime(item)
+                    notifyItemChanged(position)
                 }
 
                 true -> {
                     holder.binding.IBTNLike.setImageResource(R.drawable.star_border)
                     item.liked = false
                     viewmodel.updateAnime(item)
+                    notifyItemChanged(position)
                 }
             }
 
         }
 
     }
+
+
+    override fun getItemCount(): Int {
+        return dataset.size
+    }
+
 
 }

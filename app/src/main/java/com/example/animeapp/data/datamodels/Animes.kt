@@ -51,7 +51,8 @@ data class AnimeData(
     val genres: List<Genre>?,
     val explicit_genres: List<Any>?,
     val themes: List<Theme>?,
-    val demographics: List<Any>?
+    val demographics: List<Any>?,
+    var liked: Boolean = false
 )
 
 

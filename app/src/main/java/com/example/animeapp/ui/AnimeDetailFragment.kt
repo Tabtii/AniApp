@@ -6,11 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.animeapp.R
 import com.example.animeapp.databinding.FragmentAnimeDetailBinding
 import com.squareup.picasso.Picasso
 
@@ -66,17 +68,45 @@ class AnimeDetailFragment : Fragment() {
             binding.TVScoredBy.text = "${it.scored_by} users"
             binding.TVSource.text = it.source
 
+            when (it.liked) {
+                false -> {
+                    binding.IBTNLikeADetail.setImageResource(R.drawable.star_border)
+                }
+                true -> {
+                    binding.IBTNLikeADetail.setImageResource(R.drawable.star)
+                }
+            }
+
+            binding.IBTNLikeADetail.setOnClickListener {view->
+                when (it.liked) {
+                    true -> {
+                        binding.IBTNLikeADetail.setImageResource(R.drawable.star_border)
+                        it.liked = false
+                        viewModel.updateAnime(it)
+                    }
+                    false -> {
+                        binding.IBTNLikeADetail.setImageResource(R.drawable.star)
+                        it.liked = true
+                        viewModel.updateAnime(it)
+                    }
+                }
+            }
+
+
+
 
             val webView: WebView = binding.WVTrailer
-            // Aktiviere JavaScript im WebView
             webView.settings.javaScriptEnabled = true
-            // Setze die YouTube-Video-URL
+            webView.settings.domStorageEnabled = true
+            webView.webViewClient = WebViewClient()
             val videoUrl = it.trailer?.embed_url
             if (videoUrl != null) {
-                webView.loadUrl(videoUrl)
+                val htmlCode = "<html><body style='margin:0;padding:0;'><iframe width='100%' height='100%' src='$videoUrl' frameborder='0' allowfullscreen></iframe></body></html>"
+                webView.loadData(htmlCode, "text/html", "utf-8")
             }
-            // Stelle sicher, dass Links im WebView geöffnet werden
-            webView.webViewClient = WebViewClient()
+
+
+
 
             var licensors = ""
             for (licensor in it.licensors!!){
