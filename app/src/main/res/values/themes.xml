@@ -3,7 +3,9 @@
     <style name="Base.Theme.AniMeApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/pink</item>
+        <item name="colorPrimary">@color/mint</item>
+        <item name="android:windowBackground"> @color/lightBlue</item>
+        <item name="cardBackgroundColor">@color/orange</item>
     </style>
 
     <style name="Theme.AniMeApp" parent="Base.Theme.AniMeApp" />

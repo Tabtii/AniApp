@@ -7,8 +7,9 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:clickable="true"
-    app:cardBackgroundColor="@color/background"
-    android:focusable="true">
+    android:focusable="true"
+    android:theme="@style/Theme.AniMeApp"
+    app:cardBackgroundColor="@color/background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="360dp"
