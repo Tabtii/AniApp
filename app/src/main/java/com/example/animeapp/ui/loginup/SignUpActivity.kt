@@ -1,10 +1,9 @@
-package com.example.animeapp.ui
+package com.example.animeapp.ui.loginup
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.animeapp.R
 import com.example.animeapp.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 

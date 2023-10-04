@@ -1,15 +1,18 @@
 package com.example.animeapp.data.remote
 
-import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.AnimeInfo
 import com.example.animeapp.data.datamodels.CharacterData
-import com.example.animeapp.data.datamodels.MangaData
+import com.example.animeapp.data.datamodels.CharacterList
 import com.example.animeapp.data.datamodels.MangaInfo
+import com.example.animeapp.data.datamodels.AniByIdResponse
+import com.example.animeapp.data.datamodels.AnimeData
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -55,6 +58,11 @@ interface ApiService {
         @Query("limit") limit: Int
     ): AnimeInfo
 
+    @GET("anime/{id}/full")
+    suspend fun getAnimeFull(@Path("id") id: Int): AniByIdResponse
+
+    @GET("anime/{id}/characters")
+    suspend fun getAnimeCharacters(@Path("id") id: Int): Call<CharacterList>
 }
 
 object AnimeApi {

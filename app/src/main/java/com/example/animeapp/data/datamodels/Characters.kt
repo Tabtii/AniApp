@@ -23,8 +23,43 @@ data class Character(
     val favorites: Int?,
     val about: String?,
     var liked: Boolean = false
-
 )
+
+data class CharacterList(
+    val data: List<AnimeCharacter>
+)
+data class AnimeCharacter(
+    val character: Character,
+    val role: String,
+    val favorites: Int,
+    val voiceActors: List<VoiceActor>
+)
+
+
+
+
+
+data class Image(
+    val imageUrl: String,
+    val smallImageUrl: String? = null
+)
+
+data class VoiceActor(
+    val person: Person,
+    val language: String
+)
+
+data class Person(
+    val malId: Int,
+    val url: String,
+    val images: PersonImages,
+    val name: String
+)
+
+data class PersonImages(
+    val jpg: Image
+)
+
 
 
 

@@ -8,19 +8,17 @@
     android:layout_marginTop="8dp"
     android:clickable="true"
     android:padding="8dp"
-    app:cardBackgroundColor="#59FFFFFF"
-    >
+    app:cardBackgroundColor="#59FFFFFF">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="360dp"
+        android:layout_height="150dp">
 
         <ImageView
             android:id="@+id/IVCharacterImage"
-            android:layout_width="120dp"
-            android:layout_height="200dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
@@ -28,14 +26,28 @@
         <TextView
             android:id="@+id/TVCharacterName"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
             android:text="CHARAKTER"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="17sp"
-            app:layout_constraintEnd_toEndOf="@+id/IVCharacterImage"
-            app:layout_constraintStart_toStartOf="@+id/IVCharacterImage"
-            app:layout_constraintTop_toBottomOf="@+id/IVCharacterImage" />
+            app:layout_constraintBottom_toBottomOf="@+id/IVCharacterImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/IVCharacterImage"
+            app:layout_constraintTop_toTopOf="@+id/IVCharacterImage" />
+
+        <TextView
+            android:id="@+id/TVCharRole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Role:"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/TVCharacterName"
+            app:layout_constraintStart_toStartOf="@+id/TVCharacterName"
+            app:layout_constraintTop_toBottomOf="@+id/TVCharacterName" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

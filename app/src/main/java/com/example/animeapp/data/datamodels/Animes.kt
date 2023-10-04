@@ -1,59 +1,103 @@
 package com.example.animeapp.data.datamodels
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Relation
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
 
 data class AnimeInfo(
     val pagination: Pagination?,
-    val data: List<AnimeData>
+    val data: List<Data>
 )
 
 
 
-@Entity(tableName = "anime_table")
+@JsonClass(generateAdapter = true)
 data class AnimeData(
-    @PrimaryKey
-    val mal_id: Int,
-    val url: String?,
-    val images: Images?,
-    val trailer: Trailer?,
-    val approved: Boolean?,
-    val titles: List<Title>?,
-    val title: String?,
-    val title_english: String?,
-    val title_japanese: String?,
-    val title_synonyms: List<String>?,
-    val type: String?,
-    val source: String?,
-    val episodes: Int?,
-    val status: String?,
-    val airing: Boolean?,
+    @Json
     val aired: Aired?,
-    val duration: String?,
-    val rating: String?,
-    val score: Double?,
-    val scored_by: Int?,
-    val rank: Int?,
-    val popularity: Int?,
-    val members: Int?,
-    val favorites: Int?,
-    val synopsis: String?,
-    val background: String?,
-    val season: String?,
-    val year: Int?,
+    val airing: Boolean?,
+    val approved: Boolean?,
+    val background: Any?,
     val broadcast: Broadcast?,
-    val producers: List<Producer>?,
-    val licensors: List<Licensor>?,
-    val studios: List<Studio>?,
-    val genres: List<Genre>?,
+    val demographics: List<Demographic>?,
+    val duration: String?,
+    val episodes: Any?,
     val explicit_genres: List<Any>?,
+    val `external`: List<External>?,
+    val favorites: Int?,
+    val genres: List<Genre>?,
+    val images: Images?,
+    val licensors: List<Any>?,
+    val mal_id: Int?,
+    val members: Int?,
+    val popularity: Int?,
+    val producers: List<Producer>?,
+    val rank: Any?,
+    val rating: String?,
+    val relations: List<Relation>?,
+    val score: Any?,
+    val scored_by: Any?,
+    val season: String?,
+    val source: String?,
+    val status: String?,
+    val streaming: List<Any>?,
+    val studios: List<Studio>?,
+    val synopsis: String?,
+    val theme: Theme?,
     val themes: List<Theme>?,
-    val demographics: List<Any>?,
-    var liked: Boolean = false
-)
+    val title: String?,
+    val title_english: Any?,
+    val title_japanese: String?,
+    val title_synonyms: List<Any>?,
+    val titles: List<Title>?,
+    val trailer: Trailer?,
+    val type: String?,
+    val url: String?,
+    val year: Int?
+) {
+    constructor() : this(
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 
 
@@ -63,52 +107,107 @@ data class Aired(
     val to: String?,
     val prop: AiredProp?,
     val string: String?
-)
+){
+    constructor() : this(
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 data class AiredProp(
     val from: AiredDate?,
     val to: AiredDate?
-)
+){
+    constructor() : this(
+        null,
+        null,
+
+    )
+}
 
 data class AiredDate(
     val day: Int?,
     val month: Int?,
     val year: Int?
-)
+){
+    constructor() : this(
+        null,
+        null,
+        null
+    )
+}
 
 data class Broadcast(
     val day: String?,
     val time: String?,
     val timezone: String?,
     val string: String?
-)
+){
+    // Argumentloser Konstruktor hinzufügen
+    constructor() : this(
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 data class Producer(
-    val mal_id: Int,
-    val type: String,
-    val name: String,
-    val url: String
-)
+    val mal_id: Int?,
+    val type: String?,
+    val name: String?,
+    val url: String?
+){
+    constructor() : this(
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 data class Licensor(
-    val mal_id: Int,
-    val type: String,
-    val name: String,
-    val url: String
-)
+    val mal_id: Int?,
+    val type: String?,
+    val name: String?,
+    val url: String?
+){
+    constructor() : this(
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 data class Studio(
-    val mal_id: Int,
-    val type: String,
-    val name: String,
-    val url: String
-)
+    val mal_id: Int?,
+    val type: String?,
+    val name: String?,
+    val url: String?
+){
+    constructor() : this(
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 data class Trailer(
     val youtube_id: String?,
     val embed_url: String?,
     val images: TrailerImages?
-)
+) {
+    constructor() : this(
+        null,
+        null,
+        null
+
+    )
+}
 
 data class TrailerImages(
     val image_url: String?,
@@ -116,7 +215,14 @@ data class TrailerImages(
     val medium_image_url: String?,
     val large_image_url: String?,
     val maximum_image_url: String?
-)
+) {    constructor() : this(
+        null,
+        null,
+        null,
+        null,
+    null
+    )
+}
 
 
 

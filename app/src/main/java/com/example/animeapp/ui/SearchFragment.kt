@@ -1,6 +1,5 @@
 package com.example.animeapp.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,17 +10,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
-import com.example.animeapp.adapter.Adapter
-import com.example.animeapp.adapter.AnimeLikeAdapder
-import com.example.animeapp.databinding.FragmentFavBinding
+import com.example.animeapp.databinding.FragmentSearchBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.example.animeapp.ui.SignInActivity
+import com.example.animeapp.ui.loginup.SignInActivity
+import com.example.animeapp.ui.viewmodel.MainViewmodel
 
 
-class FavFragment : Fragment() {
+class SearchFragment : Fragment() {
 
 
-    private lateinit var binding: FragmentFavBinding
+    private lateinit var binding: FragmentSearchBinding
     private val viewmodel: MainViewmodel by activityViewModels()
 
 
@@ -30,8 +28,8 @@ class FavFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        viewmodel.loadLikedAnime()
-        binding = FragmentFavBinding.inflate(layoutInflater, container, false)
+
+        binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

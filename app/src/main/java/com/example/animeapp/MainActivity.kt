@@ -11,7 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.animeapp.databinding.ActivityMainBinding
-import com.example.animeapp.ui.MainViewmodel
+import com.example.animeapp.ui.viewmodel.MainViewmodel
 import androidx.activity.OnBackPressedCallback
 import com.google.firebase.database.FirebaseDatabase
 

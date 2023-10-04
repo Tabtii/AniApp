@@ -1,4 +1,4 @@
-package com.example.animeapp.ui
+package com.example.animeapp.ui.loginup
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

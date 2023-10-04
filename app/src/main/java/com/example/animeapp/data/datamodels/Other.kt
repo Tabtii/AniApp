@@ -4,17 +4,30 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 data class Title(
-    val type: String,
-    val title: String
-)
+    val type: String?,
+    val title: String?
+){
+    constructor() : this(
+        null,
+        null,
+
+    )
+}
 
 
 data class Theme(
-    val mal_id: Int,
-    val type: String,
-    val name: String,
-    val url: String
-)
+    val mal_id: Int?,
+    val type: String?,
+    val name: String?,
+    val url: String?
+){
+    constructor() : this(
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 @Entity(tableName = "paging_table")
 data class Pagination(
@@ -32,21 +45,40 @@ data class PaginationItems(
 )
 
 data class ImageInfo(
-    val image_url: String,
+    val image_url: String?,
     val small_image_url: String? = null
-)
+){
+    constructor() : this(
+        null,
+        null,
+
+    )
+}
 
 data class Images(
-    val jpg: ImageInfo,
-    val webp: ImageInfo
-)
+    val jpg: ImageInfo?,
+    val webp: ImageInfo?
+){
+    constructor() : this(
+        null,
+        null
+
+    )
+}
 
 data class Genre(
-    val mal_id: Int,
-    val type: String,
-    val name: String,
-    val url: String
-)
+    val mal_id: Int?,
+    val type: String?,
+    val name: String?,
+    val url: String?
+){
+    constructor() : this(
+        null,
+        null,
+        null,
+        null
+    )
+}
 
 data class Items(
     val count: Int,

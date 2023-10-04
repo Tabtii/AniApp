@@ -15,10 +15,10 @@
         android:theme="@style/Theme.AniMeApp"
         tools:targetApi="31">
         <activity
-            android:name=".ui.SignUpActivity"
+            android:name=".ui.loginup.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.SignInActivity"
+            android:name=".ui.loginup.SignInActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
