@@ -11,9 +11,7 @@ data class CharacterData(
 
 
 
-@Entity(tableName = "char_table")
 data class Character(
-    @PrimaryKey
     val mal_id: Int,
     val url: String,
     val images: Images,
@@ -29,10 +27,10 @@ data class CharacterList(
     val data: List<AnimeCharacter>
 )
 data class AnimeCharacter(
-    val character: Character,
-    val role: String,
-    val favorites: Int,
-    val voiceActors: List<VoiceActor>
+    val character: Character?,
+    val role: String?,
+    val favorites: Int?,
+    val voiceActors: List<VoiceActor>?
 )
 
 

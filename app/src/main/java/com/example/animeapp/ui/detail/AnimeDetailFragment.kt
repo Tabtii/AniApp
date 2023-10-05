@@ -77,14 +77,22 @@ class AnimeDetailFragment : Fragment() {
                 binding.TVStatus.text = it.data?.status
                 binding.TVEpisodes.text = it.data?.episodes.toString()
                 binding.TVPremiered.text = "$season ${it.data?.year}"
-                binding.TVScoredetail.text = it.data?.score.toString()
-                binding.TVScoredBy.text = "${it.data?.scored_by} users"
+
+                if (it.data?.score != null ){
+                    binding.TVScoredetail.text = it.data?.score.toString()
+                    binding.TVScoredBy.text = "${it.data?.scored_by} users"
+                }else{
+                    binding.TVScoredetail.text = "N/A"
+                    binding.TVScoredBy.text = "N/A users"
+                }
+
+
                 binding.TVSource.text = it.data?.source
                 viewModel.firebaseAnimeData.observe(viewLifecycleOwner){list->
                     if (list.isNullOrEmpty()){
 
                     }else { for (item in list){
-                        if (item.mal_id  == it.data?.mal_id){
+                        if (item.data?.mal_id  == it.data?.mal_id){
 
                         }
                     }}
@@ -122,11 +130,10 @@ class AnimeDetailFragment : Fragment() {
                     }
                 }
 
-                /*binding.CVCharacterDetail.setOnClickListener {view->
-                    view.findNavController().navigate(AnimeDetailFragmentDirections.actionAnimeDetailFragmentToCharacterListFragment(it.mal_id))
-                }*/
             }
-
+            binding.CVCharacterDetail.setOnClickListener {view->
+                view.findNavController().navigate(AnimeDetailFragmentDirections.actionAnimeDetailFragmentToCharacterListFragment(id))
+            }
             if (it != null){
                 binding.TVSynopsis.text = it.data?.synopsis ?: "N/A"
                 if (it.data?.background != null) {
@@ -143,9 +150,6 @@ class AnimeDetailFragment : Fragment() {
                 val htmlCode = "<html><body style='margin:0;padding:0;'><iframe width='100%' height='100%' src='$videoUrl' frameborder='0' allowfullscreen></iframe></body></html>"
                 webView.loadData(htmlCode, "text/html", "utf-8")
             }
-
-
-
 
             var licensors = ""
             if (it != null) {

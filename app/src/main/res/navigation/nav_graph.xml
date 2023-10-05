@@ -42,7 +42,11 @@
         android:id="@+id/characterListFragment"
         android:name="com.example.animeapp.ui.CharacterListFragment"
         android:label="fragment_character_list"
-        tools:layout="@layout/fragment_character_list" />
+        tools:layout="@layout/fragment_character_list" >
+        <argument
+            android:name="AniID"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/favoFragment"
         android:name="com.example.animeapp.ui.HomeFragment"

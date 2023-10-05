@@ -18,12 +18,11 @@ import com.example.animeapp.ui.viewmodel.MainViewmodel
 class CharacterListFragment : Fragment() {
     private lateinit var binding: FragmentCharacterListBinding
     private val viewModel: MainViewmodel by activityViewModels()
-    private lateinit var data: LiveData<CharacterList>
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            val index = it.getInt("IDAnime1")
+            val index = it.getInt("AniID")
             viewModel.loadCharacterList(index)
         }
     }

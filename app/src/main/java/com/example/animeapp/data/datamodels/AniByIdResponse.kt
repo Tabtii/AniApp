@@ -2,8 +2,14 @@ package com.example.animeapp.data.datamodels
 
 data class AniByIdResponse(
     val data: Data?
-)
+) {constructor(): this(
+    null
+)}
 
+data class AnimeFirebase(
+    val id : Int?,
+    val data : Data?
+)
 data class Data(
     val aired: Aired?,
     val airing: Boolean?,
@@ -14,7 +20,7 @@ data class Data(
     val duration: String?,
     val episodes: Any?,
     val explicit_genres: List<Any>?,
-    val `external`: List<External>?,
+    val external: List<External>?,
     val favorites: Int?,
     val genres: List<Genre>?,
     val images: Images?,
@@ -99,13 +105,19 @@ data class Data(
 data class External(
     val name: String?,
     val url: String?
-)
+){constructor():this(
+    null,
+    null
+)}
 
 
 data class Relation(
     val entry: List<Entry?>?,
     val relation: String?
-)
+){constructor():this(
+    null,
+    null
+)}
 
 
 data class Prop(
@@ -142,7 +154,12 @@ data class Entry(
     val name: String?,
     val type: String?,
     val url: String?
-)
+){constructor():this(
+    null,
+    null,
+    null,
+    null
+)}
 
 data class ImagesX(
     val image_url: String?,

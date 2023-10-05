@@ -87,4 +87,9 @@ data class Demographic(
     val type: String?,
     val name: String?,
     val url: String?
-)
+){constructor(): this(
+    null,
+    null,
+    null,
+    null
+)}

@@ -31,8 +31,7 @@ private const val TAG = "REPOSITORY"
 @RequiresApi(Build.VERSION_CODES.O)
 class AppRepository(private val api: ApiService) {
     private val limit = 25
-    private val database =
-        FirebaseDatabase.getInstance("https://animeapp-d1c31-default-rtdb.europe-west1.firebasedatabase.app")
+    private val database = FirebaseDatabase.getInstance("https://animeapp-d1c31-default-rtdb.europe-west1.firebasedatabase.app")
     private val animeTableRef: DatabaseReference = database.getReference("/users")
     private val userID = Firebase.auth.currentUser?.uid!!
 
@@ -41,7 +40,7 @@ class AppRepository(private val api: ApiService) {
         if (animeData.data?.like == true) {
             val mal_id = animeData.data?.mal_id.toString()
             // Speichere die Daten unter dem Pfad "users/{userId}/{animeDataKey}"
-            animeTableRef.child(userID).child(mal_id).setValue(animeData)
+            animeTableRef.child(userID).child((mal_id)).setValue(animeData)
 
         }
     }
@@ -55,21 +54,7 @@ class AppRepository(private val api: ApiService) {
     }
 
     suspend fun getCharList(aniID: Int): CharacterList? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val response: Response<CharacterList> = api.getAnimeCharacters(aniID).execute()
-                if (response.isSuccessful) {
-                    Log.d(TAG, "${response.body()}")
-                    response.body()
-                } else {
-                    // Hier kannst du Fehlerbehandlung durchführen, z.B. Loggen oder eine Exception werfen
-                    null
-                }
-            } catch (e: Exception) {
-                // Hier kannst du Netzwerkfehler behandeln, z.B. Loggen oder eine Exception werfen
-                null
-            }
-        }
+       return api.getAnimeCharacters(aniID)
     }
 
     suspend fun getSeason(page: Int): AnimeInfo? {
@@ -83,14 +68,14 @@ class AppRepository(private val api: ApiService) {
     }
 
 
-    fun getFirebaseAnimeData(): List<Data> {
+    fun getFirebaseAnimeData(): List<AniByIdResponse> {
         val animeDataRef: DatabaseReference = database.getReference("/users/$userID")
-        val dataList: MutableList<Data> = ArrayList()
+        val dataList: MutableList<AniByIdResponse> = ArrayList()
 
         animeDataRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (dataSnapshotChild in dataSnapshot.children) {
-                    val data: Data? = dataSnapshotChild.getValue(Data::class.java)
+                    val data: AniByIdResponse? = dataSnapshotChild.getValue(AniByIdResponse::class.java)
                     if (data != null) {
                         dataList.add(data)
                     }

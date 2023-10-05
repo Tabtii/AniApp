@@ -37,8 +37,8 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
     private val _charList = MutableLiveData<CharacterList?>()
     val charList: LiveData<CharacterList?> = _charList
     private val userId = Firebase.auth.currentUser?.uid
-    private val _firebaseAnimeData =MutableLiveData<List<Data>>()
-    val firebaseAnimeData: LiveData<List<Data>> = _firebaseAnimeData
+    private val _firebaseAnimeData =MutableLiveData<List<AniByIdResponse>>()
+    val firebaseAnimeData: LiveData<List<AniByIdResponse>> = _firebaseAnimeData
 
     init {
         loadSeasonNow(1)

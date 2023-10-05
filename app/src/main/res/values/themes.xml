@@ -8,5 +8,9 @@
         <item name="cardBackgroundColor">@color/orange</item>
     </style>
 
+    <style name="CustomBottomNavMenuActiveItemIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@android:color/transparent</item>
+    </style>
+
     <style name="Theme.AniMeApp" parent="Base.Theme.AniMeApp" />
 </resources>

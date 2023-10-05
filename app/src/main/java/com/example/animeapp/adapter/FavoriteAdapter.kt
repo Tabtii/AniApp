@@ -10,12 +10,13 @@ import com.example.animeapp.R
 import com.example.animeapp.data.datamodels.AniByIdResponse
 import com.example.animeapp.data.datamodels.Data
 import com.example.animeapp.databinding.ListItemAnimeBinding
+import com.example.animeapp.ui.HomeFragmentDirections
 import com.example.animeapp.ui.ThisSeasonFragmentDirections
 import com.example.animeapp.ui.viewmodel.MainViewmodel
 import com.squareup.picasso.Picasso
 
 class FavoriteAdapter   (
-    private val dataset: List<Data>?,
+    private val dataset: List<AniByIdResponse>?,
     private val viewmodel: MainViewmodel
 ) : RecyclerView.Adapter<FavoriteAdapter.ItemViewHolder>() {
     inner class ItemViewHolder(val binding: ListItemAnimeBinding) :
@@ -32,7 +33,7 @@ class FavoriteAdapter   (
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset?.get(position)
         var genre1 = ""
-        var genreList = item?.genres
+        var genreList = item?.data?.genres
         if (item != null) {
             if (genreList != null) {
                 for (genre in genreList) {
@@ -40,23 +41,23 @@ class FavoriteAdapter   (
                 }
             }
         }
-        val imageUrl = item?.images?.jpg?.image_url
+        val imageUrl = item?.data?.images?.jpg?.image_url
         Picasso.get().load(imageUrl).into(holder.binding.IVAnimeImage)
         if (item != null) {
-            if (item.title_english == null) {
+            if (item.data?.title_english == null) {
                 if (item != null) {
-                    holder.binding.TVAnimeName.text = item.title
+                    holder.binding.TVAnimeName.text = item.data?.title
                 }
             } else {
                 if (item != null) {
-                    holder.binding.TVAnimeName.text = item.title_english.toString()
+                    holder.binding.TVAnimeName.text = item.data?.title_english.toString()
                 }
             }
         }
         if (item != null) {
-            if (item.score != null) {
+            if (item.data?.score != null) {
                 if (item != null) {
-                    holder.binding.TVScore.text = item.score.toString()
+                    holder.binding.TVScore.text = item.data?.score.toString()
                 }
             } else {
                 holder.binding.TVScore.text = "N/A"
@@ -66,13 +67,18 @@ class FavoriteAdapter   (
         holder.binding.CVAnime.setOnClickListener {
 
             if (item != null) {
-                it.findNavController().navigate(ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(item.mal_id))
-            }
+                if (item.data != null) {
+                    it.findNavController().navigate(
+                        HomeFragmentDirections.actionFavoFragmentToAnimeDetailFragment(
+                            item.data.mal_id
+                        )
+                    )
+                }}
 
 
         }
         if (item != null) {
-            when (item.like) {
+            when (item.data?.like) {
                 false -> {
                     holder.binding.IBTNLike.setImageResource(R.drawable.star_border)
 
@@ -82,22 +88,28 @@ class FavoriteAdapter   (
                     holder.binding.IBTNLike.setImageResource(R.drawable.star)
 
                 }
+
+                else -> {}
             }
         }
+
+
 
         holder.binding.IBTNLike.setOnClickListener {
 
             if (item != null) {
-                when (item.like) {
+                when (item.data?.like) {
                     false -> {
                         holder.binding.IBTNLike.setImageResource(R.drawable.star)
-                        viewmodel.markAnimeAsLiked(AniByIdResponse(item))
+                        viewmodel.markAnimeAsLiked(AniByIdResponse(item.data))
                     }
 
                     true -> {
                         holder.binding.IBTNLike.setImageResource(R.drawable.star_border)
-                        viewmodel.markAnimeAsDisLiked(AniByIdResponse(item))
+                        viewmodel.markAnimeAsDisLiked(AniByIdResponse(item.data))
                     }
+
+                    else -> {}
                 }
             }
 

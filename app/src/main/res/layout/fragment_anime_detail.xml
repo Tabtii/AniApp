@@ -140,27 +140,29 @@
 
                     <TextView
                         android:id="@+id/TVType"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/TypeTV"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/TypeTV"
-                        app:layout_constraintTop_toTopOf="@+id/TypeTV" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/TypeTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Type:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVType"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="@+id/TVType" />
 
                     <WebView
                         android:id="@+id/WVTrailer"
@@ -178,72 +180,78 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Status:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVStatus"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/TypeTV" />
+                        app:layout_constraintTop_toTopOf="@+id/TVStatus" />
 
                     <TextView
                         android:id="@+id/TVStatus"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/StatusTV"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/StatusTV"
-                        app:layout_constraintTop_toTopOf="@+id/StatusTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVType" />
 
                     <TextView
                         android:id="@+id/EisodeTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Episodes:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVEpisodes"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/StatusTV" />
+                        app:layout_constraintTop_toTopOf="@+id/TVEpisodes" />
 
                     <TextView
                         android:id="@+id/TVEpisodes"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/EisodeTV"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/EisodeTV"
-                        app:layout_constraintTop_toTopOf="@+id/EisodeTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVStatus" />
 
                     <TextView
                         android:id="@+id/PremieredTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Premiered:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVPremiered"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/EisodeTV" />
+                        app:layout_constraintTop_toTopOf="@+id/TVPremiered" />
 
                     <TextView
                         android:id="@+id/TVPremiered"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/PremieredTV"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/PremieredTV"
-                        app:layout_constraintTop_toTopOf="@+id/PremieredTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVEpisodes" />
 
                     <TextView
                         android:id="@+id/TrailerTV"
@@ -255,7 +263,7 @@
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/PremieredTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVPremiered" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -289,54 +297,54 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="24dp"
                         android:text="Title English:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVTitleEng"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/IVAnimeDetail" />
+                        app:layout_constraintTop_toTopOf="@+id/TVTitleEng" />
 
                     <TextView
                         android:id="@+id/TVTitleEng"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/TitleEngTV"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/TitleEngTV"
-                        app:layout_constraintTop_toTopOf="@+id/TitleEngTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/IVAnimeDetail" />
 
                     <TextView
                         android:id="@+id/TitleJapTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginBottom="8dp"
                         android:text="Title Japanese:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVTitleJap"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/TitleEngTV" />
+                        app:layout_constraintTop_toTopOf="@+id/TVTitleJap" />
 
                     <TextView
                         android:id="@+id/TVTitleJap"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/TitleJapTV"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/TitleJapTV"
-                        app:layout_constraintTop_toTopOf="@+id/TitleJapTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVTitleEng" />
 
                     <TextView
                         android:id="@+id/ScoredetailTV"
@@ -491,6 +499,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
@@ -498,94 +507,99 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toEndOf="@+id/ThemesTV"
-                        app:layout_constraintTop_toTopOf="@+id/ThemesTV" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/ThemesTV"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="0dp"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Themes:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVThemes"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="@+id/TVThemes" />
 
                     <TextView
                         android:id="@+id/TVStudio"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/StudioTV"
-                        app:layout_constraintTop_toTopOf="@+id/StudioTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVThemes" />
 
                     <TextView
                         android:id="@+id/StudioTV"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="0dp"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Studio:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVStudio"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/ThemesTV" />
+                        app:layout_constraintTop_toTopOf="@+id/TVStudio" />
 
                     <TextView
                         android:id="@+id/SourceTV"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Source:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVSource"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/StudioTV" />
+                        app:layout_constraintTop_toTopOf="@+id/TVSource" />
 
                     <TextView
                         android:id="@+id/ProducerTV"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="0dp"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         android:text="Producer:"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/TVProducer"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/SourceTV" />
+                        app:layout_constraintTop_toTopOf="@+id/TVProducer" />
 
                     <TextView
                         android:id="@+id/TVSource"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/SourceTV"
-                        app:layout_constraintTop_toTopOf="@+id/SourceTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVStudio" />
 
                     <TextView
                         android:id="@+id/TVProducer"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
                         android:text="/"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/ProducerTV"
-                        app:layout_constraintTop_toTopOf="@+id/ProducerTV" />
+                        app:layout_constraintTop_toBottomOf="@+id/TVSource" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>

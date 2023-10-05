@@ -28,14 +28,14 @@ class CharacterAdapter(
     }
 
     override fun getItemCount(): Int {
-        return dataset?.data?.size ?:1
+        return dataset?.data?.size ?:0
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset?.data?.get(position)
 
         if (item != null) {
-            holder.binding.TVCharacterName.text = item.character.name
+            holder.binding.TVCharacterName.text = item.character?.name ?: "N/A"
         }
 
         val imageUrl = item?.character?.images?.jpg?.image_url
