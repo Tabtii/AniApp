@@ -7,6 +7,7 @@ import com.example.animeapp.data.datamodels.MangaInfo
 import com.example.animeapp.data.datamodels.AniByIdResponse
 import com.example.animeapp.data.datamodels.AnimeCharacter
 import com.example.animeapp.data.datamodels.AnimeData
+import com.example.animeapp.data.datamodels.CharByIdResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
@@ -64,6 +65,9 @@ interface ApiService {
 
     @GET("anime/{id}/characters")
     suspend fun getAnimeCharacters(@Path("id") id: Int): CharacterList
+
+    @GET("characters/{id}/full")
+    suspend fun  getCharactersFull(@Path("id")id: Int): CharByIdResponse
 }
 
 object AnimeApi {

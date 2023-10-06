@@ -38,24 +38,24 @@ data class AnimeCharacter(
 
 
 data class Image(
-    val imageUrl: String,
+    val imageUrl: String?,
     val smallImageUrl: String? = null
 )
 
 data class VoiceActor(
-    val person: Person,
-    val language: String
+    val person: Person?,
+    val language: String?
 )
 
 data class Person(
-    val malId: Int,
-    val url: String,
-    val images: PersonImages,
-    val name: String
+    val malId: Int?,
+    val url: String?,
+    val images: PersonImages?,
+    val name: String?
 )
 
 data class PersonImages(
-    val jpg: Image
+    val jpg: Image?
 )
 
 

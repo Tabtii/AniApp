@@ -11,6 +11,8 @@ import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.AnimeInfo
 import com.example.animeapp.data.datamodels.CharacterList
 import com.example.animeapp.data.datamodels.AniByIdResponse
+import com.example.animeapp.data.datamodels.AnimeCharacter
+import com.example.animeapp.data.datamodels.CharByIdResponse
 import com.example.animeapp.data.datamodels.Data
 import com.example.animeapp.data.remote.ApiService
 import com.google.firebase.auth.ktx.auth
@@ -64,7 +66,10 @@ class AppRepository(private val api: ApiService) {
 
     suspend fun getAnimeByID(id: Int): AniByIdResponse {
         return api.getAnimeFull(id)
+    }
 
+    suspend fun getCharByID(id: Int): CharByIdResponse {
+        return api.getCharactersFull(id)
     }
 
 

@@ -13,6 +13,8 @@ import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.AnimeInfo
 import com.example.animeapp.data.datamodels.CharacterList
 import com.example.animeapp.data.datamodels.AniByIdResponse
+import com.example.animeapp.data.datamodels.AnimeCharacter
+import com.example.animeapp.data.datamodels.CharByIdResponse
 import com.example.animeapp.data.datamodels.Data
 import com.example.animeapp.data.remote.AnimeApi
 import com.google.firebase.auth.ktx.auth
@@ -34,6 +36,8 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
     val seasonNow: LiveData<AnimeInfo?> = _seasonNow
     private val _aniDetail = MutableLiveData<AniByIdResponse?>()
     val aniDetail: LiveData<AniByIdResponse?> = _aniDetail
+    private val _charDetail = MutableLiveData<CharByIdResponse?>()
+    val charDetail: LiveData<CharByIdResponse?> = _charDetail
     private val _charList = MutableLiveData<CharacterList?>()
     val charList: LiveData<CharacterList?> = _charList
     private val userId = Firebase.auth.currentUser?.uid
@@ -69,10 +73,13 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
 
     fun loadAnimeByID(id: Int) {
         viewModelScope.launch {
-            Log.d(TAG, "${_aniDetail.value}")
-            Log.d(TAG, "$id")
             _aniDetail.postValue(repository.getAnimeByID(id))
-            Log.d(TAG, "${_aniDetail.value}")
+        }
+    }
+
+    fun loadCharByID(id: Int){
+        viewModelScope.launch {
+            _charDetail.postValue(repository.getCharByID(id))
         }
     }
     fun loadCharacterList(aniId: Int) {

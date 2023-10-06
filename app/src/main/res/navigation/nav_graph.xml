@@ -46,6 +46,9 @@
         <argument
             android:name="AniID"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_characterListFragment_to_charDetailFragment"
+            app:destination="@id/charDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoFragment"
@@ -58,5 +61,14 @@
         <action
             android:id="@+id/action_favoFragment_to_characterListFragment"
             app:destination="@id/characterListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/charDetailFragment"
+        android:name="com.example.animeapp.ui.detail.CharDetailFragment"
+        android:label="fragment_char_detail"
+        tools:layout="@layout/fragment_char_detail" >
+        <argument
+            android:name="CharID"
+            app:argType="integer" />
     </fragment>
 </navigation>
