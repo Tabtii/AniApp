@@ -46,6 +46,18 @@ class CharDetailFragment : Fragment() {
         viewModel.charDetail.observe(viewLifecycleOwner){
             val item = it
 
+            if (item != null) {
+                binding.TVAbout.text = item.data.about
+                binding.TVNameKanji.text = item.data.name_kanji
+            }
+
+            if (item != null) {
+                for (name in item.data.nicknames!!){
+                    binding.TVNickname.text = " " + name
+                }
+
+
+            }
             val imageUrl = item?.data?.images?.jpg?.image_url
             Picasso.get().load(imageUrl).into(binding.IVCharDetailImage)
 
