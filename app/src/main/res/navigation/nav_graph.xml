@@ -70,5 +70,8 @@
         <argument
             android:name="CharID"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_charDetailFragment_to_animeDetailFragment"
+            app:destination="@id/animeDetailFragment" />
     </fragment>
 </navigation>
