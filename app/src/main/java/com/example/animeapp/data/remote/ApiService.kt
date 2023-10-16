@@ -38,9 +38,26 @@ interface ApiService {
 
     @GET("anime")
     suspend fun getAllAnime(
-        @Query("page") page: Int,
-        @Query("limit") limit: Int
-    ): AnimeInfo
+        @Query("sfw") sfw : Boolean,
+        @Query("unapproved")unapproved: Boolean,
+        @Query("page") page: Int?,
+        @Query("limit") limit: Int?,
+        @Query("q") q: String?,
+        @Query("type") type: String?,
+        @Query("score") score: Double?,
+        @Query("minScore") minScore: Double?,
+        @Query("maxScore") maxScore: Double?,
+        @Query("status") status: String?,
+        @Query("rating") rating: String?,
+        @Query("genres") genres: String?,
+        @Query("genresExcluded") genresExcluded: String?,
+        @Query("orderBy") orderBy: String?,
+        @Query("sort") sort: String?,
+        @Query("letter") letter: String?,
+        @Query("producers") producers: String?,
+        @Query("startDate") startDate: String?,
+        @Query("endDate") endDate: String?
+        ): AnimeInfo
 
     @GET("characters")
     suspend fun getAllCharacter(
@@ -48,14 +65,19 @@ interface ApiService {
         @Query("limit") limit: Int
     ): CharacterData
 
-    @GET("manga")
-    suspend fun getAllManga(
-        @Query("page") page: Int,
-        @Query("limit") limit: Int
-    ): MangaInfo
 
     @GET("seasons/now")
     suspend fun getSeasonNow(
+        @Query("sfw") sfw : Boolean,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): AnimeInfo
+
+    @GET ("seasons/{year}/{season}")
+    suspend fun getSeasonByYear(
+        @Path("year") year : Int,
+        @Path("season") season: String,
+        @Query("sfw") sfw : Boolean,
         @Query("page") page: Int,
         @Query("limit") limit: Int
     ): AnimeInfo
@@ -68,6 +90,8 @@ interface ApiService {
 
     @GET("characters/{id}/full")
     suspend fun  getCharactersFull(@Path("id")id: Int): CharByIdResponse
+
+
 }
 
 object AnimeApi {

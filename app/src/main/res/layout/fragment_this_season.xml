@@ -6,40 +6,71 @@
     android:layout_height="match_parent"
     tools:context=".ui.ThisSeasonFragment">
 
+    <TextView
+        android:id="@+id/TVFirstPage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="1"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/TVPagination"
+        app:layout_constraintEnd_toStartOf="@+id/TVPagination"
+        app:layout_constraintTop_toTopOf="@+id/TVPagination" />
+
+    <TextView
+        android:id="@+id/TVLastPage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="9"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/TVPagination"
+        app:layout_constraintStart_toEndOf="@+id/TVPagination"
+        app:layout_constraintTop_toTopOf="@+id/TVPagination" />
+
     <Button
         android:id="@+id/BTNPrev"
-        android:layout_width="wrap_content"
+        android:layout_width="105dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:text="Previous"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardView2"
+        app:layout_constraintTop_toBottomOf="@+id/MCVSeasonView"
         app:strokeWidth="1dp" />
 
     <Button
         android:id="@+id/BTNNext"
-        android:layout_width="wrap_content"
+        android:layout_width="105dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:text="Next"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardView2"
+        app:layout_constraintTop_toBottomOf="@+id/MCVSeasonView"
         app:strokeWidth="1dp" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardView2"
+        android:id="@+id/MCVSeasonView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:clickable="true"
         android:theme="@style/Theme.AniMeApp"
         app:cardBackgroundColor="@color/background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/SPSeason">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -76,6 +107,7 @@
         android:id="@+id/RVSeason"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,13 +119,70 @@
     <TextView
         android:id="@+id/TVPagination"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="N/A"
         android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardView2" />
+        app:layout_constraintTop_toBottomOf="@+id/MCVSeasonView" />
+
+    <TextView
+        android:id="@+id/SeasonTV2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Season:"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/SPSeason"
+        app:layout_constraintTop_toTopOf="@+id/SPSeason"
+        tools:visibility="visible" />
+
+    <Spinner
+        android:id="@+id/SPYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <Spinner
+        android:id="@+id/SPSeason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SPYear"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/YearTV2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Year:"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/SPYear"
+        app:layout_constraintTop_toTopOf="@+id/SPYear"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/BTNSearch2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="Search"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/SPSeason"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/SPYear"
+        app:strokeWidth="1dp"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

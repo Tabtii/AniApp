@@ -87,7 +87,7 @@ class AnimeDetailFragment : Fragment() {
                 }
 
 
-                binding.TVSource.text = it.data?.source
+                binding.TVSource.text = " ${it.data?.source}"
                 viewModel.firebaseAnimeData.observe(viewLifecycleOwner){list->
                     if (list.isNullOrEmpty()){
 
@@ -151,38 +151,39 @@ class AnimeDetailFragment : Fragment() {
                 webView.loadData(htmlCode, "text/html", "utf-8")
             }
 
+
+            var producers = ""
             var licensors = ""
             if (it != null) {
                 for (licensor in it.data?.licensors!!){
                     licensors = "$licensors $licensor"
                 }
 
-                var producer = ""
-                for (produ in it.data?.producers!!){
-                    producer =  producer + " " + produ.name
+                for (producer in it.data?.producers!!){
+                    producers = "$producers${producer.name} (${producer.type})\n"
                 }
-                binding.TVProducer.text = producer
+
 
                 var studios = ""
                 for (studio in it.data?.studios!!){
-                    studios =  studios + " " + studio.name
+                    studios =  "$studios ${studio.name}"
                 }
                 binding.TVStudio.text = studios
 
                 var themes = ""
                 for (theme in it.data?.themes!!){
-                    themes =  themes + " " + theme.name
+                    themes =  "$themes ${theme.name}"
                 }
 
                 binding.TVThemes.text = themes
                 var genre1 = ""
                 for (genre in it.data?.genres!!){
-                    genre1 =  genre1 + " " + genre.name
+                    genre1 =  "$genre1 ${genre.name}"
                 }
                 binding.TVGenreDetail.text = genre1
 
             }
-            binding.TVProducer.text = licensors
+            binding.TVProducer.text = producers
 
 
         }

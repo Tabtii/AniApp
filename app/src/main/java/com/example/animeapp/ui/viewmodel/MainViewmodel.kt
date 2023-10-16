@@ -2,20 +2,16 @@ package com.example.animeapp.ui.viewmodel
 
 import android.app.Application
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.animeapp.data.repo.AppRepository
-import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.AnimeInfo
 import com.example.animeapp.data.datamodels.CharacterList
 import com.example.animeapp.data.datamodels.AniByIdResponse
-import com.example.animeapp.data.datamodels.AnimeCharacter
 import com.example.animeapp.data.datamodels.CharByIdResponse
-import com.example.animeapp.data.datamodels.Data
 import com.example.animeapp.data.remote.AnimeApi
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -23,9 +19,9 @@ import com.google.firebase.ktx.Firebase
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.checkerframework.checker.units.qual.A
 
 private const val TAG = "MAINVIEWMODEL"
+
 @RequiresApi(Build.VERSION_CODES.O)
 class MainViewmodel(app: Application) : AndroidViewModel(app) {
 
@@ -40,13 +36,16 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
     val charDetail: LiveData<CharByIdResponse?> = _charDetail
     private val _charList = MutableLiveData<CharacterList?>()
     val charList: LiveData<CharacterList?> = _charList
+    private val _searchResults = MutableLiveData<AnimeInfo?>()
+    val searchResults: LiveData<AnimeInfo?> = _searchResults
     private val userId = Firebase.auth.currentUser?.uid
-    private val _firebaseAnimeData =MutableLiveData<List<AniByIdResponse>>()
+    private val _firebaseAnimeData = MutableLiveData<List<AniByIdResponse>>()
     val firebaseAnimeData: LiveData<List<AniByIdResponse>> = _firebaseAnimeData
+    val inputText = MutableLiveData<String>()
 
     init {
-        loadSeasonNow(1)
     }
+
 
 
     fun markAnimeAsDisLiked(animeData: AniByIdResponse) {
@@ -60,11 +59,20 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
             repository.saveLikedAnimeData(animeData)
         }
     }
+
     fun loadSeasonNow(page: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _seasonNow.postValue(repository.getSeason(page))
         }
     }
+
+    fun loadSeasonByYear(year : Int,season : String,page: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _seasonNow.postValue(repository.getSeasonByYear(year, season, page))
+        }
+
+    }
+
     fun loadLikedData() {
         viewModelScope.launch(Dispatchers.IO) {
             _firebaseAnimeData.postValue(repository.getFirebaseAnimeData())
@@ -77,14 +85,57 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun loadCharByID(id: Int){
+    fun loadCharByID(id: Int) {
         viewModelScope.launch {
             _charDetail.postValue(repository.getCharByID(id))
         }
     }
+
     fun loadCharacterList(aniId: Int) {
         viewModelScope.launch {
             _charList.postValue(repository.getCharList(aniId))
         }
+    }
+
+    fun fetchAnimeData(
+        page: Int,
+        q: String?,
+        type: String?,
+        score: Double?,
+        minScore: Double?,
+        maxScore: Double?,
+        status: String?,
+        rating: String?,
+        genres: String?,
+        genresExcluded: String?,
+        orderBy: String?,
+        sort: String?,
+        letter: String?,
+        producers: String?,
+        startDate: String?,
+        endDate: String?
+    ) {
+viewModelScope.launch(Dispatchers.IO){_searchResults.postValue(
+    repository.getAllAnime(
+        page,
+        q,
+        type,
+        score,
+        minScore,
+        maxScore,
+        status,
+        rating,
+        genres,
+        genresExcluded,
+        orderBy,
+        sort,
+        letter,
+        producers,
+        startDate,
+        endDate
+    )
+)}
+
+
     }
 }

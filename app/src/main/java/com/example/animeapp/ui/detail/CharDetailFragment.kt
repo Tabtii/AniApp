@@ -90,7 +90,6 @@ class CharDetailFragment : Fragment() {
                     cardView.strokeWidth = 3
                     cardView.layoutParams.height = 300
 
-                    // Erstellen eines vertikalen LinearLayouts innerhalb der CardView
                     val linearLayout1 = LinearLayout(context)
                     linearLayout1.orientation = LinearLayout.HORIZONTAL
                     linearLayout1.layoutParams = LinearLayout.LayoutParams(
@@ -100,12 +99,10 @@ class CharDetailFragment : Fragment() {
 
                     cardView.addView(linearLayout1)
 
-                    // Erstellen von TextView 1
                     val textView1 = TextView(requireContext())
                     textView1.isSingleLine = false
                     textView1.textSize = 18f
                     textView1.setTextColor(Color.BLACK)
-                    // Einstellen der Margin für die TextView
                     val layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -115,46 +112,41 @@ class CharDetailFragment : Fragment() {
                         360,
                         8,
                         0,
-                        0
-                    ) // Hier können Sie die gewünschten Margin-Werte festlegen (left, top, right, bottom)
+                        8
+                    )
                     textView1.layoutParams = layoutParams
 
                     textView1.text = "Voice actor/ actress:\n" +
                             "${it.data.voices?.get(i)?.person?.name}\n" +
-                            "\nLanguage:\n" +
-                            "${it.data.voices?.get(i)?.language}" // Setzen Sie den gewünschten Text hier
+                            "Language:\n" +
+                            "${it.data.voices?.get(i)?.language}"
 
                     val imageView = ImageView(requireContext())
                     val layoutParamsImage = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
-                    layoutParamsImage.gravity = Gravity.START // ImageView am Start positionieren
+                    layoutParamsImage.gravity = Gravity.START
                     layoutParamsImage.setMargins(
                         0,
                         0,
                         680,
                         0,
-                    ) // Hier können Sie die gewünschten Margin-Werte festlegen (left, top, right, bottom)
+                    )
                     imageView.layoutParams = layoutParamsImage
 
-                    // Restlichen Code für die ImageView
-
-                    // Erstellen von ImageView
                     if (it.data.voices?.get(i)?.person?.images?.jpg?.imageUrl.isNullOrEmpty()) {
-                        imageView.setImageResource(actorImage.random()) // Setzen Sie das gewünschte Bild hier
+                        imageView.setImageResource(actorImage.random())
                     } else {
                         Picasso.get().load(it.data.voices?.get(i)?.person?.images?.jpg?.imageUrl)
                             .into(imageView)
                     }
 
 
-                    // Fügen Sie ImageView und TextViews zur CardView hinzu
                     cardView.addView(imageView)
                     cardView.addView(textView1)
 
 
-                    // Fügen Sie die CardView zum LinearLayout hinzu
                     linearLayout?.addView(cardView)
                 }
                 binding.RVAnime2.adapter= LittleAniAdapter(it.data.anime)

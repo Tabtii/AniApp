@@ -3,17 +3,11 @@ package com.example.animeapp.data.repo
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.animeapp.data.datamodels.AnimeData
 import com.example.animeapp.data.datamodels.AnimeInfo
 import com.example.animeapp.data.datamodels.CharacterList
 import com.example.animeapp.data.datamodels.AniByIdResponse
-import com.example.animeapp.data.datamodels.AnimeCharacter
 import com.example.animeapp.data.datamodels.CharByIdResponse
-import com.example.animeapp.data.datamodels.Data
 import com.example.animeapp.data.remote.ApiService
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -22,18 +16,19 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.Response
-import java.util.Objects
+import retrofit2.http.Query
+import java.time.Year
 
 
 private const val TAG = "REPOSITORY"
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AppRepository(private val api: ApiService) {
+    private val unapproved = true
+    private val sfw = true
     private val limit = 25
-    private val database = FirebaseDatabase.getInstance("https://animeapp-d1c31-default-rtdb.europe-west1.firebasedatabase.app")
+    private val database =
+        FirebaseDatabase.getInstance("https://animeapp-d1c31-default-rtdb.europe-west1.firebasedatabase.app")
     private val animeTableRef: DatabaseReference = database.getReference("/users")
     private val userID = Firebase.auth.currentUser?.uid!!
 
@@ -56,13 +51,63 @@ class AppRepository(private val api: ApiService) {
     }
 
     suspend fun getCharList(aniID: Int): CharacterList? {
-       return api.getAnimeCharacters(aniID)
+        return api.getAnimeCharacters(aniID)
     }
 
     suspend fun getSeason(page: Int): AnimeInfo? {
-        return api.getSeasonNow(page, limit)
+        return api.getSeasonNow(sfw,page, limit)
 
     }
+
+    suspend fun getSeasonByYear(year: Int,season: String,page: Int): AnimeInfo?{
+        return api.getSeasonByYear(year, season, sfw, page, limit)
+    }
+
+   suspend fun getAllAnime(
+
+       page: Int,
+       q: String?,
+       type: String?,
+       score: Double?,
+       minScore: Double?,
+       maxScore: Double?,
+       status: String?,
+       rating: String?,
+       genres: String?,
+       genresExcluded: String?,
+       orderBy: String?,
+       sort: String?,
+       letter: String?,
+       producers: String?,
+       startDate: String?,
+       endDate: String?
+    ): AnimeInfo {
+
+        return api.getAllAnime(
+            sfw,
+            unapproved,
+            page,
+            limit,
+            q,
+            type,
+            score,
+            minScore,
+            maxScore,
+            status,
+            rating,
+            genres,
+            genresExcluded,
+            orderBy,
+            sort,
+            letter,
+            producers,
+            startDate,
+            endDate
+        )
+
+
+    }
+
 
     suspend fun getAnimeByID(id: Int): AniByIdResponse {
         return api.getAnimeFull(id)
@@ -80,7 +125,8 @@ class AppRepository(private val api: ApiService) {
         animeDataRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (dataSnapshotChild in dataSnapshot.children) {
-                    val data: AniByIdResponse? = dataSnapshotChild.getValue(AniByIdResponse::class.java)
+                    val data: AniByIdResponse? =
+                        dataSnapshotChild.getValue(AniByIdResponse::class.java)
                     if (data != null) {
                         dataList.add(data)
                     }
@@ -95,7 +141,7 @@ class AppRepository(private val api: ApiService) {
         // Wait for onDataChange to be called (asynchronously) and then return the list
         // Note: This is not the recommended way to do it, but it simplifies the code.
         // In a real application, you should handle this asynchronously.
-        Thread.sleep(2000) // Wait for 2 seconds (adjust as needed)
+        Thread.sleep(1000) // Wait for 2 seconds (adjust as needed)
 
         return dataList
     }

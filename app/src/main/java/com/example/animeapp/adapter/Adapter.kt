@@ -11,6 +11,7 @@ import com.example.animeapp.R
 import com.example.animeapp.data.datamodels.AniByIdResponse
 import com.example.animeapp.data.datamodels.AnimeInfo
 import com.example.animeapp.databinding.ListItemAnimeBinding
+import com.example.animeapp.ui.SearchFragmentDirections
 import com.example.animeapp.ui.viewmodel.MainViewmodel
 import com.example.animeapp.ui.ThisSeasonFragmentDirections
 import com.squareup.picasso.Picasso
@@ -44,7 +45,7 @@ class Adapter(
         var genre1 = ""
         if (item != null) {
             for (genre in item.genres!!) {
-                genre1 = genre1 + " " + genre.name
+                genre1 = "$genre1 ${genre.name}"
             }
         }
         val imageUrl = item.images?.jpg?.image_url
@@ -63,9 +64,14 @@ class Adapter(
         holder.binding.CVAnime.setOnClickListener {
                 Log.d(TAG, "$id")
             if (id != null) {
-                it.findNavController().navigate(
-                    ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(id)
-                )
+                try {
+                    it.findNavController().navigate(
+                        ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(id)
+                    )
+                }catch (e:Exception){
+                    it.findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToAnimeDetailFragment(id))
+                }
+
             }
 
         }
