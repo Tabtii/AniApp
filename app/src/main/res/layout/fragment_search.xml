@@ -126,6 +126,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:visibility="gone"
+        app:cardBackgroundColor="@color/background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/FilterTV">
@@ -141,6 +142,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="Min Score:"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/SortedTV" />
@@ -152,6 +154,7 @@
                 android:layout_marginStart="8dp"
                 android:max="10"
                 android:progress="0"
+                android:progressTint="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toEndOf="@+id/textView6"
                 app:layout_constraintTop_toTopOf="@+id/textView6" />
@@ -162,6 +165,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="0"
+                android:textColor="@color/black"
                 app:layout_constraintStart_toEndOf="@+id/seekBar"
                 app:layout_constraintTop_toTopOf="@+id/seekBar" />
 
@@ -190,6 +194,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="Order by:  "
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -202,7 +207,8 @@
                 android:text="Search"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+                app:layout_constraintTop_toBottomOf="@+id/seekBar"
+                app:strokeWidth="1dp" />
 
             <TextView
                 android:id="@+id/SortedTV"
@@ -211,6 +217,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="Sorted by:"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/OrderByTV" />
