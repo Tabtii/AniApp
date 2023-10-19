@@ -60,11 +60,6 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun loadSeasonNow(page: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _seasonNow.postValue(repository.getSeason(page))
-        }
-    }
 
     fun loadSeasonByYear(year : Int,season : String,page: Int) {
         viewModelScope.launch(Dispatchers.IO) {

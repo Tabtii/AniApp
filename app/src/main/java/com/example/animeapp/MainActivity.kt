@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Verhindern der automatischen Bildschirmrotation
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT // Portrait-Modus
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -31,28 +30,19 @@ class MainActivity : AppCompatActivity() {
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
-        //NavController durch NavHostFragment laden
         val navHostFragment: NavHostFragment =
             supportFragmentManager.findFragmentById(R.id.navHostFragmentFCV) as NavHostFragment
         val navController = navHostFragment.navController
 
-        //BottomNavBar mit NavController verbinden
         binding.bottomNavBNV.setupWithNavController(navController)
 
 
-        //Wird aufgerufen wenn Item in der NavBar ausgewählt wird
         binding.bottomNavBNV.setOnItemSelectedListener { item ->
 
-            //Standard NavBar Funktionalität: Navigiere zum ausgewählten Item
-            //Hierbei wird auch im navController der entsprechende BackStack geladen
-            //Das führt dazu dass vorherige Navigation noch "gespeichert" und z.B.
-            //das zweite Fragment angezeigt wird obwohl das erste ausgewählt wurde
             NavigationUI.onNavDestinationSelected(item, navController)
 
-            //Hier lösen wir das Problem indem wir den BackStack zurücksetzen auf das ausgewählte Item
             navController.popBackStack(item.itemId, false)
 
-            //Item soll als ausgewählt angezeigt werden(farblich hinterlegt)
             return@setOnItemSelectedListener true
         }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

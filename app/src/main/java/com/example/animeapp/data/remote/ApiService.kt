@@ -59,20 +59,6 @@ interface ApiService {
         @Query("endDate") endDate: String?
         ): AnimeInfo
 
-    @GET("characters")
-    suspend fun getAllCharacter(
-        @Query("page") page: Int,
-        @Query("limit") limit: Int
-    ): CharacterData
-
-
-    @GET("seasons/now")
-    suspend fun getSeasonNow(
-        @Query("sfw") sfw : Boolean,
-        @Query("page") page: Int,
-        @Query("limit") limit: Int
-    ): AnimeInfo
-
     @GET ("seasons/{year}/{season}")
     suspend fun getSeasonByYear(
         @Path("year") year : Int,

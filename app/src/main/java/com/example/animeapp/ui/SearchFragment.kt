@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.animeapp.adapter.Adapter
 import com.example.animeapp.databinding.FragmentSearchBinding
 import com.example.animeapp.db.AnimeSearchQueryOrderBy
+import com.example.animeapp.db.Genre
 import com.example.animeapp.ui.viewmodel.MainViewmodel
 
 private const val TAG = "SEARCHFRAGMENT"
@@ -30,6 +31,7 @@ class SearchFragment : Fragment() {
     private var scoreSeekBar = 0
     private var sortBy = "desc"
     private var orderBy = AnimeSearchQueryOrderBy.TITLE.value
+    private var genreNR : String = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -52,7 +54,7 @@ class SearchFragment : Fragment() {
             maxScore = null,
             status = null,
             rating = null,
-            genres = null,
+            genres = genreNR,
             genresExcluded = null,
             orderBy = orderBy,
             sort = sortBy,
@@ -68,6 +70,8 @@ class SearchFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
         val seekBar = binding.seekBar
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -81,50 +85,103 @@ class SearchFragment : Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
+
+
         val orderBySpinner = binding.spinner2
-
         val orderByOptions = listOf("Title", "Score")
-
-        val orderByAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, orderByOptions)
+        val orderByAdapter =
+            ArrayAdapter(requireContext(), R.layout.simple_spinner_item, orderByOptions)
         orderByAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         orderBySpinner.adapter = orderByAdapter
-
-
         orderBySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedItem = orderByOptions[position]
                 when (selectedItem) {
                     "Title" -> orderBy = AnimeSearchQueryOrderBy.TITLE.value
                     "Score" -> orderBy = AnimeSearchQueryOrderBy.SCORE.value
                 }
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-        binding.FilterTV.setOnClickListener {
-            when(binding.CVFilter.visibility){
-                View.VISIBLE ->binding.CVFilter.visibility= View.GONE
-                View.GONE -> binding.CVFilter.visibility= View.VISIBLE
+
+
+        val genreSpinner = binding.SPIGenre
+        val genreOptions =
+            listOf(
+                "Action", "Adventure", "Avant Garde", "Award winning", "Boys love",
+                "Comedy", "Drama", "Ecchi", "Fantasy", "Girls love", "Gourmet", "Horror", "Mystery",
+                "Romance","Sci-Fi","Slice of life","Sports","Supernatural","Suspense")
+        val genreAdapter =
+            ArrayAdapter(requireContext(), R.layout.simple_spinner_item, genreOptions)
+        genreAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        genreSpinner.adapter = genreAdapter
+        genreSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedItem = genreOptions[position]
+                when (selectedItem) {
+                    "Action" -> genreNR = Genre.ACTION.value
+                    "Adventure" ->  genreNR = Genre.ADVENTURE.value
+                    "Avant Garde" -> genreNR = Genre.AVANT_GARDE.value
+                    "Award winning" -> genreNR = Genre.AWARD_WINNING.value
+                    "Boys love" -> genreNR = Genre.BOYS_LOVE.value
+                    "Comedy" -> genreNR = Genre.COMEDY.value
+                    "Drama" -> genreNR = Genre.DRAMA.value
+                    "Ecchi"-> genreNR = Genre.ECCHI.value
+                    "Fantasy"-> genreNR = Genre.FANTASY.value
+                    "Girls love" -> genreNR = Genre.GIRLS_LOVE.value
+                    "Gourmet" -> genreNR = Genre.GOURMET.value
+                    "Horror" -> genreNR = Genre.HORROR.value
+                    "Mystery" -> genreNR = Genre.MYSTERY.value
+                    "Romance" -> genreNR = Genre.ROMANCE.value
+                    "Sci-Fi" -> genreNR = Genre.SCIFI.value
+                    "Slice of life" -> genreNR = Genre.SLICE_OF_LIFE.value
+                    "Sports" -> genreNR = Genre.SPORTS.value
+                    "Supernatural" -> genreNR = Genre.SUPERNATURAL.value
+                    "Suspense" -> genreNR = Genre.SUSPENSE.value
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
+
+
+        binding.FilterTV.setOnClickListener {
+            when (binding.CVFilter.visibility) {
+                View.VISIBLE -> binding.CVFilter.visibility = View.GONE
+                View.GONE -> binding.CVFilter.visibility = View.VISIBLE
+            }
+        }
+
 
         binding.BTNSearch.setOnClickListener {
             search(binding.SearchView.query.toString(), 1)
             binding.CVFilter.visibility = View.GONE
         }
 
+
         val sortSpinner = binding.spinner
-
         val sortOptions = listOf("descended", "ascended")
-
         val sortAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, sortOptions)
         sortAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         sortSpinner.adapter = sortAdapter
-
-
         sortSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedItem = sortOptions[position]
                 when (selectedItem) {
                     "descended" -> sortBy = "desc"
@@ -173,14 +230,14 @@ class SearchFragment : Fragment() {
                         binding.BTNPrev2.visibility = View.GONE
                         binding.TVFirstPage.visibility = View.GONE
                         binding.TVPagination2.visibility = View.VISIBLE
-                        if (result.pagination.current_page != result.pagination.last_visible_page)
-                        {
+                        if (result.pagination.current_page != result.pagination.last_visible_page) {
                             binding.TVLastPage.visibility = View.VISIBLE
-                        }else {
+                        } else {
                             binding.TVLastPage.visibility = View.GONE
 
                         }
                     }
+
                     result.pagination?.last_visible_page -> {
                         binding.TVLastPage.visibility = View.GONE
                         binding.TVFirstPage.visibility = View.VISIBLE

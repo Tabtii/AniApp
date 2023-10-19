@@ -54,10 +54,6 @@ class AppRepository(private val api: ApiService) {
         return api.getAnimeCharacters(aniID)
     }
 
-    suspend fun getSeason(page: Int): AnimeInfo? {
-        return api.getSeasonNow(sfw,page, limit)
-
-    }
 
     suspend fun getSeasonByYear(year: Int,season: String,page: Int): AnimeInfo?{
         return api.getSeasonByYear(year, season, sfw, page, limit)
@@ -134,14 +130,10 @@ class AppRepository(private val api: ApiService) {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle database errors here
             }
         })
 
-        // Wait for onDataChange to be called (asynchronously) and then return the list
-        // Note: This is not the recommended way to do it, but it simplifies the code.
-        // In a real application, you should handle this asynchronously.
-        Thread.sleep(1000) // Wait for 2 seconds (adjust as needed)
+        Thread.sleep(1000)
 
         return dataList
     }
