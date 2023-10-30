@@ -37,7 +37,7 @@ class ThisSeasonFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        viewModel.loadSeasonByYear(year,currentSeason,1)
+        viewModel.loadSeasonByYear(year, currentSeason, 1)
         binding = FragmentThisSeasonBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -45,20 +45,30 @@ class ThisSeasonFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Season suche
         val yearSpinner = binding.SPYear
+        val yearOptions = listOf(
+            2023, 2022, 2021, 2020,
+            2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010,
+            2009, 2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000,
+            1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990,
+            1989, 1988
+        )
 
-        val yearOptions = listOf(1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,
-            2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,
-            2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,
-            2020,2021,2022,2023)
-
-        val orderByAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, yearOptions)
+        val orderByAdapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, yearOptions)
         orderByAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         yearSpinner.adapter = orderByAdapter
 
 
         yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedItem = yearOptions[position]
                 year = selectedItem
             }
@@ -70,15 +80,21 @@ class ThisSeasonFragment : Fragment() {
 
         val seasonSpinner = binding.SPSeason
 
-        val seasonOptions = listOf("spring", "summer","fall", "winter")
+        val seasonOptions = listOf("spring", "summer", "fall", "winter")
 
-        val sortAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, seasonOptions)
+        val sortAdapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, seasonOptions)
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         seasonSpinner.adapter = sortAdapter
 
 
         seasonSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedItem = seasonOptions[position]
                 currentSeason = selectedItem
             }
@@ -88,11 +104,11 @@ class ThisSeasonFragment : Fragment() {
         }
 
         binding.BTNSearch2.setOnClickListener {
-            viewModel.loadSeasonByYear(year,currentSeason,1)
+            viewModel.loadSeasonByYear(year, currentSeason, 1)
         }
 
         binding.MCVSeasonView.setOnClickListener {
-            when(binding.BTNSearch2.visibility){
+            when (binding.BTNSearch2.visibility) {
                 GONE -> {
                     binding.SPSeason.visibility = VISIBLE
                     binding.SPYear.visibility = VISIBLE
@@ -100,7 +116,8 @@ class ThisSeasonFragment : Fragment() {
                     binding.SeasonTV2.visibility = VISIBLE
                     binding.BTNSearch2.visibility = VISIBLE
                 }
-                VISIBLE ->{
+
+                VISIBLE -> {
                     binding.SPSeason.visibility = GONE
                     binding.SPYear.visibility = GONE
                     binding.YearTV2.visibility = GONE
@@ -186,22 +203,27 @@ class ThisSeasonFragment : Fragment() {
         }
 
         binding.TVFirstPage2.setOnClickListener {
-            viewModel.loadSeasonByYear(year, currentSeason,1)
+            viewModel.loadSeasonByYear(year, currentSeason, 1)
         }
 
         binding.TVLastPage2.setOnClickListener {
-            viewModel.loadSeasonByYear(year,currentSeason,viewModel.seasonNow.value?.pagination?.last_visible_page!!)
+            viewModel.loadSeasonByYear(
+                year,
+                currentSeason,
+                viewModel.seasonNow.value?.pagination?.last_visible_page!!
+            )
         }
 
         binding.BTNNext.setOnClickListener {
             var currentPage = viewModel.seasonNow.value?.pagination?.current_page
             if (currentPage != null) {
                 try {
-                    viewModel.loadSeasonByYear(year,currentSeason,currentPage + 1)
+                    Thread.sleep(500)
+                    viewModel.loadSeasonByYear(year, currentSeason, currentPage + 1)
                     binding.TVPagination.text =
                         viewModel.seasonNow.value?.pagination?.current_page.toString()
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Wait", Toast.LENGTH_SHORT)
+
                 }
 
             }
@@ -211,11 +233,12 @@ class ThisSeasonFragment : Fragment() {
             var currentPage = viewModel.seasonNow.value?.pagination?.current_page
             if (currentPage != null) {
                 try {
-                    viewModel.loadSeasonByYear(year,currentSeason,currentPage - 1)
+                    Thread.sleep(500)
+                    viewModel.loadSeasonByYear(year, currentSeason, currentPage - 1)
                     binding.TVPagination.text =
                         viewModel.seasonNow.value?.pagination?.current_page.toString()
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Wait", Toast.LENGTH_SHORT)
+
                 }
             }
         }

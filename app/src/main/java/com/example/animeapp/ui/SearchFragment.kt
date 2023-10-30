@@ -30,7 +30,7 @@ class SearchFragment : Fragment() {
     private var startPage = 1
     private var scoreSeekBar = 0
     private var sortBy = "desc"
-    private var orderBy = AnimeSearchQueryOrderBy.TITLE.value
+    private var orderBy = AnimeSearchQueryOrderBy.SCORE.value
     private var genreNR : String = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -43,6 +43,9 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+
+
+    //Filteroptionen
     @RequiresApi(Build.VERSION_CODES.O)
     fun search(query: String, page: Int): Boolean {
         viewmodel.fetchAnimeData(
@@ -71,7 +74,7 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        //Schieberegler um den MinScore einzustellen
         val seekBar = binding.seekBar
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -88,7 +91,7 @@ class SearchFragment : Fragment() {
 
 
         val orderBySpinner = binding.spinner2
-        val orderByOptions = listOf("Title", "Score")
+        val orderByOptions = listOf("Score","Title" )
         val orderByAdapter =
             ArrayAdapter(requireContext(), R.layout.simple_spinner_item, orderByOptions)
         orderByAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
@@ -271,11 +274,15 @@ class SearchFragment : Fragment() {
 
 
         binding.BTNNext2.setOnClickListener {
+            Thread.sleep(500)
+
             startPage++
             search(binding.SearchView.query.toString(), startPage)
         }
 
         binding.BTNPrev2.setOnClickListener {
+            Thread.sleep(500)
+
             startPage--
             search(binding.SearchView.query.toString(), startPage)
 

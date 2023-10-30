@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavBNV.setupWithNavController(navController)
 
-
         binding.bottomNavBNV.setOnItemSelectedListener { item ->
 
             NavigationUI.onNavDestinationSelected(item, navController)

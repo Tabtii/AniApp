@@ -50,6 +50,8 @@ class HomeFragment : Fragment() {
             Log.d("FAVLIST", "LiveData aktualisiert: $it")
             binding.RvAnime.adapter = FavoriteAdapter(it,viewmodel)
         }
+
+        //LogOut Button
         binding.BTNLogOut1.setOnClickListener {
             Toast.makeText(requireContext(), "Goodbye", Toast.LENGTH_SHORT).show()
             val intent = Intent(requireContext(), SignInActivity::class.java)
