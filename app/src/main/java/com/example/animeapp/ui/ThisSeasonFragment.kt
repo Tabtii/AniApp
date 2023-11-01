@@ -80,7 +80,7 @@ class ThisSeasonFragment : Fragment() {
 
         val seasonSpinner = binding.SPSeason
 
-        val seasonOptions = listOf("spring", "summer", "fall", "winter")
+        val seasonOptions = listOf("","Spring", "Summer", "Fall", "Winter")
 
         val sortAdapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, seasonOptions)
@@ -95,8 +95,16 @@ class ThisSeasonFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                val selectedItem = seasonOptions[position]
-                currentSeason = selectedItem
+
+                when(seasonOptions[position]){
+                        ""-> currentSeason
+                        "Spring" ->currentSeason = "spring"
+                        "Summer" ->currentSeason = "summer"
+                        "Fall" ->currentSeason = "fall"
+                        "Winter" ->currentSeason = "winter"
+                    }
+
+
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
