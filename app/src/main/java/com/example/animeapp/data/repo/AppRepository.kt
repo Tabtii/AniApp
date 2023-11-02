@@ -133,7 +133,7 @@ class AppRepository(private val api: ApiService) {
             }
         })
 
-        Thread.sleep(1000)
+        Thread.sleep(100)
 
         return dataList
     }
