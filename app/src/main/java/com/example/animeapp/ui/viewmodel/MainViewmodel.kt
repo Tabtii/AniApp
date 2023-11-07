@@ -41,11 +41,6 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
     private val userId = Firebase.auth.currentUser?.uid
     private val _firebaseAnimeData = MutableLiveData<List<AniByIdResponse>>()
     val firebaseAnimeData: LiveData<List<AniByIdResponse>> = _firebaseAnimeData
-    val inputText = MutableLiveData<String>()
-
-    init {
-    }
-
 
 
     fun markAnimeAsDisLiked(animeData: AniByIdResponse) {
@@ -61,7 +56,7 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
     }
 
 
-    fun loadSeasonByYear(year : Int,season : String,page: Int) {
+    fun loadSeasonByYear(year: Int, season: String, page: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _seasonNow.postValue(repository.getSeasonByYear(year, season, page))
         }
@@ -110,26 +105,28 @@ class MainViewmodel(app: Application) : AndroidViewModel(app) {
         startDate: String?,
         endDate: String?
     ) {
-viewModelScope.launch(Dispatchers.IO){_searchResults.postValue(
-    repository.getAllAnime(
-        page,
-        q,
-        type,
-        score,
-        minScore,
-        maxScore,
-        status,
-        rating,
-        genres,
-        genresExcluded,
-        orderBy,
-        sort,
-        letter,
-        producers,
-        startDate,
-        endDate
-    )
-)}
+        viewModelScope.launch(Dispatchers.IO) {
+            _searchResults.postValue(
+                repository.getAllAnime(
+                    page,
+                    q,
+                    type,
+                    score,
+                    minScore,
+                    maxScore,
+                    status,
+                    rating,
+                    genres,
+                    genresExcluded,
+                    orderBy,
+                    sort,
+                    letter,
+                    producers,
+                    startDate,
+                    endDate
+                )
+            )
+        }
 
 
     }

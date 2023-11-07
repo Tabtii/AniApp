@@ -15,7 +15,9 @@ import com.example.animeapp.ui.SearchFragmentDirections
 import com.example.animeapp.ui.viewmodel.MainViewmodel
 import com.example.animeapp.ui.ThisSeasonFragmentDirections
 import com.squareup.picasso.Picasso
+
 private const val TAG = "Adapter"
+
 class Adapter(
     private val dataset: AnimeInfo,
     private val viewmodel: MainViewmodel
@@ -24,6 +26,7 @@ class Adapter(
 
     inner class ItemViewHolder(val binding: ListItemAnimeBinding) :
         RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding =
             ListItemAnimeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -40,7 +43,7 @@ class Adapter(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
 
         val item = dataset.data[position]
-        Log.d(TAG,"$item")
+        Log.d(TAG, "$item")
         val id = item.mal_id
         var genre1 = ""
         if (item != null) {
@@ -62,14 +65,18 @@ class Adapter(
         }
         holder.binding.TVGenre.text = genre1
         holder.binding.CVAnime.setOnClickListener {
-                Log.d(TAG, "$id")
+            Log.d(TAG, "$id")
             if (id != null) {
                 try {
                     it.findNavController().navigate(
-                        ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(id)
+                        ThisSeasonFragmentDirections.actionThisSeasonFragmentToAnimeDetailFragment(
+                            id
+                        )
                     )
-                }catch (e:Exception){
-                    it.findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToAnimeDetailFragment(id))
+                } catch (e: Exception) {
+                    it.findNavController().navigate(
+                        SearchFragmentDirections.actionSearchFragmentToAnimeDetailFragment(id)
+                    )
                 }
 
             }
