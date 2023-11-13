@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "267188366264",
+    "firebase_url": "https://animeapp-d1c31-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "animeapp-d1c31",
+    "storage_bucket": "animeapp-d1c31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267188366264:android:f8cc08593219c7550f3d4d",
+        "android_client_info": {
+          "package_name": "com.example.animeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBP6Kc5aN5C3Hb2oa0JNYzigmNlaZxWoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
