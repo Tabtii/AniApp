@@ -5,6 +5,7 @@ import '../models/anime.dart';
 import '../models/content.dart';
 import 'common.dart';
 import 'visuals.dart';
+import 'dub_panel.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.anime, required this.store});
@@ -18,6 +19,8 @@ class _DetailScreenState extends State<DetailScreen> {
   late Anime anime;
   List<Availability> availability = [];
   List<ReleaseEvent> releases = [];
+  List<ReleaseEvent> dubs = [];
+  String? dubError;
   bool loading = true;
   String? error, availabilityError, releaseError;
   String get _settings =>
@@ -52,6 +55,8 @@ class _DetailScreenState extends State<DetailScreen> {
       availabilityError = null;
       availability = [];
       releases = [];
+      dubs = [];
+      dubError = null;
     });
     releaseError = null;
     await Future.wait([
@@ -74,6 +79,19 @@ class _DetailScreenState extends State<DetailScreen> {
             setState(
               () => availabilityError =
                   'Streaming-Daten sind gerade nicht erreichbar.',
+            );
+          }
+        }
+      })(),
+      (() async {
+        try {
+          final value = await widget.store.dubReleases(anime.id);
+          if (current()) setState(() => dubs = value);
+        } catch (_) {
+          if (current()) {
+            setState(
+              () =>
+                  dubError = 'Dub-Ankündigungen konnten nicht geladen werden.',
             );
           }
         }
@@ -183,6 +201,16 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
           const SizedBox(height: 20),
+          DubPanel(
+            language: widget.store.language,
+            region: widget.store.region,
+            events: dubs,
+            availability: availability,
+            loading: loading,
+            error: dubError,
+            onRetry: _load,
+          ),
+          const SizedBox(height: 6),
           Wrap(
             spacing: 8,
             children: anime.genres.map((g) => Chip(label: Text(g))).toList(),
@@ -210,34 +238,42 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          ...releases.map(
-            (e) => Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      e.kind == 'japan'
-                          ? 'Nächste Ausstrahlung in Japan'
-                          : 'Nächster Release',
-                      style: Theme.of(context).textTheme.titleMedium,
+          ...releases
+              .where((e) => e.kind != 'dub')
+              .map(
+                (e) => Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          e.kind == 'japan'
+                              ? 'Nächste Ausstrahlung in Japan'
+                              : 'Nächster Release',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text(
+                          e.startsAt != null
+                              ? dateLabel(e.startsAt)
+                              : e.startsOn != null
+                              ? shortDate(e.startsOn)
+                              : 'Termin noch offen',
+                        ),
+                        Text(
+                          e.status == 'estimated'
+                              ? 'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
+                              : 'Angekündigter Termin',
+                        ),
+                        TextButton(
+                          onPressed: () => openSource(context, e.source),
+                          child: const Text('Terminquelle öffnen'),
+                        ),
+                      ],
                     ),
-                    Text(dateLabel(e.startsAt)),
-                    Text(
-                      e.status == 'estimated'
-                          ? 'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
-                          : 'Angekündigter Termin',
-                    ),
-                    TextButton(
-                      onPressed: () => openSource(context, e.source),
-                      child: const Text('Terminquelle öffnen'),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
           if (anime.broadcast != null) ...[
             const SizedBox(height: 20),
             Text(

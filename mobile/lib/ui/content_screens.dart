@@ -16,6 +16,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late Future<List<ReleaseEvent>> future;
   bool onlyMine = false;
+  bool onlyDub = false;
   String _settings = '';
   String? selectedDay;
   String get _key =>
@@ -99,7 +100,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Row(
+        child: Wrap(
+          spacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             FilterChip(
               label: const Text('Meine Watchlist'),
@@ -107,7 +110,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
               onSelected: (v) => setState(() => onlyMine = v),
               avatar: const Icon(Icons.bookmark_outline_rounded, size: 16),
             ),
-            const Spacer(),
+            FilterChip(
+              label: Text('Dub · ${languageLabel(widget.store.language)}'),
+              selected: onlyDub,
+              onSelected: (value) => setState(() {
+                onlyDub = value;
+                selectedDay = null;
+              }),
+              avatar: const Icon(Icons.record_voice_over_rounded, size: 16),
+            ),
             IconButton(
               tooltip: 'Zu den Zeiten',
               onPressed: () => showModalBottomSheet<void>(
@@ -144,17 +155,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
             final all = (snapshot.data ?? [])
                 .where(
                   (e) =>
+                      !onlyDub ||
+                      (e.kind == 'dub' && e.language == widget.store.language),
+                )
+                .where(
+                  (e) =>
                       !onlyMine ||
                       (e.animeId != null && widget.store.isSaved(e.animeId!)),
                 )
                 .toList();
             final dates = <String, DateTime?>{
-              for (final e in all) dayKey(e.startsAt): e.startsAt,
+              for (final e in all) dayKey(e.date): e.date,
             };
             final items = all
                 .where(
-                  (e) =>
-                      selectedDay == null || dayKey(e.startsAt) == selectedDay,
+                  (e) => selectedDay == null || dayKey(e.date) == selectedDay,
                 )
                 .toList();
             return RefreshIndicator(
@@ -207,12 +222,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                   for (var i = 0; i < items.length; i++) ...[
                     if (i == 0 ||
-                        dayKey(items[i - 1].startsAt) !=
-                            dayKey(items[i].startsAt))
+                        dayKey(items[i - 1].date) != dayKey(items[i].date))
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
                         child: Text(
-                          dayLabel(items[i].startsAt).toUpperCase(),
+                          dayLabel(items[i].date).toUpperCase(),
                           style: TextStyle(
                             fontSize: 11,
                             letterSpacing: 1.1,
@@ -257,7 +271,9 @@ class _ReleaseTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    timeLabel(e.startsAt),
+                    e.startsAt == null
+                        ? (e.startsOn == null ? 'TBA' : 'Tag')
+                        : timeLabel(e.startsAt),
                     style: TextStyle(
                       color: scheme.primary,
                       fontWeight: FontWeight.w900,
@@ -266,7 +282,9 @@ class _ReleaseTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'UHR',
+                    e.startsAt == null
+                        ? (e.startsOn == null ? 'OFFEN' : 'OHNE ZEIT')
+                        : 'UHR',
                     style: TextStyle(
                       fontSize: 8,
                       letterSpacing: 1.5,

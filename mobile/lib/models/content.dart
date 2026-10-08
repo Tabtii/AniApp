@@ -10,6 +10,23 @@ class ReleaseEvent {
   String get status => data['status'] as String? ?? 'announced';
   DateTime? get startsAt =>
       DateTime.tryParse(data['starts_at'] as String? ?? '')?.toLocal();
+  // A calendar date is not a midnight timestamp and must not change timezone.
+  DateTime? get startsOn =>
+      DateTime.tryParse(data['starts_on'] as String? ?? '');
+  DateTime? get date => startsAt ?? startsOn;
+  String? get note => data['release_note'] as String?;
+  DateTime? get checkedAt =>
+      DateTime.tryParse(data['checked_at'] as String? ?? '')?.toLocal();
+  bool isUpcoming(DateTime now) {
+    if (startsAt != null) {
+      return startsAt!.isAfter(now.subtract(const Duration(hours: 24)));
+    }
+    if (startsOn != null) {
+      return !startsOn!.isBefore(DateTime(now.year, now.month, now.day));
+    }
+    return true;
+  }
+
   String get provider =>
       data['provider'] as String? ?? 'Japanische Ausstrahlung';
   String get source => data['source_url'] as String? ?? '';

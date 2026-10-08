@@ -32,6 +32,13 @@ test('RLS isolates watchlists and hides unpublished content', async () => {
   assert.equal((await db.query("select public.begin_content_sync('wrong') as state")).rows[0].state, 'denied');
   assert.equal((await db.query("select public.begin_content_sync('test-token') as state")).rows[0].state, 'ready');
   assert.equal((await db.query("select public.begin_content_sync('test-token') as state")).rows[0].state, 'recent');
+  await db.exec(`insert into public.release_events(mal_id,title,kind,starts_on,provider,region,audio_language,status,source_url,published)
+    values (123,'Date-only dub','dub','2026-10-15','Publisher','DE','de','confirmed','https://example.com/dub',true)`);
+  const day = (await db.query("select starts_at,starts_on::text from public.release_events where mal_id=123")).rows[0];
+  assert.equal(day.starts_at, null);
+  assert.equal(day.starts_on, '2026-10-15');
+  await assert.rejects(db.query("update public.release_events set starts_on=null where mal_id=123"));
+  await assert.rejects(db.query("update public.release_events set starts_at='2026-10-15T18:00:00Z' where mal_id=123"));
   await db.exec('reset role;');
   const rls = await db.query("select relname from pg_class where relnamespace='public'::regnamespace and relkind='r' and not relrowsecurity");
   assert.deepEqual(rls.rows, []);

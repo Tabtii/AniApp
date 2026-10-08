@@ -6,6 +6,7 @@ import 'watchlist_screen.dart';
 import 'content_screens.dart';
 import 'profile_screen.dart';
 import 'visuals.dart';
+import 'brand.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.store, this.startupWarning});
@@ -47,23 +48,7 @@ class _AppShellState extends State<AppShell> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 31,
-              height: 31,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [coral, Color(0xFFA47FEF)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.bolt_rounded,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
+            const AniAppMark(size: 35),
             const SizedBox(width: 9),
             Text.rich(
               TextSpan(

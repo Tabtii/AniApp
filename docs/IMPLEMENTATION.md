@@ -101,3 +101,14 @@ Verification on 2026-10-08: Flutter 3.47.6 analysis reports no issues, all 13 Fl
 - Detail pages, watchlists, profile, navigation and typography share the new coral/lavender palette in both light and dark mode. Text scaling is supported.
 - Live `content-sync` version 2 imported 40 news previews and 87 broadcast posters successfully. The hourly free RSS/API pipeline remains unchanged; no paid crawling or new provider account is required.
 - Visual checks render production Flutter widgets with snapshots of the live API and the actual source images. They are UI renders, not physical Android/iOS device captures. The app itself reads the live APIs.
+
+
+## AniApp mark and dub announcements (0.3.1+8)
+
+The custom vector A/play mark replaces the lightning badge and stock launcher icons. `mobile/lib/ui/brand.dart` is the editable source; run `flutter test tool/export_brand_test.dart` from `mobile/` to regenerate native and web icon sizes. Android has an adaptive launcher icon.
+
+Anime details now have a dedicated panel for the preferred dubbing language and region. Published dub announcements remain visible independently of the calendar filter and distinguish availability observations, announcements without dates, dates without times, and timestamped releases. A date-only release never invents midnight or shifts to another day when changing timezones. A past announced date does not prove current availability. Calendar users can filter directly to dubs in their preferred language.
+
+Thirteen autumn 2026 German Crunchyroll dub announcements were reviewed against the official seasonal dub announcement and lineup on 2026-10-08, mapped to their specific MAL season IDs, and published to Supabase. All thirteen currently have an unknown start date. The review record is `supabase/content/dubs-reviewed-2026-10-08.json`. These reviewed dub records are **not automatically refreshed** and do not constitute a comprehensive dub feed; the existing hourly news/Japanese-broadcast pipeline continues independently. New exact dates require a verified source update, not extrapolation from Japanese broadcasts. The app reads the published database records live.
+
+Validation includes database constraints for date precision, a public REST read returning all 13 dub announcements, explicit undated/error/availability UI states and the existing regression suite. The security advisor retains the [pg_net namespace warning](https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public) and reports [leaked-password protection disabled](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection); neither setting was changed by this feature. Public email confirmation still requires custom SMTP.

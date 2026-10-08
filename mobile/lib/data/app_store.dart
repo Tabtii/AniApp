@@ -225,22 +225,41 @@ class AppStore extends ChangeNotifier {
     if (animeId != null) query = query.eq('mal_id', animeId);
     final rows = await query
         .or(
-          'starts_at.is.null,starts_at.gte.${DateTime.now().toUtc().subtract(const Duration(hours: 24)).toIso8601String()}',
+          'and(starts_at.is.null,starts_on.is.null),starts_at.gte.${DateTime.now().toUtc().subtract(const Duration(hours: 24)).toIso8601String()},starts_on.gte.${DateTime.now().toIso8601String().split('T').first}',
         )
         .order('starts_at', ascending: true, nullsFirst: false)
         .limit(200)
         .timeout(const Duration(seconds: 15));
-    return rows.map((r) => ReleaseEvent(r)).where((e) {
-      final upcoming =
-          e.startsAt == null ||
-          e.startsAt!.isAfter(
-            DateTime.now().subtract(const Duration(hours: 24)),
-          );
+    final result = rows.map((r) => ReleaseEvent(r)).where((e) {
       final location = e.kind == 'japan' || e.region == region;
       final audio =
           languageMode != 'dub' || (e.kind == 'dub' && e.language == language);
-      return upcoming && location && audio;
+      return e.isUpcoming(DateTime.now()) && location && audio;
     }).toList();
+    result.sort(
+      (a, b) => a.date == null
+          ? (b.date == null ? a.title.compareTo(b.title) : 1)
+          : b.date == null
+          ? -1
+          : a.date!.compareTo(b.date!),
+    );
+    return result;
+  }
+
+  Future<List<ReleaseEvent>> dubReleases(int id) async {
+    if (backend == null) return [];
+    final rows = await backend!
+        .from('release_events')
+        .select()
+        .eq('published', true)
+        .eq('mal_id', id)
+        .eq('kind', 'dub')
+        .eq('region', region)
+        .eq('audio_language', language)
+        .order('checked_at', ascending: false)
+        .limit(50)
+        .timeout(const Duration(seconds: 15));
+    return rows.map(ReleaseEvent.new).toList();
   }
 
   Future<List<Availability>> availability(int id) async {

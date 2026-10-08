@@ -36,6 +36,23 @@ void main() {
     expect(a.subtitles, null);
     expect(a.status, 'announced');
   });
+  test(
+    'date-only dub announcement has no fabricated time and expires by day',
+    () {
+      final event = ReleaseEvent({
+        'kind': 'dub',
+        'starts_on': '2026-10-15',
+        'status': 'confirmed',
+      });
+      expect(event.startsAt, isNull);
+      expect(event.startsOn, DateTime(2026, 10, 15));
+      expect(event.isUpcoming(DateTime(2026, 10, 15, 23, 59)), isTrue);
+      expect(event.isUpcoming(DateTime(2026, 10, 16)), isFalse);
+      final unknown = ReleaseEvent({'kind': 'dub', 'status': 'announced'});
+      expect(unknown.date, isNull);
+      expect(unknown.isUpcoming(DateTime(2027)), isTrue);
+    },
+  );
   test('season follows current month', () {
     expect(currentSeason(DateTime(2026, 10, 8)), 'fall');
     expect(currentSeason(DateTime(2027, 1, 1)), 'winter');
