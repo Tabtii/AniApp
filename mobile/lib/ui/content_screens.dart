@@ -19,6 +19,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   bool onlyDub = false;
   String _settings = '';
   String? selectedDay;
+  String? selectedProvider;
+  String providerLabel(ReleaseEvent e) =>
+      e.kind == 'japan' ? 'Japan (TV)' : e.provider;
   String get _key =>
       '${widget.store.region}|${widget.store.language}|${widget.store.languageMode}';
   @override
@@ -34,6 +37,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       setState(() {
         if (_settings != _key) {
           _settings = _key;
+          selectedDay = null;
+          selectedProvider = null;
           future = widget.store.releases();
         }
       });
@@ -107,7 +112,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
             FilterChip(
               label: const Text('Meine Watchlist'),
               selected: onlyMine,
-              onSelected: (v) => setState(() => onlyMine = v),
+              onSelected: (v) => setState(() {
+                onlyMine = v;
+                selectedDay = null;
+              }),
               avatar: const Icon(Icons.bookmark_outline_rounded, size: 16),
             ),
             FilterChip(
@@ -127,7 +135,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 builder: (context) => const Padding(
                   padding: EdgeInsets.fromLTRB(24, 0, 24, 32),
                   child: Text(
-                    'Alle Zeiten werden in deiner Gerätezeitzone angezeigt. Japanische Ausstrahlung, Streaming und Synchronfassungen haben eigene Termine. „Voraussichtlich“ folgt dem regulären Sendeplan; Sonderpausen und Verschiebungen sind möglich.',
+                    'Der Kalender berücksichtigt laufende Anime aus allen Seasons. Anbieter-Termine und deutsche Dubs können auch nach dem Ende der japanischen Ausstrahlung weiterlaufen. Uhrzeiten gelten in deiner Gerätezeitzone. „Voraussichtlich“ ist aus einem Wochenplan abgeleitet; Pausen und Verschiebungen sind möglich. Die Anbieterabdeckung ist noch unvollständig. Quelle und Prüfdatum findest du am Termin.',
                   ),
                 ),
               ),
@@ -152,7 +160,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               );
             }
-            final all = (snapshot.data ?? [])
+            final source = snapshot.data ?? [];
+            final providers = source.map(providerLabel).toSet().toList()
+              ..sort();
+            final provider = providers.contains(selectedProvider)
+                ? selectedProvider
+                : null;
+            final all = source
+                .where((e) => provider == null || providerLabel(e) == provider)
                 .where(
                   (e) =>
                       !onlyDub ||
@@ -167,10 +182,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
             final dates = <String, DateTime?>{
               for (final e in all) dayKey(e.date): e.date,
             };
+            final day = dates.containsKey(selectedDay) ? selectedDay : null;
             final items = all
-                .where(
-                  (e) => selectedDay == null || dayKey(e.date) == selectedDay,
-                )
+                .where((e) => day == null || dayKey(e.date) == day)
                 .toList();
             return RefreshIndicator(
               onRefresh: reload,
@@ -178,6 +192,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(top: 8, bottom: 24),
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                    child: Text(
+                      'Alle Seasons · laufende Serien & angekündigte Starts',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 6),
+                    child: Row(
+                      children: [
+                        for (final name in <String?>[null, ...providers])
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: ChoiceChip(
+                              label: Text(name ?? 'Alle Anbieter'),
+                              selected: provider == name,
+                              onSelected: (_) => setState(() {
+                                selectedProvider = name;
+                                selectedDay = null;
+                              }),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -187,28 +231,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           padding: const EdgeInsets.only(right: 8),
                           child: ChoiceChip(
                             label: const Text('Alle Tage'),
-                            selected: selectedDay == null,
+                            selected: day == null,
                             onSelected: (_) =>
                                 setState(() => selectedDay = null),
                           ),
                         ),
-                        ...dates.entries
-                            .take(8)
-                            .map(
-                              (d) => Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: ChoiceChip(
-                                  label: Text(
-                                    d.value == null
-                                        ? 'Offen'
-                                        : '${d.value!.day}.${d.value!.month}.',
-                                  ),
-                                  selected: selectedDay == d.key,
-                                  onSelected: (_) =>
-                                      setState(() => selectedDay = d.key),
-                                ),
+                        ...dates.entries.map(
+                          (d) => Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: ChoiceChip(
+                              label: Text(
+                                d.value == null
+                                    ? 'Offen'
+                                    : '${d.value!.day}.${d.value!.month}.',
                               ),
+                              selected: day == d.key,
+                              onSelected: (_) =>
+                                  setState(() => selectedDay = d.key),
                             ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -357,6 +399,27 @@ class _ReleaseTile extends StatelessWidget {
                                 color: scheme.onSurfaceVariant,
                               ),
                             ),
+                            const SizedBox(height: 4),
+                            Text(
+                              e.kind == 'japan'
+                                  ? 'Japanische TV-Ausstrahlung'
+                                  : e.provider,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: scheme.primary,
+                              ),
+                            ),
+                            if (e.note != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                e.note!,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
                             const SizedBox(height: 6),
                             Text(
                               e.status == 'estimated'
@@ -372,6 +435,14 @@ class _ReleaseTile extends StatelessWidget {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
+                            if (e.checkedAt != null)
+                              Text(
+                                'Geprüft ${e.checkedAt!.day}.${e.checkedAt!.month}.${e.checkedAt!.year}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
                           ],
                         ),
                       ),

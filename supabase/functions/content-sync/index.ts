@@ -1,13 +1,14 @@
+import {loadAdn,saveAdn} from './adn.ts';
 import {broadcastEvents, rssNews, malNews, type Row} from './content.ts';
 const url=Deno.env.get('SUPABASE_URL')!;
 const secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-async function db(path:string,body:unknown) {
-  const r=await fetch(`${url}/rest/v1/${path}`,{method:'POST',headers:{apikey:secret,Authorization:`Bearer ${secret}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates'},body:JSON.stringify(body),signal:AbortSignal.timeout(12000)});
+async function db(path:string,body:unknown,method='POST') {
+  const r=await fetch(`${url}/rest/v1/${path}`,{method,headers:{apikey:secret,Authorization:`Bearer ${secret}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates'},body:JSON.stringify(body),signal:AbortSignal.timeout(12000)});
   if(!r.ok) throw new Error(`Database ${r.status}: ${(await r.text()).slice(0,240)}`);
   const t=await r.text();return t?JSON.parse(t):null;
 }
-async function source(url:string) {
-  const r=await fetch(url,{headers:{Accept:'application/json, application/rss+xml', 'User-Agent':'AniApp/0.2.4 (+https://github.com/Tabtii/AniApp)'},signal:AbortSignal.timeout(18000)});
+async function source(url:string,headers:Record<string,string>={}) {
+  const r=await fetch(url,{headers:{Accept:'application/json, application/rss+xml', 'User-Agent':'AniApp/0.3.2 (+https://github.com/Tabtii/AniApp)',...headers},signal:AbortSignal.timeout(18000)});
   if(!r.ok) throw new Error(`Source HTTP ${r.status}`);
   const text=await r.text();if(text.length>2500000) throw new Error('Source too large'); return text;
 }
@@ -23,7 +24,7 @@ Deno.serve(async req=> {
   const report:Record<string,unknown>={};
   let successes=0;
   // Sources fail independently; existing published data survives failed imports.
-  for(const name of ['anime2you','myanimelist','schedule']) {
+  for(const name of ['anime2you','myanimelist','schedule','adn']) {
     try {
       if(name==='anime2you') {
         const rows=rssNews(await source('https://www.anime2you.de/feed/'));
@@ -33,6 +34,10 @@ Deno.serve(async req=> {
         if(!Array.isArray(value.data))throw new Error('Invalid news response');
         const rows=malNews(value.data);if(!rows.length)throw new Error('No recent news');
         await db('news?on_conflict=source_url',rows);report[name]={count:rows.length};
+      } else if(name==='adn') {
+        const data=await loadAdn(source);
+        await saveAdn(data,db);
+        report[name]={count:data.rows.length,days:data.days.length,failed:data.failed,unmapped:data.unmapped};
       } else {
         const all:Row[]=[];let complete=false;
         for(let page=1;page<=8;page++) {
@@ -50,5 +55,5 @@ Deno.serve(async req=> {
     }catch(e){report[name]={error:e instanceof Error?e.message:'Unavailable'};}
   }
   await db('rpc/finish_content_sync',{p_report:report});
-  return reply({status:successes===3?'ok':'partial',sources:report},successes?200:503);
+  return reply({status:successes===4 && !(report.adn as {failed:unknown[]})?.failed?.length?'ok':'partial',sources:report},successes?200:503);
 });

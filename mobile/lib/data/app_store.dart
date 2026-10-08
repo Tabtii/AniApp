@@ -219,31 +219,65 @@ class AppStore extends ChangeNotifier {
         .timeout(const Duration(seconds: 15));
   }
 
-  Future<List<ReleaseEvent>> releases({int? animeId}) async {
+  Future<List<ReleaseEvent>> releases({int? animeId}) =>
+      _loadReleases(animeId).timeout(const Duration(seconds: 20));
+
+  Future<List<ReleaseEvent>> _loadReleases(int? animeId) async {
     if (backend == null) return [];
-    var query = backend!.from('release_events').select().eq('published', true);
-    if (animeId != null) query = query.eq('mal_id', animeId);
-    final rows = await query
-        .or(
-          'and(starts_at.is.null,starts_on.is.null),starts_at.gte.${DateTime.now().toUtc().subtract(const Duration(hours: 24)).toIso8601String()},starts_on.gte.${DateTime.now().toIso8601String().split('T').first}',
-        )
-        .order('starts_at', ascending: true, nullsFirst: false)
-        .limit(200)
-        .timeout(const Duration(seconds: 15));
-    final result = rows.map((r) => ReleaseEvent(r)).where((e) {
-      final location = e.kind == 'japan' || e.region == region;
-      final audio =
-          languageMode != 'dub' || (e.kind == 'dub' && e.language == language);
-      return e.isUpcoming(DateTime.now()) && location && audio;
-    }).toList();
-    result.sort(
-      (a, b) => a.date == null
-          ? (b.date == null ? a.title.compareTo(b.title) : 1)
-          : b.date == null
-          ? -1
-          : a.date!.compareTo(b.date!),
-    );
-    return result;
+    final now = DateTime.now();
+    final deadline = now.add(const Duration(seconds: 20));
+    final selectedRegion = region, selectedLanguage = language;
+    final dubOnly = languageMode == 'dub';
+    final result = <ReleaseEvent>[];
+    // Provider schedules can contain more than 200 episodes. Read every page;
+    // stable ID ordering prevents equal/undated timestamps from shuffling pages.
+    for (var page = 0; page < 20; page++) {
+      var query = backend!
+          .from('release_events')
+          .select()
+          .eq('published', true);
+      if (animeId != null) query = query.eq('mal_id', animeId);
+      query = query
+          .or('kind.eq.japan,region.eq.$selectedRegion')
+          .or(
+            'and(starts_at.is.null,starts_on.is.null),starts_at.gte.${now.toUtc().subtract(const Duration(hours: 24)).toIso8601String()},starts_on.gte.${now.toIso8601String().split('T').first}',
+          );
+      if (dubOnly) {
+        query = query.eq('kind', 'dub').eq('audio_language', selectedLanguage);
+      }
+      final remaining = deadline.difference(DateTime.now());
+      if (remaining <= Duration.zero) {
+        throw TimeoutException(
+          'Kalender konnte nicht vollständig geladen werden.',
+        );
+      }
+      final rows = await query
+          .order('id')
+          .range(page * 200, page * 200 + 199)
+          .timeout(remaining);
+      result.addAll(
+        rows
+            .map(ReleaseEvent.new)
+            .where(
+              (e) =>
+                  e.isUpcoming(now) &&
+                  (e.kind == 'japan' || e.region == selectedRegion) &&
+                  (!dubOnly ||
+                      (e.kind == 'dub' && e.language == selectedLanguage)),
+            ),
+      );
+      if (rows.length < 200) {
+        result.sort(
+          (a, b) => a.date == null
+              ? (b.date == null ? a.title.compareTo(b.title) : 1)
+              : b.date == null
+              ? -1
+              : a.date!.compareTo(b.date!),
+        );
+        return result;
+      }
+    }
+    throw StateError('Zu viele Termine. Bitte den Sprachfilter verwenden.');
   }
 
   Future<List<ReleaseEvent>> dubReleases(int id) async {
