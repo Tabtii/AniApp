@@ -48,6 +48,9 @@ class Availability {
   String get url =>
       data['watch_url'] as String? ?? data['source_url'] as String? ?? '';
   String get scope => data['scope'] as String? ?? 'series';
+  int? get season => (data['season_number'] as num?)?.toInt();
+  String? get sourceName => data['source_name'] as String?;
+  List<String> get offers => List<String>.from(data['offers'] as List? ?? []);
   int? get episode => (data['episode'] as num?)?.toInt();
   String get checkedAt => data['checked_at'] as String? ?? '';
 }

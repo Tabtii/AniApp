@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/anime.dart';
 import '../models/content.dart';
+import '../models/enrichment.dart';
 import 'catalog.dart';
 
 class AppStore extends ChangeNotifier {
@@ -221,6 +222,57 @@ class AppStore extends ChangeNotifier {
 
   Future<List<ReleaseEvent>> releases({int? animeId}) =>
       _loadReleases(animeId).timeout(const Duration(seconds: 20));
+
+  Future<AnimeEnrichment> enrichment(int id) async {
+    if (backend == null) return AnimeEnrichment.empty;
+    final selectedRegion = region, selectedLanguage = language;
+    final result = await backend!.functions
+        .invoke(
+          'anime-enrichment',
+          body: {
+            'mal_id': id,
+            'region': selectedRegion,
+            'language': selectedLanguage,
+          },
+        )
+        .timeout(const Duration(seconds: 32));
+    if (result.status != 200 ||
+        result.data is! Map ||
+        result.data['mal_id'] != id ||
+        result.data['region'] != selectedRegion ||
+        result.data['language'] != selectedLanguage) {
+      throw StateError('Zusatzinformationen sind nicht erreichbar.');
+    }
+    return AnimeEnrichment(Map<String, dynamic>.from(result.data as Map));
+  }
+
+  Future<List<ReleaseEvent>> _aniSchedule() async {
+    if (backend == null || languageMode == 'dub') return [];
+    try {
+      final result = await backend!.functions
+          .invoke(
+            'anime-enrichment',
+            body: {'mode': 'calendar', 'region': region, 'language': language},
+          )
+          .timeout(const Duration(seconds: 8));
+      if (result.status != 200 ||
+          result.data is! Map ||
+          result.data['status'] != 'ok') {
+        return [];
+      }
+      return (result.data['events'] as List)
+          .map((e) => ReleaseEvent(Map<String, dynamic>.from(e as Map)))
+          .where((e) => e.kind == 'japan' && e.isUpcoming(DateTime.now()))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<ReleaseEvent>> calendarReleases() async {
+    final results = await Future.wait([releases(), _aniSchedule()]);
+    return mergeJapanSchedule(results[0], results[1]);
+  }
 
   Future<List<ReleaseEvent>> _loadReleases(int? animeId) async {
     if (backend == null) return [];

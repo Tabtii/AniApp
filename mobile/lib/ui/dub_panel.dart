@@ -23,12 +23,14 @@ class DubPanel extends StatelessWidget {
     required this.loading,
     required this.onRetry,
     this.error,
+    this.observation = const {},
   });
   final String language, region;
   final List<ReleaseEvent> events;
   final List<Availability> availability;
   final bool loading;
   final String? error;
+  final Map<String, dynamic> observation;
   final VoidCallback onRetry;
   @override
   Widget build(BuildContext context) {
@@ -67,10 +69,49 @@ class DubPanel extends StatelessWidget {
             const SizedBox(height: 14),
             if (loading)
               const LinearProgressIndicator()
-            else if (error != null) ...[
-              Text(error!),
-              TextButton(onPressed: onRetry, child: const Text('Erneut laden')),
-            ] else ...[
+            else ...[
+              if (['available', 'partial'].contains(observation['status'])) ...[
+                Text(
+                  observation['status'] == 'partial'
+                      ? 'Teilweise synchronisiert'
+                      : 'Synchronfassung vorhanden',
+                  style: TextStyle(
+                    color: scheme.primary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Laut MyDubList. Anbieter, Region und Veröffentlichung einzelner Folgen sind damit noch nicht bestätigt.',
+                  style: TextStyle(fontSize: 12),
+                ),
+                if (observation['checked_at'] is String)
+                  Text(
+                    'Abgerufen: ${shortDate(DateTime.tryParse(observation['checked_at'] as String))}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                TextButton(
+                  onPressed: () => openSource(context, 'https://mydublist.com'),
+                  child: const Text('Quelle: MyDubList'),
+                ),
+                if (events.isNotEmpty || available.isNotEmpty)
+                  const Divider(height: 24),
+              ],
+              if (observation['status'] == 'original_language')
+                const Text(
+                  'Japanisch ist die Originalsprache der meisten Anime. Die Audioauswahl bitte beim Anbieter prüfen.',
+                ),
+              if (error != null) ...[
+                Text(error!),
+                TextButton(
+                  onPressed: onRetry,
+                  child: const Text('Erneut laden'),
+                ),
+              ],
+              if (observation['status'] == 'unavailable')
+                const Text(
+                  'Die zusätzliche Sprachquelle MyDubList ist gerade nicht erreichbar.',
+                ),
               if (available.isNotEmpty) ...[
                 Text(
                   'Als verfügbar gemeldet',
@@ -85,7 +126,15 @@ class DubPanel extends StatelessWidget {
                   style: TextStyle(fontSize: 12),
                 ),
               ],
-              if (events.isEmpty && available.isEmpty)
+              if (events.isEmpty &&
+                  available.isEmpty &&
+                  error == null &&
+                  ![
+                    'available',
+                    'partial',
+                    'original_language',
+                    'unavailable',
+                  ].contains(observation['status']))
                 const Text(
                   'Noch keine belegte Dub-Ankündigung für diesen Titel und diese Region hinterlegt.',
                 ),

@@ -1,6 +1,6 @@
 # AniApp — Android & iOS
 
-The new shared Flutter app is in [`mobile/`](mobile/). Version 0.3.2 adds a season-independent provider calendar, automatically refreshed ADN episode dates and reviewed Netflix/aniverse slots, plus a custom AniApp mark and sourced dub-announcement details alongside a cover-led discovery screen, real news image previews, a poster timeline, and a refreshed light/dark design. It includes seasonal discovery, watchlists and the Supabase integration for news, release dates and language availability. See [setup and implementation status](docs/IMPLEMENTATION.md).
+The new shared Flutter app is in [`mobile/`](mobile/). Version 0.3.3 adds MyDubList language observations and prepared TMDb/JustWatch and AniList adapters (see [activation requirements](docs/DATA_SOURCES.md)), alongside a season-independent provider calendar, automatically refreshed ADN episode dates and reviewed Netflix/aniverse slots, plus a custom AniApp mark and sourced dub-announcement details alongside a cover-led discovery screen, real news image previews, a poster timeline, and a refreshed light/dark design. It includes seasonal discovery, watchlists and the Supabase integration for news, release dates and language availability. See [setup and implementation status](docs/IMPLEMENTATION.md).
 
 The original Kotlin application below remains as a historical training reference.
 

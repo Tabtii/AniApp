@@ -28,7 +28,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
     _settings = _key;
-    future = widget.store.releases();
+    future = widget.store.calendarReleases();
     widget.store.addListener(_changed);
   }
 
@@ -39,7 +39,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           _settings = _key;
           selectedDay = null;
           selectedProvider = null;
-          future = widget.store.releases();
+          future = widget.store.calendarReleases();
         }
       });
     }
@@ -52,7 +52,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<void> reload() async {
-    final next = widget.store.releases();
+    final next = widget.store.calendarReleases();
     setState(() => future = next);
     try {
       await next;

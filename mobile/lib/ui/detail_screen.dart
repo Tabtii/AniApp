@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/app_store.dart';
 import '../models/anime.dart';
 import '../models/content.dart';
+import '../models/enrichment.dart';
 import 'common.dart';
 import 'visuals.dart';
 import 'dub_panel.dart';
@@ -21,6 +22,8 @@ class _DetailScreenState extends State<DetailScreen> {
   List<ReleaseEvent> releases = [];
   List<ReleaseEvent> dubs = [];
   String? dubError;
+  AnimeEnrichment enrichment = AnimeEnrichment.empty;
+  String? enrichmentError;
   bool loading = true;
   String? error, availabilityError, releaseError;
   String get _settings =>
@@ -57,9 +60,24 @@ class _DetailScreenState extends State<DetailScreen> {
       releases = [];
       dubs = [];
       dubError = null;
+      enrichment = AnimeEnrichment.empty;
+      enrichmentError = null;
     });
     releaseError = null;
     await Future.wait([
+      (() async {
+        try {
+          final value = await widget.store.enrichment(anime.id);
+          if (current()) setState(() => enrichment = value);
+        } catch (_) {
+          if (current()) {
+            setState(
+              () => enrichmentError =
+                  'Zusätzliche Sprach- und Anbieterdaten sind gerade nicht erreichbar.',
+            );
+          }
+        }
+      })(),
       (() async {
         try {
           final value = await widget.store.catalog.detail(anime.id);
@@ -133,7 +151,10 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Artwork(anime.image, alignment: Alignment.topCenter),
+                  Artwork(
+                    enrichment.banner ?? anime.image,
+                    alignment: Alignment.topCenter,
+                  ),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -208,6 +229,7 @@ class _DetailScreenState extends State<DetailScreen> {
             availability: availability,
             loading: loading,
             error: dubError,
+            observation: enrichment.dub,
             onRetry: _load,
           ),
           const SizedBox(height: 6),
@@ -218,8 +240,11 @@ class _DetailScreenState extends State<DetailScreen> {
           if (loading) const LinearProgressIndicator(),
           if (error != null ||
               availabilityError != null ||
-              releaseError != null) ...[
-            Text(error ?? availabilityError ?? releaseError!),
+              releaseError != null ||
+              enrichmentError != null) ...[
+            Text(
+              error ?? availabilityError ?? releaseError ?? enrichmentError!,
+            ),
             TextButton(onPressed: _load, child: const Text('Erneut versuchen')),
           ],
           const SizedBox(height: 16),
@@ -231,14 +256,30 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            anime.synopsis ?? 'Noch keine Beschreibung verfügbar.',
+            enrichment.overview ??
+                anime.synopsis ??
+                'Noch keine Beschreibung verfügbar.',
             style: TextStyle(
               height: 1.65,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
+          if (enrichment.overview != null)
+            TextButton(
+              onPressed: () =>
+                  openSource(context, enrichment.streaming['source'] as String),
+              child: const Text('Deutsche Beschreibung: TMDb'),
+            ),
+          if (enrichment.anilist['status'] == 'ok')
+            TextButton(
+              onPressed: () =>
+                  openSource(context, enrichment.anilist['source'] as String),
+              child: const Text('Bilder & Episodentermine: AniList'),
+            ),
           const SizedBox(height: 20),
-          ...releases
+          ...mergeJapanSchedule(releases, [
+                if (enrichment.nextRelease != null) enrichment.nextRelease!,
+              ])
               .where((e) => e.kind != 'dub')
               .map(
                 (e) => Card(
@@ -262,7 +303,8 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                         Text(
                           e.status == 'estimated'
-                              ? 'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
+                              ? e.note ??
+                                    'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
                               : 'Angekündigter Termin',
                         ),
                         TextButton(
@@ -291,12 +333,12 @@ class _DetailScreenState extends State<DetailScreen> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 12),
-          if (availability.isEmpty && !loading)
+          if (availability.isEmpty && enrichment.providers.isEmpty && !loading)
             Text(
               availabilityError ??
-                  'Für diesen Titel und diese Region ist noch keine verlässliche Sprachangabe verfügbar.',
+                  'Für diesen Titel und diese Region liegen noch keine verlässlichen Anbieterangaben vor.',
             ),
-          if (availability.isEmpty && !loading)
+          if (availability.isEmpty && enrichment.providers.isEmpty && !loading)
             TextButton.icon(
               onPressed: () => openSource(
                 context,
@@ -305,7 +347,19 @@ class _DetailScreenState extends State<DetailScreen> {
               icon: const Icon(Icons.open_in_new),
               label: const Text('Anbieterübersicht auf MyAnimeList'),
             ),
-          ...availability.map(
+          if (enrichment.streaming['status'] == 'unavailable')
+            const Text('TMDb / JustWatch ist gerade nicht erreichbar.'),
+          if (enrichment.providers.isNotEmpty) ...[
+            const Text(
+              'Anbieterdaten: JustWatch über TMDb. Verfügbarkeit und Sprachen bitte beim Anbieter prüfen.',
+            ),
+            TextButton(
+              onPressed: () =>
+                  openSource(context, 'https://github.com/Fribb/anime-lists'),
+              child: const Text('Titelzuordnung: Fribb / anime-lists'),
+            ),
+          ],
+          ...[...availability, ...enrichment.providers].map(
             (a) => Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -324,8 +378,29 @@ class _DetailScreenState extends State<DetailScreen> {
                     Text(
                       a.scope == 'episode'
                           ? 'Folge ${a.episode ?? '?'}'
-                          : 'Angabe für ${a.scope == 'season' ? 'die Staffel' : 'die Serie'}; kann je Folge abweichen.',
+                          : a.scope == 'movie'
+                          ? 'Angabe für den Film.'
+                          : a.scope == 'season'
+                          ? 'Angabe für Staffel ${a.season ?? '?'}; Episodenabdeckung bitte prüfen.'
+                          : 'Angabe für die Serie; kann je Staffel und Folge abweichen.',
                     ),
+                    if (a.offers.isNotEmpty)
+                      Text(
+                        a.offers
+                            .map(
+                              (o) =>
+                                  const {
+                                    'flatrate': 'Abo',
+                                    'free': 'Kostenlos',
+                                    'ads': 'Mit Werbung',
+                                    'rent': 'Leihen',
+                                    'buy': 'Kaufen',
+                                  }[o] ??
+                                  o,
+                            )
+                            .join(' · '),
+                      ),
+                    if (a.sourceName != null) Text('Quelle: ${a.sourceName}'),
                     Text(
                       'Audio: ${a.audio == null
                           ? 'Unbekannt'
@@ -347,7 +422,11 @@ class _DetailScreenState extends State<DetailScreen> {
                     TextButton.icon(
                       onPressed: () => openSource(context, a.url),
                       icon: const Icon(Icons.open_in_new),
-                      label: const Text('Beim Anbieter prüfen'),
+                      label: Text(
+                        a.sourceName == 'TMDb / JustWatch'
+                            ? 'Angebote auf TMDb öffnen'
+                            : 'Beim Anbieter prüfen',
+                      ),
                     ),
                   ],
                 ),

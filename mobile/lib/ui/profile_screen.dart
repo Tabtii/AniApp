@@ -4,6 +4,7 @@ import '../data/app_store.dart';
 import 'common.dart';
 import 'login_dialog.dart';
 import 'visuals.dart';
+import 'sources_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.store});
@@ -191,6 +192,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 24),
         const Text(
           'Audio und Untertitel werden getrennt ausgewiesen. Angaben können sich je Anbieter, Region, Staffel und Folge unterscheiden.',
+        ),
+        const SizedBox(height: 16),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.info_outline_rounded),
+          title: const Text('Datenquellen & Hinweise'),
+          trailing: const Icon(Icons.chevron_right_rounded),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SourcesScreen()),
+          ),
         ),
       ],
     );

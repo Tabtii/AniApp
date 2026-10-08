@@ -28,7 +28,7 @@ The release importer reads every page of Tenrai's currently airing schedule and 
 
 Five German Crunchyroll series pages were retrieved live and reviewed for audio and subtitles: Frieren, The Apothecary Diaries, Black Clover, Solo Leveling and DAN DA DAN. The factual observations and source URLs are recorded in `supabase/content/availability-reviewed-2026-10-08.json` and published in Supabase. These are dated series-level observations, **not an automatically refreshed or comprehensive language feed**, and are not copied to unverified seasons or other regions. Other titles retain an explicit unknown-language state and a link to the MAL provider overview. Provider access/subscriptions may still differ per region and episode. Push notifications and a comprehensive German dub calendar are not implemented.
 
-AniList is deliberately not integrated pending clarification of its competing-tracker restriction. Japanese broadcast schedules are displayed as regular Japanese broadcast information, never as a confirmed local streaming release.
+Version 0.3.3 adds the `anime-enrichment` gateway and mobile panels for MyDubList, TMDb/JustWatch and AniList. MyDubList runs without credentials. TMDb requires a server-side API credential; AniList is implemented but disabled pending permission under its competing-tracker restriction. See [source behavior, activation and limitations](DATA_SOURCES.md). Japanese broadcasts never imply a confirmed local streaming or dub release.
 
 ## Run
 
