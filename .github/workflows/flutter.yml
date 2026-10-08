@@ -2,7 +2,8 @@ name: Flutter Android and iOS
 on:
   pull_request:
   push:
-    branches: [master, feature/anime-companion]
+    # Feature branches are checked by pull_request; don't run every job twice.
+    branches: [master]
 env:
   FLUTTER_SUPPRESS_ANALYTICS: true
 permissions:
