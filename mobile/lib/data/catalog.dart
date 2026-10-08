@@ -29,13 +29,13 @@ class Catalog {
   Future<void> _queue = Future.value();
   DateTime _lastRequest = DateTime.fromMillisecondsSinceEpoch(0);
 
-  // Serialise Jikan requests: at most one request per second per client.
+  // Serialise public catalog requests: at most one request per second per client.
   Future<Map<String, dynamic>> _get(
     String path,
     Map<String, String> query,
     DateTime deadline,
   ) async {
-    final uri = Uri.https('api.jikan.moe', '/v4/$path', query);
+    final uri = Uri.https('api.tenrai.org', '/v1/$path', query);
     final waitFor = _queue;
     final completion = Completer<void>();
     _queue = completion.future;
@@ -79,7 +79,7 @@ class Catalog {
     String path,
     Map<String, String> query,
   ) {
-    final key = Uri.https('api.jikan.moe', '/v4/$path', query).toString();
+    final key = Uri.https('api.tenrai.org', '/v1/$path', query).toString();
     final cached = _cache[key];
     if (cached != null &&
         DateTime.now().difference(cached.$1) < const Duration(minutes: 15)) {
@@ -120,7 +120,7 @@ class Catalog {
     Map<String, String> query,
     DateTime deadline,
   ) async {
-    // The server keeps provider credentials private and can use MAL + Jikan.
+    // The server keeps provider credentials private and can use MAL + Tenrai.
     if (backend != null && DateTime.now().isAfter(_backendRetryAfter)) {
       try {
         final result = await backend!.functions

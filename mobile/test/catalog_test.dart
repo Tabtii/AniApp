@@ -86,6 +86,8 @@ void main() {
       final catalog = Catalog(
         client: MockClient((request) async {
           calls++;
+          expect(request.url.host, 'api.tenrai.org');
+          expect(request.url.path, '/v1/anime');
           expect(request.url.queryParameters['q'], 'A & B');
           expect(request.url.queryParameters['sfw'], 'true');
           expect(request.url.queryParameters['genres'], '7');

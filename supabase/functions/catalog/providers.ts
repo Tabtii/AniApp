@@ -30,7 +30,7 @@ export function malAnime(node: Json): Json {
       ? `${node.broadcast.day_of_the_week ?? ''} ${node.broadcast.start_time ?? ''} (Japan)` : null}};
 }
 export function malUrl(path: string, query: Record<string, string>): URL | null {
-  // MAL search does not support these genre filters; use Jikan to preserve semantics.
+  // MAL search does not support these genre filters; use Tenrai to preserve semantics.
   if (query.genres) return null;
   const fields = 'id,title,main_picture,alternative_titles,mean,num_episodes,synopsis,genres,broadcast';
   let target: string;
@@ -60,12 +60,16 @@ export async function fetchCatalog(path: string, query: Record<string, string>, 
     try {
       const result = await fetcher(official, {headers: {'X-MAL-CLIENT-ID': clientId!}, signal: AbortSignal.timeout(8000)});
       if (result.ok) return normalizeMal(await result.json(), /\/full$/.test(path));
-      // All errors fall back to read-only Jikan, including missing catalog entries.
+      // All errors fall back to read-only Tenrai, including missing catalog entries.
     } catch { /* Fallback below. */ }
   }
-  const jikan = new URL(`https://api.jikan.moe/v4/${path}`);
-  Object.entries(query).forEach(([key, value]) => jikan.searchParams.set(key, value));
-  const result = await fetcher(jikan, {signal: AbortSignal.timeout(10000)});
+  const tenrai = new URL(`https://api.tenrai.org/v1/${path}`);
+  Object.entries(query).forEach(([key, value]) => tenrai.searchParams.set(key, value));
+  const result = await fetcher(tenrai, {headers: {'Accept': 'application/json'}, signal: AbortSignal.timeout(8000)});
   if (!result.ok) throw new Error(`Catalog upstream ${result.status}`);
-  return {...await result.json(), source: 'jikan'};
+  const value = await result.json();
+  if (path.endsWith('/full') ? !value?.data || !Number.isInteger(value.data.mal_id) : !Array.isArray(value?.data)) {
+    throw new Error('Invalid catalog response');
+  }
+  return {...value, source: 'tenrai'};
 }
