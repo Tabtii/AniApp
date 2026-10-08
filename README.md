@@ -1,6 +1,6 @@
 # AniApp — Android & iOS
 
-The new shared Flutter app is in [`mobile/`](mobile/). Version 0.3.3 adds MyDubList language observations and prepared TMDb/JustWatch and AniList adapters (see [activation requirements](docs/DATA_SOURCES.md)), alongside a season-independent provider calendar, automatically refreshed ADN episode dates and reviewed Netflix/aniverse slots, plus a custom AniApp mark and sourced dub-announcement details alongside a cover-led discovery screen, real news image previews, a poster timeline, and a refreshed light/dark design. It includes seasonal discovery, watchlists and the Supabase integration for news, release dates and language availability. See [setup and implementation status](docs/IMPLEMENTATION.md).
+The shared Flutter app is in [`mobile/`](mobile/). Version 0.3.4 adds keyless Kitsu detail metadata, images and trailer links, plus an own ADN News scraper serving short sourced previews through Supabase. It also corrects the One Piece weekly estimate using a reviewed publisher pause notice. Seasonal discovery, watchlists, multilingual dub observations, news previews and a season-independent calendar run on Android and iOS. TMDb and AniList adapters still require their [activation prerequisites](docs/DATA_SOURCES.md). See [setup and implementation status](docs/IMPLEMENTATION.md).
 
 The original Kotlin application below remains as a historical training reference.
 

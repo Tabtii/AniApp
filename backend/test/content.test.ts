@@ -39,6 +39,12 @@ test('preview images stay on source CDNs and excerpts are bounded',()=>{
 
 test('broadcast calendar includes past-season and long-running anime without a season filter',()=>{
  const continuing={...anime,season:'spring',year:2026,aired:{from:'2026-04-01T00:00:00Z',to:null}};
- const longRunning={...anime,mal_id:21,season:'fall',year:1999};
- assert.deepEqual(broadcastEvents([continuing,longRunning],now).map(r=>r.mal_id),[1,21]);
+ const longRunning={...anime,mal_id:235,season:'winter',year:1996};
+ assert.deepEqual(broadcastEvents([continuing,longRunning],now).map(r=>r.mal_id),[1,235]);
+});
+
+test('reviewed broadcast pause suppresses weekly estimates without inventing a return date',()=>{
+ const onePiece={...anime,mal_id:21};
+ assert.equal(broadcastEvents([onePiece],new Date('2026-10-03T10:00:00Z')).length,1);
+ assert.deepEqual(broadcastEvents([onePiece],now),[]);
 });

@@ -1,4 +1,5 @@
 // Read-only enrichment. MAL identity stays canonical; no title-based matches.
+import {kitsuDetails,kitsuLookupUrl} from './kitsu.ts';
 export type Json = Record<string, any>;
 export const mappingSource = 'https://github.com/Fribb/anime-lists';
 const mappingUrl = 'https://raw.githubusercontent.com/Fribb/anime-lists/master/anime-list-mini.json';
@@ -142,6 +143,15 @@ export class Enrichment {
         overview:result.value.overview,source:`https://www.themoviedb.org/${path}`,checked_at:result.checkedAt};
     } catch {return {status:'unavailable',providers:[]};}
   }
+  async kitsu(malId:number):Promise<Json> {
+    try {
+      const result=await this.cached(`kitsu:${malId}`,3600000,async()=>{
+        const data=await this.json(kitsuLookupUrl(malId),{headers:{Accept:'application/vnd.api+json'}});
+        return {detail:kitsuDetails(data,malId)};
+      });
+      return result.value.detail?{status:'ok',...result.value.detail,checked_at:result.checkedAt}:{status:'unmapped'};
+    }catch{return {status:'unavailable'};}
+  }
   private async aniQuery(query:string,variables:Json):Promise<Json> {
     if(!this.options.anilistApproved)throw new Error('AniList approval required');
     if(Date.now()<this.aniCooldown)throw new Error('AniList cooldown');
@@ -182,7 +192,7 @@ export class Enrichment {
     }catch{return {status:'unavailable',events:[]};}
   }
   async detail(malId:number, language:string,region:string):Promise<Json>{
-    const [dub,streaming,anilist]=await Promise.all([this.dub(malId,language),this.tmdb(malId,region),this.anilist(malId)]);
-    return {mal_id:malId,language,region,dub,streaming,anilist};
+    const [dub,streaming,anilist,kitsu]=await Promise.all([this.dub(malId,language),this.tmdb(malId,region),this.anilist(malId),this.kitsu(malId)]);
+    return {mal_id:malId,language,region,dub,streaming,anilist,kitsu};
   }
 }

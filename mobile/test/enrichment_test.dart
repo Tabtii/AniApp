@@ -10,8 +10,91 @@ import 'package:aniapp/models/content.dart';
 import 'package:aniapp/models/enrichment.dart';
 import 'package:aniapp/ui/dub_panel.dart';
 import 'package:aniapp/ui/sources_screen.dart';
+import 'package:aniapp/ui/kitsu_panel.dart';
 
 void main() {
+  test(
+    'reviewed pause suppresses calculated slots but preserves local releases',
+    () {
+      final result = mergeJapanSchedule(
+        [
+          ReleaseEvent({
+            'mal_id': 21,
+            'kind': 'japan',
+            'provider': 'ADN News',
+            'status': 'delayed',
+          }),
+          ReleaseEvent({
+            'mal_id': 21,
+            'kind': 'japan',
+            'provider': 'Tenrai / MyAnimeList',
+            'starts_on': '2026-10-11',
+          }),
+          ReleaseEvent({
+            'mal_id': 21,
+            'kind': 'dub',
+            'provider': 'Provider',
+            'starts_on': '2026-10-12',
+          }),
+        ],
+        [
+          ReleaseEvent({
+            'mal_id': 21,
+            'kind': 'japan',
+            'provider': 'AniList',
+            'starts_on': '2026-10-11',
+          }),
+        ],
+      );
+      expect(result.length, 2);
+      expect(result.where((e) => e.kind == 'japan').single.date, isNull);
+      expect(result.where((e) => e.kind == 'dub').length, 1);
+    },
+  );
+  testWidgets(
+    'Kitsu metadata and source fit large text without implying German releases',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(320, 740));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(1.3)),
+            child: child!,
+          ),
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: KitsuPanel(
+                data: {
+                  'status': 'ok',
+                  'airing_status': 'finished',
+                  'episodes': 28,
+                  'episode_minutes': 24,
+                  'start_date': '2023-09-29',
+                  'end_date': '2024-03-22',
+                  'checked_at': '2026-10-08T17:00:00Z',
+                  'source': 'https://kitsu.app/anime/46474',
+                  'trailer_url': 'https://www.youtube.com/watch?v=qgQunxD0qCk',
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('28 Folgen'), findsOneWidget);
+      expect(find.textContaining('Originalausstrahlung:'), findsOneWidget);
+      expect(
+        find.textContaining('deutsche Veröffentlichungen'),
+        findsOneWidget,
+      );
+      expect(find.text('Quelle: Kitsu'), findsOneWidget);
+      expect(find.text('Trailer auf YouTube'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
   test(
     'episode schedule replaces only corresponding estimated Japanese slots',
     () {

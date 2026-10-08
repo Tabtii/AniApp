@@ -1,3 +1,4 @@
+import {pausedIds} from './reviewed-pauses.ts';
 export type Row = Record<string, any>;
 export function sourceImage(value: unknown, host: string): string | null {
   if (typeof value !== 'string' || value.length > 2048) return null;
@@ -12,7 +13,9 @@ const days = ['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays',
 export function broadcastEvents(anime: Row[], now = new Date()): Row[] {
   const result: Row[] = [];
   const jst = new Date(now.getTime() + 9 * 3600000);
+  const paused=pausedIds(now);
   for (const a of anime) {
+    if(paused.has(a.mal_id))continue;
     const b = a.broadcast, day = days.indexOf(b?.day);
     if (!a.airing || !Number.isInteger(a.mal_id) || a.mal_id <= 0 || day < 0 || b.timezone !== 'Asia/Tokyo' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(b.time ?? '')) continue;
     if (!a.title || (a.explicit_genres?.length ?? 0) > 0) continue;

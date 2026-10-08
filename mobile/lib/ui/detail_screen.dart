@@ -7,6 +7,7 @@ import '../models/enrichment.dart';
 import 'common.dart';
 import 'visuals.dart';
 import 'dub_panel.dart';
+import 'kitsu_panel.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.anime, required this.store});
@@ -128,7 +129,12 @@ class _DetailScreenState extends State<DetailScreen> {
         }
       })(),
     ]);
-    if (current()) setState(() => loading = false);
+    if (current()) {
+      setState(() {
+        loading = false;
+        if (enrichment.kitsu['status'] == 'ok') error = null;
+      });
+    }
   }
 
   @override
@@ -233,6 +239,8 @@ class _DetailScreenState extends State<DetailScreen> {
             onRetry: _load,
           ),
           const SizedBox(height: 6),
+          KitsuPanel(data: enrichment.kitsu),
+          const SizedBox(height: 6),
           Wrap(
             spacing: 8,
             children: anime.genres.map((g) => Chip(label: Text(g))).toList(),
@@ -258,6 +266,7 @@ class _DetailScreenState extends State<DetailScreen> {
           Text(
             enrichment.overview ??
                 anime.synopsis ??
+                enrichment.synopsis ??
                 'Noch keine Beschreibung verfügbar.',
             style: TextStyle(
               height: 1.65,
@@ -275,6 +284,12 @@ class _DetailScreenState extends State<DetailScreen> {
               onPressed: () =>
                   openSource(context, enrichment.anilist['source'] as String),
               child: const Text('Bilder & Episodentermine: AniList'),
+            ),
+          if (enrichment.kitsu['status'] == 'ok')
+            TextButton(
+              onPressed: () =>
+                  openSource(context, enrichment.kitsu['source'] as String),
+              child: const Text('Zusätzliche Bilder & Infos: Kitsu'),
             ),
           const SizedBox(height: 20),
           ...mergeJapanSchedule(releases, [
@@ -302,10 +317,12 @@ class _DetailScreenState extends State<DetailScreen> {
                               : 'Termin noch offen',
                         ),
                         Text(
-                          e.status == 'estimated'
-                              ? e.note ??
-                                    'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
-                              : 'Angekündigter Termin',
+                          e.note ??
+                              (e.status == 'estimated'
+                                  ? 'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
+                                  : e.status == 'delayed'
+                                  ? 'Pause oder Verschiebung – Termin offen'
+                                  : 'Angekündigter Termin'),
                         ),
                         TextButton(
                           onPressed: () => openSource(context, e.source),

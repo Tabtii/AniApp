@@ -1,6 +1,26 @@
-# Enrichment sources (0.3.3)
+# Enrichment sources (0.3.4)
 
 `anime-enrichment` is a read-only Edge Function. The mobile app calls it with a MAL ID, selected country and language; the project publishable key is required. It has bounded requests, timeouts, input validation, in-flight request coalescing and isolate-local caches/quotas. There are no new tables, no service-role client operations, and no edits to users' watchlists.
+
+## Kitsu — active public detail API
+
+The public JSON:API at <https://kitsu.app/api/edge> adds an independent source for episode totals, running time, original airing dates/status, cover/banner images, synopsis fallback and external YouTube trailer links. It needs no account/API credential. Official API reference: <https://hummingbird-me.github.io/api-docs/>.
+
+`mappings?filter[externalSite]=myanimelist/anime&filter[externalId]=<MAL_ID>&include=item` resolves exact identities. Returned mapping IDs are checked even if upstream filters were ignored. Missing, conflicting, paginated or adult mappings are not used. Detail requests are cached for an hour per instance and fail independently of dub/streaming sources. The UI labels Kitsu and original airing dates; they do not imply local streaming availability or a German dub date. Primary search/season discovery still uses the existing catalog gateway; Kitsu is a detail supplement, not a complete offline catalog replacement.
+
+## Own ADN News scraper — active, no paid crawler service
+
+`content-sync/adn-news.ts` reads <https://news.animationdigitalnetwork.com/robots.txt>, discovers German articles through `/de/feed/` (or the public German index only when the feed is missing), and fetches up to eight dated article pages. It stores only headline, a maximum 20-word preview, source image URL, article publication date, fetch time and source link in the existing `news` table. It does not copy full articles or infer anime IDs, episode dates or dub dates from a news publication date.
+
+Only the fixed ADN News origin and dated German article paths are permitted. The scraper respects matching robots rules/crawl-delay, spaces requests by at least one second, rejects redirects, and stops on access/rate-limit responses. Each page has an eight-second timeout and 1.5 MB response limit; the total crawl budget is 45 seconds. Each article is refreshed at most once per day. Feed/metadata failures preserve previously published rows and appear in the private sync report. There is no browser login, CAPTCHA workaround, Firecrawl or additional scraping subscription. Existing Supabase quota/hosting limits still apply.
+
+The existing hourly content-sync schedule also collects Anime2You/MyAnimeList news and provider episode data. Flutter reads the shared published news through Supabase; each phone does not crawl the publisher independently.
+
+### Reviewed pause notices
+
+ADN's [4 October One Piece announcement](https://news.animationdigitalnetwork.com/de/2026/10/04/warum-gibt-es-diese-woche-keine-neue-folge-one-piece/) says the series pauses after episode 1180 and does not confirm a resumption date (reviewed 8 October 2026). `reviewed-pauses.ts` suppresses this title's recurring Japanese estimate and publishes a sourced, undated `delayed` event. This is a **human-reviewed exception**, not automatic interpretation of every crawled article. Older-season shows otherwise stay in the calendar, and local dub/provider events remain separate.
+
+When a publisher confirms resumption, remove/update the reviewed exception **and retire its exact ADN News pause row** before allowing weekly estimates again. Until then the app shows the dated source notice and an unknown return date. Never use article publication time as an episode time.
 
 ## MyDubList — active without a key
 
@@ -36,7 +56,7 @@ Prepared functionality:
 
 ## Deployment and validation
 
-Deploy `supabase/functions/anime-enrichment/index.ts` with its `deno.json`, `providers.ts`, and `../catalog/auth.ts`. JWT gateway verification is disabled only because the function validates the project's publishable key itself, matching `catalog`. This function cannot read or mutate private database rows.
+Deploy `supabase/functions/anime-enrichment/index.ts` with its `deno.json`, `providers.ts`, `kitsu.ts`, and `../catalog/auth.ts`. Deploy `content-sync/index.ts` with `deno.json`, `content.ts`, `adn.ts`, `adn-news.ts` and `reviewed-pauses.ts`. JWT gateway verification is disabled only because enrichment validates the project's publishable key itself, matching `catalog`; content-sync retains its private Vault-backed sync token and lease. Enrichment cannot read or mutate private database rows. No new schema or credentials are needed.
 
 Tests cover ID/season/region separation, language uncertainty, outages, attribution, AniList approval gating, cooldown and calendar merging. Fixtures are test-only. MyDubList can be smoke-tested live immediately; TMDb and AniList require the prerequisites above before a real upstream smoke test can be claimed.
 

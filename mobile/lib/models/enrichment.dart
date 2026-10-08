@@ -10,8 +10,12 @@ class AnimeEnrichment {
       Map<String, dynamic>.from(data['streaming'] as Map? ?? {});
   Map<String, dynamic> get anilist =>
       Map<String, dynamic>.from(data['anilist'] as Map? ?? {});
+  Map<String, dynamic> get kitsu =>
+      Map<String, dynamic>.from(data['kitsu'] as Map? ?? {});
   String? get overview => streaming['overview'] as String?;
-  String? get banner => anilist['banner'] as String?;
+  String? get banner =>
+      anilist['banner'] as String? ?? kitsu['banner'] as String?;
+  String? get synopsis => kitsu['synopsis'] as String?;
   ReleaseEvent? get nextRelease => anilist['next_release'] is Map
       ? ReleaseEvent(Map<String, dynamic>.from(anilist['next_release'] as Map))
       : null;
@@ -24,13 +28,20 @@ List<ReleaseEvent> mergeJapanSchedule(
   List<ReleaseEvent> existing,
   List<ReleaseEvent> anilist,
 ) {
+  final paused = existing
+      .where(
+        (e) => e.kind == 'japan' && e.status == 'delayed' && e.date == null,
+      )
+      .map((e) => e.animeId)
+      .toSet();
+  anilist = anilist.where((e) => !paused.contains(e.animeId)).toList();
   final ids = anilist.map((e) => e.animeId).toSet();
   final result = [
     ...existing.where(
       (e) =>
           !(e.kind == 'japan' &&
               e.provider == 'Tenrai / MyAnimeList' &&
-              ids.contains(e.animeId)),
+              (ids.contains(e.animeId) || paused.contains(e.animeId))),
     ),
     ...anilist,
   ];

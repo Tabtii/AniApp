@@ -33,6 +33,19 @@ class SourcesScreen extends StatelessWidget {
           child: const Text('Fehlerhafte Dub-Angabe melden'),
         ),
         const Divider(height: 32),
+        Text(
+          'Zusätzliche Anime-Infos: Kitsu',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Bilder, Laufzeit, Episodenzahl, Originalausstrahlung und Trailer stammen bei Kennzeichnung von Kitsu. Titel werden über die dort hinterlegte MyAnimeList-ID zugeordnet. Angaben sind keine deutschen Streaming- oder Dub-Termine.',
+        ),
+        TextButton(
+          onPressed: () => openSource(context, 'https://kitsu.app'),
+          child: const Text('Kitsu'),
+        ),
+        const Divider(height: 32),
         Align(
           alignment: Alignment.centerLeft,
           child: Image.asset('assets/tmdb-logo.png', width: 100),
@@ -82,7 +95,7 @@ class SourcesScreen extends StatelessWidget {
           child: const Text('Tenrai / MyAnimeList'),
         ),
         const Text(
-          'Anbietertermine: unter anderem ADN und geprüfte Ankündigungen. News: Anime2You und MyAnimeList. Originalquellen und Abrufdatum stehen an den jeweiligen Inhalten. Bilder bleiben Eigentum ihrer Rechteinhaber.',
+          'Anbietertermine: unter anderem ADN und geprüfte Ankündigungen. News: Anime2You, MyAnimeList und ADN News. Der eigene ADN-Scraper übernimmt öffentliche Artikel-Metadaten und kurze Vorschauen. Originalquellen und Abrufdatum stehen an den jeweiligen Inhalten. Bilder bleiben Eigentum ihrer Rechteinhaber.',
         ),
       ],
     ),
