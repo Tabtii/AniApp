@@ -1,4 +1,5 @@
 import {fetchCatalog, validateRequest} from './providers.ts';
+import {acceptsPublishableKey} from './auth.ts';
 
 const headers = {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info'};
@@ -9,6 +10,9 @@ Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', {headers});
   if (req.method !== 'POST') return new Response('{}', {status: 405, headers});
   const respond = (value: unknown, status = 200) => new Response(JSON.stringify(value), {status, headers});
+  if (!acceptsPublishableKey(req.headers.get('apikey'), Deno.env.get('SUPABASE_PUBLISHABLE_KEYS'))) {
+    return respond({error: 'A valid project publishable key is required'}, 401);
+  }
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
   const now = Date.now();
   const bucket = clients.get(ip);
@@ -32,5 +36,8 @@ Deno.serve(async (req: Request) => {
     if (cache.size >= 500) cache.delete(cache.keys().next().value!);
     cache.set(key, {until: Date.now() + 15 * 60000, value});
     return respond(value);
-  } catch { return respond({error: 'Catalog is temporarily unavailable'}, 503); }
+  } catch (error) {
+    console.error('Catalog upstream failed:', error instanceof Error ? error.message : 'Unknown error');
+    return respond({error: 'Catalog is temporarily unavailable'}, 503);
+  }
 });

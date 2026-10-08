@@ -83,10 +83,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         message = null;
                       });
                       try {
-                        await widget.store.backend!.auth.signUp(
-                          email: email.text.trim(),
-                          password: password.text,
-                        );
+                        await widget.store.backend!.auth
+                            .signUp(
+                              email: email.text.trim(),
+                              password: password.text,
+                              emailRedirectTo:
+                                  'com.tabtii.aniapp://login-callback/',
+                            )
+                            .timeout(const Duration(seconds: 20));
                         if (context.mounted) {
                           setDialogState(
                             () => message =
@@ -115,10 +119,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         message = null;
                       });
                       try {
-                        await widget.store.backend!.auth.signInWithPassword(
-                          email: email.text.trim(),
-                          password: password.text,
-                        );
+                        await widget.store.backend!.auth
+                            .signInWithPassword(
+                              email: email.text.trim(),
+                              password: password.text,
+                            )
+                            .timeout(const Duration(seconds: 20));
                         if (context.mounted) Navigator.pop(context);
                       } catch (_) {
                         if (context.mounted) {

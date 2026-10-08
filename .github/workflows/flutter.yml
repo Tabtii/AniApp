@@ -24,7 +24,7 @@ jobs:
       - run: dart format --output=none --set-exit-if-changed lib test
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --debug
+      - run: flutter build apk --debug --dart-define-from-file=config/supabase.json
       - uses: actions/upload-artifact@v4
         with:
           name: aniapp-android-debug
@@ -42,7 +42,7 @@ jobs:
           flutter-version: '3.47.6'
           cache: true
       - run: flutter pub get
-      - run: flutter build ios --simulator --debug
+      - run: flutter build ios --simulator --debug --dart-define-from-file=config/supabase.json
   backend:
     runs-on: ubuntu-latest
     steps:
