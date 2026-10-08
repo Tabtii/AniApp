@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,6 +7,8 @@ import 'package:aniapp/data/app_store.dart';
 import 'package:aniapp/main.dart';
 import 'package:aniapp/models/anime.dart';
 import 'package:aniapp/data/catalog.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 class FakeCatalog extends Catalog {
   @override
@@ -13,6 +17,45 @@ class FakeCatalog extends Catalog {
 }
 
 void main() {
+  testWidgets('catalog loading stops on timeout and retry can recover', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final response = Completer<http.Response>();
+    final store = AppStore(
+      await SharedPreferences.getInstance(),
+      catalog: Catalog(client: MockClient((_) => response.future)),
+    );
+    await store.initialize();
+    await tester.pumpWidget(AniApp(store: store));
+    await tester.pump();
+    expect(find.text('Anime werden geladen …'), findsOneWidget);
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byWidgetPredicate(
+              (widget) => widget is IconButton && widget.tooltip == 'Suchen',
+            ),
+          )
+          .onPressed,
+      isNull,
+    );
+    await tester.pump(const Duration(seconds: 13));
+    await tester.pumpAndSettle();
+    expect(find.text('Anime werden geladen …'), findsNothing);
+    expect(find.text('Erneut versuchen'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    response.complete(
+      http.Response('{"data":[{"mal_id":1,"title":"Wieder erreichbar"}]}', 200),
+    );
+    await tester.tap(find.text('Erneut versuchen'));
+    await tester.pumpAndSettle();
+    expect(find.text('Wieder erreichbar'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+    store.dispose();
+  });
+
   testWidgets(
     'five navigation destinations and guest mode render without backend',
     (tester) async {

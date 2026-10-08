@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/app_store.dart';
 import 'common.dart';
+import 'login_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.store});
@@ -27,125 +28,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    final email = TextEditingController(), password = TextEditingController();
-    bool busy = false;
-    String? message;
-    await showDialog<void>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Deine Watchlist überall'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: email,
-                  keyboardType: TextInputType.emailAddress,
-                  autocorrect: false,
-                  decoration: const InputDecoration(labelText: 'E-Mail'),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: password,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Passwort'),
-                ),
-                if (message != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(message!),
-                  ),
-                if (busy) const LinearProgressIndicator(),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: busy ? null : () => Navigator.pop(context),
-              child: const Text('Abbrechen'),
-            ),
-            TextButton(
-              onPressed: busy
-                  ? null
-                  : () async {
-                      if (password.text.length < 8 ||
-                          !email.text.contains('@')) {
-                        setDialogState(
-                          () => message =
-                              'Bitte nutze eine gültige E-Mail und mindestens 8 Zeichen im Passwort.',
-                        );
-                        return;
-                      }
-                      setDialogState(() {
-                        busy = true;
-                        message = null;
-                      });
-                      try {
-                        await widget.store.backend!.auth
-                            .signUp(
-                              email: email.text.trim(),
-                              password: password.text,
-                              emailRedirectTo:
-                                  'com.tabtii.aniapp://login-callback/',
-                            )
-                            .timeout(const Duration(seconds: 20));
-                        if (context.mounted) {
-                          setDialogState(
-                            () => message =
-                                'Bitte bestätige deine E-Mail. Danach kannst du dich anmelden.',
-                          );
-                        }
-                      } catch (_) {
-                        if (context.mounted) {
-                          setDialogState(
-                            () => message =
-                                'Registrierung nicht möglich. Bitte prüfe deine Angaben oder versuche es später.',
-                          );
-                        }
-                      } finally {
-                        if (context.mounted) setDialogState(() => busy = false);
-                      }
-                    },
-              child: const Text('Registrieren'),
-            ),
-            FilledButton(
-              onPressed: busy
-                  ? null
-                  : () async {
-                      setDialogState(() {
-                        busy = true;
-                        message = null;
-                      });
-                      try {
-                        await widget.store.backend!.auth
-                            .signInWithPassword(
-                              email: email.text.trim(),
-                              password: password.text,
-                            )
-                            .timeout(const Duration(seconds: 20));
-                        if (context.mounted) Navigator.pop(context);
-                      } catch (_) {
-                        if (context.mounted) {
-                          setDialogState(
-                            () => message =
-                                'Anmeldung nicht möglich. Prüfe E-Mail, Passwort und E-Mail-Bestätigung.',
-                          );
-                        }
-                      } finally {
-                        if (context.mounted) setDialogState(() => busy = false);
-                      }
-                    },
-              child: const Text('Anmelden'),
-            ),
-          ],
-        ),
-      ),
-    );
-    email.dispose();
-    password.dispose();
-  }
+  Future<void> _login() => showDialog<void>(
+    context: context,
+    builder: (_) => LoginDialog(backend: widget.store.backend!),
+  );
 
   @override
   Widget build(BuildContext context) {

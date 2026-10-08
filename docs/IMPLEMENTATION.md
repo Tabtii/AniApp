@@ -55,6 +55,8 @@ The Flutter app's Supabase accounts are separate from the existing Firebase acco
 
 ## Tests and build checks
 
+Version **0.2.2+4** fixes a reproduced login-dialog crash: text controllers now live in the dialog's own State and are disposed only after the dismissal animation, not when `showDialog` completes. Regression coverage includes focused-field cancellation, Android back, outside-tap dismissal and reopening. Catalog requests have a 12-second overall deadline, a shorter gateway timeout, request coalescing and shared result caching; a failed gateway is skipped briefly. Loading and retry states remain visible when the external anime source is unavailable. This does not resolve an upstream Jikan outage. The hotfix passes 13 Flutter tests and static analysis.
+
 ```sh
 cd mobile
 flutter analyze

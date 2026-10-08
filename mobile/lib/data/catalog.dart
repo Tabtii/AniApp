@@ -14,11 +14,18 @@ class CatalogException implements Exception {
 }
 
 class Catalog {
-  Catalog({http.Client? client, this.backend})
-    : _client = client ?? http.Client();
+  Catalog({
+    http.Client? client,
+    this.backend,
+    this.requestTimeout = const Duration(seconds: 12),
+    this.backendTimeout = const Duration(seconds: 4),
+  }) : _client = client ?? http.Client();
   final http.Client _client;
   final SupabaseClient? backend;
+  final Duration requestTimeout, backendTimeout;
   final Map<String, (DateTime, Map<String, dynamic>)> _cache = {};
+  final Map<String, Future<Map<String, dynamic>>> _inFlight = {};
+  DateTime _backendRetryAfter = DateTime.fromMillisecondsSinceEpoch(0);
   Future<void> _queue = Future.value();
   DateTime _lastRequest = DateTime.fromMillisecondsSinceEpoch(0);
 
@@ -26,13 +33,9 @@ class Catalog {
   Future<Map<String, dynamic>> _get(
     String path,
     Map<String, String> query,
+    DateTime deadline,
   ) async {
     final uri = Uri.https('api.jikan.moe', '/v4/$path', query);
-    final cached = _cache[uri.toString()];
-    if (cached != null &&
-        DateTime.now().difference(cached.$1) < const Duration(minutes: 15)) {
-      return cached.$2;
-    }
     final waitFor = _queue;
     final completion = Completer<void>();
     _queue = completion.future;
@@ -43,10 +46,10 @@ class Catalog {
       if (remaining > 0) {
         await Future<void>.delayed(Duration(milliseconds: remaining));
       }
+      final budget = deadline.difference(DateTime.now());
+      if (budget <= Duration.zero) throw TimeoutException('Catalog deadline');
       _lastRequest = DateTime.now();
-      final response = await _client
-          .get(uri)
-          .timeout(const Duration(seconds: 15));
+      final response = await _client.get(uri).timeout(budget);
       if (response.statusCode == 429) {
         throw const CatalogException(
           'Zu viele Anfragen. Bitte warte kurz und versuche es erneut.',
@@ -58,7 +61,6 @@ class Catalog {
         );
       }
       final json = jsonDecode(response.body) as Map<String, dynamic>;
-      _cache[uri.toString()] = (DateTime.now(), json);
       return json;
     } on TimeoutException {
       throw const CatalogException(
@@ -76,21 +78,64 @@ class Catalog {
   Future<Map<String, dynamic>> _request(
     String path,
     Map<String, String> query,
+  ) {
+    final key = Uri.https('api.jikan.moe', '/v4/$path', query).toString();
+    final cached = _cache[key];
+    if (cached != null &&
+        DateTime.now().difference(cached.$1) < const Duration(minutes: 15)) {
+      return Future.value(cached.$2);
+    }
+    final pending = _inFlight[key];
+    if (pending != null) return pending;
+    final deadline = DateTime.now().add(requestTimeout);
+    final operation = _fetch(path, query, deadline)
+        .timeout(
+          requestTimeout,
+          onTimeout: () {
+            throw const CatalogException(
+              'Die Anime-Quelle antwortet gerade nicht. Bitte versuche es später erneut.',
+            );
+          },
+        )
+        .then((value) {
+          if (path.endsWith('/full')
+              ? value['data'] is! Map
+              : value['data'] is! List) {
+            throw const CatalogException(
+              'Die Anime-Quelle liefert gerade ungültige Daten.',
+            );
+          }
+          _cache[key] = (DateTime.now(), value);
+          return value;
+        })
+        .whenComplete(() {
+          _inFlight.remove(key);
+        });
+    _inFlight[key] = operation;
+    return operation;
+  }
+
+  Future<Map<String, dynamic>> _fetch(
+    String path,
+    Map<String, String> query,
+    DateTime deadline,
   ) async {
     // The server keeps provider credentials private and can use MAL + Jikan.
-    if (backend != null) {
+    if (backend != null && DateTime.now().isAfter(_backendRetryAfter)) {
       try {
         final result = await backend!.functions
             .invoke('catalog', body: {'path': path, 'query': query})
-            .timeout(const Duration(seconds: 20));
+            .timeout(backendTimeout);
         if (result.status == 200 && result.data is Map) {
           return Map<String, dynamic>.from(result.data as Map);
         }
       } catch (_) {
         /* The read-only public catalog still works if the backend is unavailable. */
       }
+      // Avoid repeating a slow, failed gateway attempt for every subsequent page.
+      _backendRetryAfter = DateTime.now().add(const Duration(minutes: 1));
     }
-    return _get(path, query);
+    return _get(path, query, deadline);
   }
 
   Future<AnimePage> season(int year, String season, int page) async => _page(

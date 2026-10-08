@@ -90,14 +90,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
             suffixIcon: IconButton(
               tooltip: 'Suchen',
               icon: const Icon(Icons.arrow_forward),
-              onPressed: () {
-                searching = true;
-                page = 1;
-                _load();
-              },
+              onPressed: loading
+                  ? null
+                  : () {
+                      searching = true;
+                      page = 1;
+                      _load();
+                    },
             ),
           ),
           onSubmitted: (_) {
+            if (loading) return;
             searching = true;
             page = 1;
             _load();
@@ -114,11 +117,13 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ChoiceChip(
               label: const Text('Saison'),
               selected: !searching,
-              onSelected: (_) {
-                searching = false;
-                page = 1;
-                _load();
-              },
+              onSelected: loading
+                  ? null
+                  : (_) {
+                      searching = false;
+                      page = 1;
+                      _load();
+                    },
             ),
             if (!searching) ...[
               DropdownButton<int>(
@@ -194,7 +199,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
           ),
         ),
       Expanded(
-        child: items.isEmpty && !loading
+        child: items.isEmpty && loading
+            ? const EmptyPanel(
+                'Anime werden geladen …',
+                icon: Icons.hourglass_top,
+              )
+            : items.isEmpty
             ? EmptyPanel(
                 error == null
                     ? 'Keine Anime gefunden. Versuche andere Suchbegriffe oder Filter.'
