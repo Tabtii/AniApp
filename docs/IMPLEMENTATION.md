@@ -18,7 +18,7 @@ The app uses [Tenrai v1](https://api.tenrai.org/documentation) directly when no 
 
 MAL does not support the UI's genre search or empty search in the same way as Tenrai. Those requests go to Tenrai. Official search results have their provider's native ranking; genre searches and direct fallback use score ordering. Public Tenrai requests need no credentials; its documented public limits are 120 requests/minute and 4 requests/second. The client and gateway rate limits remain below these limits per instance, with caching and bounded timeouts.
 
-News runs without Firecrawl or paid API credentials. The `content-sync` Edge Function reads the public [Anime2You RSS feed](https://www.anime2you.de/feed/) and [Tenrai news endpoint](https://api.tenrai.org/documentation). It publishes current headlines with publisher, language, original date and direct source URL. It does not copy full articles or infer anime IDs from news IDs. The old `scripts/ingest_news.py` is an optional, unused manual draft tool; no scheduled task invokes it.
+News runs without Firecrawl or paid API credentials. The `content-sync` Edge Function reads the public [Anime2You RSS feed](https://www.anime2you.de/feed/) and [Tenrai news endpoint](https://api.tenrai.org/documentation). It publishes current headlines with publisher, language, original date, source image, a short excerpt (at most 20 words), and direct source URL. Image URLs are restricted to the source CDN over HTTPS. It does not copy full articles or infer anime IDs from news IDs. The old `scripts/ingest_news.py` is an optional, unused manual draft tool; no scheduled task invokes it.
 
 The server-side `scripts/ingest_availability.py` adapter fetches Streaming Availability API data for an explicitly reviewed MAL/provider ID match. It imports series-wide audio and subtitle data as unpublished drafts, never infers episode releases from a provider detection timestamp and never silently matches by title. Set `STREAMING_API_KEY` in the server environment. For example: `python scripts/ingest_availability.py --mal-id 123 --show-id tt1234567 --mapping-reviewed --region DE`. Review the ID mapping before invoking it.
 
@@ -49,7 +49,7 @@ Only publishable keys belong in the app. Provider keys, Firecrawl keys and Supab
 
 ## Cloud setup
 
-The dedicated **AniApp** project `pisonrhjrqpqazimiiln` is active in organization **Wolff**, Frankfurt (`eu-central-1`), on the Free plan. Both migrations in `supabase/migrations/` and the read-only `catalog` function are deployed. Existing unrelated projects were not modified. Configure `MAL_CLIENT_ID` as a function secret if using MAL.
+The dedicated **AniApp** project `pisonrhjrqpqazimiiln` is active in organization **Wolff**, Frankfurt (`eu-central-1`), on the Free plan. All migrations in `supabase/migrations/`, the read-only `catalog` function and the scheduled `content-sync` function are deployed. Existing unrelated projects were not modified. Configure `MAL_CLIENT_ID` as a function secret if using MAL.
 
 Email/password sign-up and email confirmation are enabled. The site URL and allowed redirect URL are `com.tabtii.aniapp://login-callback/`, handled by the Android and iOS app. Custom SMTP is **not configured**: [Supabase's default mail service](https://supabase.com/docs/guides/auth/auth-smtp) only sends to organization team members. Public email sign-up needs a mail provider; email confirmation has not been disabled to bypass this requirement. No real user confirmation email or physical-device sign-in has been tested.
 
@@ -59,7 +59,7 @@ The Flutter app's Supabase accounts are separate from the existing Firebase acco
 
 ## Tests and build checks
 
-Version **0.2.3+5** switches the live Supabase catalog and the direct mobile fallback to Tenrai. Live HTTP checks on 2026-10-08 returned 200 for the current fall season, page 2, Naruto search, Fantasy filtering and Frieren details, including a synopsis and MAL IDs. Two returned cover URLs also returned 200 with JPEG images. News, release-events and availability endpoints return 200 with empty lists, correctly reflecting that no reviewed content has been published yet. Supabase recorded approximately 0.5–0.7 seconds of server execution on sampled requests; this is not total device latency. Current validation: 13 Flutter tests and 8 backend tests pass; Flutter analysis has no findings.
+Version **0.2.3+5** switches the live Supabase catalog and the direct mobile fallback to Tenrai. Live HTTP checks on 2026-10-08 returned 200 for the current fall season, page 2, Naruto search, Fantasy filtering and Frieren details, including a synopsis and MAL IDs. Two returned cover URLs also returned 200 with JPEG images. News, release-events and availability endpoints return 200 with empty lists, correctly reflecting that no reviewed content has been published yet. Supabase recorded approximately 0.5–0.7 seconds of server execution on sampled requests; this is not total device latency. Validation for that version: 13 Flutter tests and 8 backend tests passed; Flutter analysis had no findings.
 
 Version **0.2.2+4** fixes a reproduced login-dialog crash: text controllers now live in the dialog's own State and are disposed only after the dismissal animation, not when `showDialog` completes. Regression coverage includes focused-field cancellation, Android back, outside-tap dismissal and reopening. Catalog requests have a 12-second overall deadline, a shorter gateway timeout, request coalescing and shared result caching; a failed gateway is skipped briefly. Loading and retry states remain visible when the external anime source is unavailable. That hotfix addressed UI and waiting behavior; version 0.2.3 replaces the failing upstream. The hotfix passes 13 Flutter tests and static analysis.
 
@@ -91,3 +91,13 @@ Verification on 2026-10-08: Flutter 3.47.6 analysis reports no issues, all 13 Fl
 - Scheduled Edge invocation returned `ok` for all three sources; a second invocation within the lease returned 202 without fetching again. Missing internal token returned 401.
 - Backend tests cover RSS freshness/source checks, timezone/day rollover, unknown times, news-vs-anime IDs, content-write permissions and sync lease/authentication. Flutter checks cover the app and earlier navigation/dialog regressions.
 - News collection uses free public endpoints. It consumes the existing Supabase project's normal function/network/database quotas; it needs no separate crawler subscription or Firecrawl credits.
+
+
+## Visual redesign (0.3.0+7)
+
+- Discovery features a large real anime cover followed by a responsive poster grid. Season/search/genre filters, pagination and watchlist actions are retained.
+- News features a leading image card, compact illustrated headlines, short source excerpts and topic filters. Original articles open externally. Missing images use a neutral icon instead of invented artwork.
+- The calendar groups upcoming events by day with date filters, source links and series posters. Estimated Japanese broadcast labels remain visible.
+- Detail pages, watchlists, profile, navigation and typography share the new coral/lavender palette in both light and dark mode. Text scaling is supported.
+- Live `content-sync` version 2 imported 40 news previews and 87 broadcast posters successfully. The hourly free RSS/API pipeline remains unchanged; no paid crawling or new provider account is required.
+- Visual checks render production Flutter widgets with snapshots of the live API and the actual source images. They are UI renders, not physical Android/iOS device captures. The app itself reads the live APIs.

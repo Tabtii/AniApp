@@ -5,6 +5,7 @@ import '../models/anime.dart';
 import 'catalog_screen.dart';
 import 'detail_screen.dart';
 import 'common.dart';
+import 'visuals.dart';
 
 class WatchlistScreen extends StatefulWidget {
   const WatchlistScreen({super.key, required this.store});
@@ -40,12 +41,9 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            'Deine Geschichten. Dein Fortschritt.',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+        const SectionHeading(
+          'Deine Anime. Dein Tempo.',
+          eyebrow: 'Meine Watchlist',
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -97,7 +95,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
               : RefreshIndicator(
                   onRefresh: store.refreshWatchlist,
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(20),
                     itemCount: entries.length,
                     itemBuilder: (context, index) {
                       final entry = entries[index];
@@ -110,7 +108,11 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: Cover(entry.anime.image),
+                                child: Cover(
+                                  entry.anime.image,
+                                  width: 88,
+                                  height: 132,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(

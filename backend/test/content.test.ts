@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {broadcastEvents,rssNews,malNews} from '../../supabase/functions/content-sync/content.ts';
+import {broadcastEvents,rssNews,malNews,sourceImage,newsPreview} from '../../supabase/functions/content-sync/content.ts';
 const now=new Date('2026-10-08T10:00:00Z');
 const anime={mal_id:1,title:'Series',airing:true,broadcast:{day:'Fridays',time:'00:30',timezone:'Asia/Tokyo'}};
 test('broadcast dates account for JST day boundaries and never invent episode numbers',()=>{
@@ -23,4 +23,16 @@ test('news import rejects untrusted links, stale/future articles and invalid XML
  const n=malNews([{mal_id:123,title:'News',url:'https://myanimelist.net/news/1',date:now.toISOString()}],now)[0];
  assert.equal(n.mal_id,undefined); // News ID must never be treated as an anime ID.
  assert.equal(n.language,'en');
+});
+
+test('preview images stay on source CDNs and excerpts are bounded',()=>{
+ assert.equal(sourceImage('http://cdn.myanimelist.net/a.jpg','cdn.myanimelist.net'),null);
+ assert.equal(sourceImage('https://cdn.myanimelist.net.evil.test/a.jpg','cdn.myanimelist.net'),null);
+ assert.equal(sourceImage('https://user:pass@cdn.myanimelist.net/a.jpg','cdn.myanimelist.net'),null);
+ assert.equal(sourceImage('https://cdn.myanimelist.net/a.jpg','cdn.myanimelist.net'),'https://cdn.myanimelist.net/a.jpg');
+ assert.equal(newsPreview('<p>Hello &amp; <b>world</b>.</p>'),'Hello & world.');
+ assert.ok(newsPreview('word '.repeat(100)).split(' ').length<=21);
+ const rows=rssNews('<rss><item><title>News</title><link>https://www.anime2you.de/news/1</link><pubDate>Wed, 07 Oct 2026 18:00:00 GMT</pubDate><description><![CDATA[<p><img src="https://www.anime2you.de/media/test.webp" /></p><p>Eine neue Staffel wurde angekündigt.</p>]]></description></item></rss>',now);
+ assert.equal(rows[0].image_url,'https://www.anime2you.de/media/test.webp');
+ assert.equal(rows[0].summary,'Eine neue Staffel wurde angekündigt.');
 });

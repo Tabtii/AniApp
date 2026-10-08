@@ -1,6 +1,6 @@
 # AniApp — Android & iOS
 
-The new shared Flutter app is in [`mobile/`](mobile/). It includes seasonal discovery, watchlists and the Supabase integration for news, release dates and language availability. See [setup and implementation status](docs/IMPLEMENTATION.md).
+The new shared Flutter app is in [`mobile/`](mobile/). Version 0.3.0 adds a cover-led discovery screen, real news image previews, a poster timeline, and a refreshed light/dark design. It includes seasonal discovery, watchlists and the Supabase integration for news, release dates and language availability. See [setup and implementation status](docs/IMPLEMENTATION.md).
 
 The original Kotlin application below remains as a historical training reference.
 

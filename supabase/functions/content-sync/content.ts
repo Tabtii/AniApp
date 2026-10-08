@@ -1,4 +1,13 @@
 export type Row = Record<string, any>;
+export function sourceImage(value: unknown, host: string): string | null {
+  if (typeof value !== 'string' || value.length > 2048) return null;
+  try { const url = new URL(value); return url.protocol === 'https:' && url.hostname === host && !url.username && !url.password ? url.href : null; } catch { return null; }
+}
+export function newsPreview(value: string): string {
+  const text = cleanText(value).split(/Der Beitrag |Read more at /)[0].trim();
+  const words = text.split(/\s+/); return words.slice(0, 20).join(' ') + (words.length > 20 ? ' …' : '');
+}
+
 const days = ['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'];
 export function broadcastEvents(anime: Row[], now = new Date()): Row[] {
   const result: Row[] = [];
@@ -13,7 +22,7 @@ export function broadcastEvents(anime: Row[], now = new Date()): Row[] {
     if (time < now.getTime()) time += 7 * 86400000;
     const end = Date.parse(a.aired?.to ?? '');
     if (Number.isFinite(end) && time > end + 86400000) continue;
-    result.push({mal_id:a.mal_id,title:a.title_english || a.title,episode:null,kind:'japan',starts_at:new Date(time).toISOString(),provider:'Tenrai / MyAnimeList',region:'JP',audio_language:'ja',status:'estimated',source_url:`https://myanimelist.net/anime/${a.mal_id}`,checked_at:now.toISOString(),published:true});
+    result.push({mal_id:a.mal_id,title:a.title_english || a.title,episode:null,kind:'japan',starts_at:new Date(time).toISOString(),provider:'Tenrai / MyAnimeList',region:'JP',audio_language:'ja',status:'estimated',image_url:sourceImage(a.images?.jpg?.large_image_url ?? a.images?.jpg?.image_url,'cdn.myanimelist.net'),source_url:`https://myanimelist.net/anime/${a.mal_id}`,checked_at:now.toISOString(),published:true});
   }
   return [...new Map(result.map(r=>[r.mal_id,r])).values()];
 }
@@ -23,7 +32,7 @@ export function cleanText(text: string): string {
     if (k[0] !== '#') return named[k.toLowerCase()] ?? '';
     const n=k[1].toLowerCase()==='x'?parseInt(k.slice(2),16):parseInt(k.slice(1),10);
     return n>0 && n<=0x10ffff?String.fromCodePoint(n):'';
-  }).replace(/\s+/g,' ').trim();
+  }).replace(/\s+/g,' ').replace(/\s+([.,;:!?])/g,'$1').trim();
 }
 function category(title:string) {
   if (/synchro|\bdub\b/i.test(title)) return 'dub';
@@ -40,7 +49,9 @@ export function rssNews(xml:string, now=new Date()):Row[] {
     const headline=get(match[1],'title'), link=get(match[1],'link'), date=new Date(get(match[1],'pubDate'));
     let url:URL; try {url=new URL(link);} catch {continue;}
     if(url.protocol!=='https:' || url.hostname!=='www.anime2you.de' || !url.pathname.startsWith('/news/') || !headline || !Number.isFinite(date.getTime()) || date>now || now.getTime()-date.getTime()>30*86400000) continue;
-    rows.push({headline:headline.slice(0,250),summary:'Meldung von Anime2You. Den vollständigen Artikel findest du über „Original lesen“.',category:category(headline),source_name:'Anime2You',source_url:url.href,published_at:date.toISOString(),checked_at:now.toISOString(),published:true,language:'de'});
+    const description = /<description[^>]*>([\s\S]*?)<\/description>/.exec(match[1])?.[1] ?? '';
+    const image = /<img\b[^>]*\bsrc=["']([^"']+)["']/i.exec(description)?.[1];
+    rows.push({headline:headline.slice(0,250),image_url:sourceImage(image ? cleanText(image) : null,'www.anime2you.de'),summary:newsPreview(description) || 'Neue Meldung von Anime2You.',category:category(headline),source_name:'Anime2You',source_url:url.href,published_at:date.toISOString(),checked_at:now.toISOString(),published:true,language:'de'});
   }
   if (!rows.length) throw new Error('RSS has no recent news');
   return rows;
@@ -49,6 +60,6 @@ export function malNews(data:Row[],now=new Date()):Row[] {
   return data.flatMap(n=> {
     const date=new Date(n.date); let url:URL; try {url=new URL(n.url);} catch{return [];}
     if(url.protocol!=='https:' || url.hostname!=='myanimelist.net' || !url.pathname.startsWith('/news/') || typeof n.title!=='string' || !Number.isFinite(date.getTime()) || date>now || now.getTime()-date.getTime()>30*86400000) return [];
-    return [{headline:cleanText(n.title).slice(0,250),summary:'Internationale Anime-Meldung von MyAnimeList. Der Originalartikel ist auf Englisch.',category:category(n.title),source_name:'MyAnimeList',source_url:url.href,published_at:date.toISOString(),checked_at:now.toISOString(),published:true,language:'en'}];
+    return [{headline:cleanText(n.title).slice(0,250),image_url:sourceImage(n.images?.jpg?.image_url,'cdn.myanimelist.net'),summary:newsPreview(n.excerpt ?? '') || 'Internationale Anime-Meldung von MyAnimeList.',category:category(n.title),source_name:'MyAnimeList',source_url:url.href,published_at:date.toISOString(),checked_at:now.toISOString(),published:true,language:'en'}];
   });
 }

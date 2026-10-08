@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/app_store.dart';
 import 'common.dart';
 import 'login_dialog.dart';
+import 'visuals.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.store});
@@ -40,8 +41,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(20),
       children: [
         Text(
-          'So schaust du Anime',
-          style: Theme.of(context).textTheme.headlineSmall,
+          'DEIN PROFIL',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontSize: 10,
+            letterSpacing: 2.2,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Dein Anime-Alltag.',
+          style: TextStyle(
+            fontSize: 27,
+            height: 1.15,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -.6,
+          ),
         ),
         const SizedBox(height: 20),
         Card(
@@ -50,6 +66,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(colors: [coral, lavender]),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: Color(0xFF171D2A),
+                    size: 29,
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Text(
                   store.signedIn ? store.email ?? 'Angemeldet' : 'Gastmodus',
                   style: Theme.of(context).textTheme.titleLarge,
@@ -60,6 +90,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? 'Deine Watchlist wird mit deinem Konto synchronisiert.'
                       : 'Deine Watchlist bleibt lokal auf diesem Gerät.',
                 ),
+                const SizedBox(height: 12),
+                Text(
+                  '${store.entries.length} Anime in deiner Liste',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 if (store.backend != null && !store.signedIn)
                   FilledButton(
                     onPressed: _login,
@@ -131,11 +170,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           items: const [
             DropdownMenuItem(
               value: 'any',
-              child: Text('Alle passenden Veröffentlichungen'),
+              child: Text(
+                'Alle Veröffentlichungen',
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             DropdownMenuItem(
               value: 'dub',
-              child: Text('Nur Synchronfassung in meiner Sprache'),
+              child: Text(
+                'Nur Dub in meiner Sprache',
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
           onChanged: (m) => perform(

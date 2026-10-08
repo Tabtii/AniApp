@@ -1,6 +1,7 @@
 class ReleaseEvent {
   ReleaseEvent(this.data);
   final Map<String, dynamic> data;
+  String? get image => data['image_url'] as String?;
   String get title => data['title'] as String? ?? 'Anime';
   int? get animeId => (data['mal_id'] as num?)?.toInt();
   String get kind => data['kind'] as String? ?? 'japan';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
 import '../data/app_store.dart';
 import '../models/content.dart';
 import '../models/anime.dart';
 import 'detail_screen.dart';
 import 'common.dart';
+import 'visuals.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key, required this.store});
@@ -17,6 +17,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   late Future<List<ReleaseEvent>> future;
   bool onlyMine = false;
   String _settings = '';
+  String? selectedDay;
+  String get _key =>
+      '${widget.store.region}|${widget.store.language}|${widget.store.languageMode}';
   @override
   void initState() {
     super.initState();
@@ -25,8 +28,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     widget.store.addListener(_changed);
   }
 
-  String get _key =>
-      '${widget.store.region}|${widget.store.language}|${widget.store.languageMode}';
   void _changed() {
     if (mounted) {
       setState(() {
@@ -44,38 +45,84 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  void reload() => setState(() => future = widget.store.releases());
+  Future<void> reload() async {
+    final next = widget.store.releases();
+    setState(() => future = next);
+    try {
+      await next;
+    } catch (_) {
+      // FutureBuilder presents the error and retry action.
+    }
+  }
+
+  String dayKey(DateTime? date) =>
+      date == null ? 'offen' : '${date.year}-${date.month}-${date.day}';
+  String dayLabel(DateTime? date) {
+    if (date == null) return 'Termin noch offen';
+    const days = [
+      'Montag',
+      'Dienstag',
+      'Mittwoch',
+      'Donnerstag',
+      'Freitag',
+      'Samstag',
+      'Sonntag',
+    ];
+    const months = [
+      'Januar',
+      'Februar',
+      'März',
+      'April',
+      'Mai',
+      'Juni',
+      'Juli',
+      'August',
+      'September',
+      'Oktober',
+      'November',
+      'Dezember',
+    ];
+    return '${days[date.weekday - 1]}, ${date.day}. ${months[date.month - 1]}';
+  }
+
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                'Release-Kalender · ${widget.store.region}',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            IconButton(
-              tooltip: 'Aktualisieren',
-              onPressed: reload,
-              icon: const Icon(Icons.refresh),
-            ),
-          ],
+      SectionHeading(
+        'Deine nächste Folge.',
+        eyebrow: 'Release-Kalender · ${widget.store.region}',
+        trailing: IconButton(
+          tooltip: 'Aktualisieren',
+          onPressed: reload,
+          icon: const Icon(Icons.refresh_rounded),
         ),
       ),
-      SwitchListTile(
-        title: const Text('Nur meine Watchlist'),
-        value: onlyMine,
-        onChanged: (value) => setState(() => onlyMine = value),
-      ),
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          'Zeiten in deiner Gerätezeitzone. Voraussichtliche Japan-Termine folgen dem regulären Sendeplan; Sonderpausen sind möglich.',
-          style: Theme.of(context).textTheme.bodySmall,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          children: [
+            FilterChip(
+              label: const Text('Meine Watchlist'),
+              selected: onlyMine,
+              onSelected: (v) => setState(() => onlyMine = v),
+              avatar: const Icon(Icons.bookmark_outline_rounded, size: 16),
+            ),
+            const Spacer(),
+            IconButton(
+              tooltip: 'Zu den Zeiten',
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                showDragHandle: true,
+                builder: (context) => const Padding(
+                  padding: EdgeInsets.fromLTRB(24, 0, 24, 32),
+                  child: Text(
+                    'Alle Zeiten werden in deiner Gerätezeitzone angezeigt. Japanische Ausstrahlung, Streaming und Synchronfassungen haben eigene Termine. „Voraussichtlich“ folgt dem regulären Sendeplan; Sonderpausen und Verschiebungen sind möglich.',
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.info_outline_rounded, size: 16),
+            ),
+          ],
         ),
       ),
       Expanded(
@@ -94,92 +141,246 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               );
             }
-            final items = (snapshot.data ?? [])
+            final all = (snapshot.data ?? [])
                 .where(
                   (e) =>
                       !onlyMine ||
                       (e.animeId != null && widget.store.isSaved(e.animeId!)),
                 )
                 .toList();
-            if (items.isEmpty) {
-              return const EmptyPanel(
-                'Noch keine passenden Release-Termine hinterlegt. Neue Folgen erscheinen hier, sobald ihre Termine erfasst sind.',
-                icon: Icons.event_outlined,
-              );
-            }
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: items
-                  .map(
-                    (e) => Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              e.title,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            Text(
-                              '${e.episode == null ? (e.kind == 'japan' ? 'Nächste Ausstrahlung' : 'Start') : 'Folge ${e.episode}'} · ${dateLabel(e.startsAt)}',
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8,
-                              children: [
-                                Chip(
-                                  label: Text(switch (e.kind) {
-                                    'dub' =>
-                                      'Synchronfassung · ${languageLabel(e.language ?? '?')}',
-                                    'streaming' => 'Streaming',
-                                    _ => 'Japanische Ausstrahlung',
-                                  }),
-                                ),
-                                Chip(
-                                  label: Text(switch (e.status) {
-                                    'confirmed' => 'Bestätigt',
-                                    'estimated' => 'Voraussichtlich',
-                                    'delayed' => 'Verschoben',
-                                    _ => 'Angekündigt',
-                                  }),
-                                ),
-                              ],
-                            ),
-                            Text('${e.provider} · ${e.region}'),
-                            if (e.animeId != null)
-                              TextButton.icon(
-                                onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => DetailScreen(
-                                      anime: Anime(
-                                        id: e.animeId!,
-                                        title: e.title,
-                                      ),
-                                      store: widget.store,
-                                    ),
-                                  ),
-                                ),
-                                icon: const Icon(Icons.movie_outlined),
-                                label: const Text('Anime ansehen'),
-                              ),
-                            TextButton.icon(
-                              onPressed: () => openSource(context, e.source),
-                              icon: const Icon(Icons.open_in_new),
-                              label: const Text('Quelle'),
-                            ),
-                          ],
+            final dates = <String, DateTime?>{
+              for (final e in all) dayKey(e.startsAt): e.startsAt,
+            };
+            final items = all
+                .where(
+                  (e) =>
+                      selectedDay == null || dayKey(e.startsAt) == selectedDay,
+                )
+                .toList();
+            return RefreshIndicator(
+              onRefresh: reload,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(top: 8, bottom: 24),
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            label: const Text('Alle Tage'),
+                            selected: selectedDay == null,
+                            onSelected: (_) =>
+                                setState(() => selectedDay = null),
+                          ),
                         ),
+                        ...dates.entries
+                            .take(8)
+                            .map(
+                              (d) => Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: ChoiceChip(
+                                  label: Text(
+                                    d.value == null
+                                        ? 'Offen'
+                                        : '${d.value!.day}.${d.value!.month}.',
+                                  ),
+                                  selected: selectedDay == d.key,
+                                  onSelected: (_) =>
+                                      setState(() => selectedDay = d.key),
+                                ),
+                              ),
+                            ),
+                      ],
+                    ),
+                  ),
+                  if (items.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 70),
+                      child: EmptyPanel(
+                        'Hier ist noch nichts geplant. Wähle einen anderen Tag oder zeige alle Anime.',
+                        icon: Icons.event_available_rounded,
                       ),
                     ),
-                  )
-                  .toList(),
+                  for (var i = 0; i < items.length; i++) ...[
+                    if (i == 0 ||
+                        dayKey(items[i - 1].startsAt) !=
+                            dayKey(items[i].startsAt))
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+                        child: Text(
+                          dayLabel(items[i].startsAt).toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 11,
+                            letterSpacing: 1.1,
+                            fontWeight: FontWeight.w800,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _ReleaseTile(event: items[i], store: widget.store),
+                    ),
+                  ],
+                ],
+              ),
             );
           },
         ),
       ),
     ],
   );
+}
+
+class _ReleaseTile extends StatelessWidget {
+  const _ReleaseTile({required this.event, required this.store});
+  final ReleaseEvent event;
+  final AppStore store;
+  @override
+  Widget build(BuildContext context) {
+    final e = event;
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 47,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    timeLabel(e.startsAt),
+                    style: TextStyle(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'UHR',
+                    style: TextStyle(
+                      fontSize: 8,
+                      letterSpacing: 1.5,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Card(
+              margin: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: e.animeId == null
+                    ? null
+                    : () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => DetailScreen(
+                            anime: Anime(
+                              id: e.animeId!,
+                              title: e.title,
+                              image: e.image,
+                            ),
+                            store: store,
+                          ),
+                        ),
+                      ),
+                child: Padding(
+                  padding: const EdgeInsets.all(11),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: SizedBox(
+                          width: 50,
+                          height: 76,
+                          child: Artwork(
+                            e.image,
+                            alignment: Alignment.topCenter,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 11),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              e.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    height: 1.2,
+                                  ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '${e.kind == 'japan'
+                                  ? 'Japan'
+                                  : e.kind == 'dub'
+                                  ? 'Dub · ${languageLabel(e.language ?? '?')}'
+                                  : 'Streaming'}${e.episode == null ? '' : ' · Folge ${e.episode}'}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              e.status == 'estimated'
+                                  ? 'Voraussichtlich'
+                                  : e.status == 'confirmed'
+                                  ? 'Bestätigt'
+                                  : e.status == 'delayed'
+                                  ? 'Verschoben'
+                                  : 'Angekündigt',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: scheme.secondary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 26,
+                        height: 30,
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          tooltip: 'Terminquelle öffnen',
+                          onPressed: () => openSource(context, e.source),
+                          icon: Icon(
+                            Icons.north_east_rounded,
+                            size: 16,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class NewsScreen extends StatefulWidget {
@@ -191,31 +392,54 @@ class NewsScreen extends StatefulWidget {
 
 class _NewsScreenState extends State<NewsScreen> {
   late Future<List<Map<String, dynamic>>> future;
+  String? category;
   @override
   void initState() {
     super.initState();
     future = widget.store.news();
   }
 
-  void reload() => setState(() => future = widget.store.news());
+  Future<void> reload() async {
+    final next = widget.store.news();
+    setState(() => future = next);
+    try {
+      await next;
+    } catch (_) {
+      // FutureBuilder presents the error and retry action.
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      Padding(
-        padding: const EdgeInsets.all(16),
+      SectionHeading(
+        'Neues aus deiner Welt.',
+        eyebrow: 'News & Ankündigungen',
+        trailing: IconButton(
+          tooltip: 'Aktualisieren',
+          onPressed: reload,
+          icon: const Icon(Icons.refresh_rounded),
+        ),
+      ),
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           children: [
-            Expanded(
-              child: Text(
-                'News & Ankündigungen',
-                style: Theme.of(context).textTheme.titleLarge,
+            for (final entry in <String?, String>{
+              null: 'Alles',
+              'season': 'Staffeln',
+              'streaming': 'Streaming',
+              'dub': 'Dubs',
+            }.entries)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(entry.value),
+                  selected: category == entry.key,
+                  onSelected: (_) => setState(() => category = entry.key),
+                ),
               ),
-            ),
-            IconButton(
-              tooltip: 'Aktualisieren',
-              onPressed: reload,
-              icon: const Icon(Icons.refresh),
-            ),
           ],
         ),
       ),
@@ -235,64 +459,204 @@ class _NewsScreenState extends State<NewsScreen> {
                 ),
               );
             }
-            final rows = snapshot.data ?? [];
+            final rows = (snapshot.data ?? [])
+                .where((n) => category == null || n['category'] == category)
+                .toList();
             if (rows.isEmpty) {
               return const EmptyPanel(
-                'Hier erscheinen neue Staffeln, Streaming-Starts und Dub-Ankündigungen mit Originalquelle.',
-                icon: Icons.newspaper_outlined,
+                'Zu diesem Thema gibt es gerade keine Meldungen.',
+                icon: Icons.auto_awesome_rounded,
               );
             }
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: rows
-                  .map(
-                    (n) => Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              switch (n['category']) {
-                                'season' => 'Staffel-News',
-                                'dub' => 'Synchronisation',
-                                'streaming' => 'Streaming',
-                                _ => 'Ankündigung',
-                              },
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              n['headline'] as String,
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(n['summary'] as String? ?? ''),
-                            const SizedBox(height: 8),
-                            Text(
-                              '${n['source_name']} · ${n['language'] == 'en' ? 'Englisch' : 'Deutsch'} · ${dateLabel(DateTime.tryParse(n['published_at'] as String? ?? '')?.toLocal())}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            TextButton.icon(
-                              onPressed: () => openSource(
-                                context,
-                                n['source_url'] as String,
-                              ),
-                              icon: const Icon(Icons.open_in_new),
-                              label: const Text('Original lesen'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
+            return RefreshIndicator(
+              onRefresh: reload,
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                itemCount: rows.length,
+                itemBuilder: (context, i) =>
+                    NewsCard(news: rows[i], featured: i == 0),
+              ),
             );
           },
         ),
       ),
     ],
   );
+}
+
+String newsCategory(dynamic value) => switch (value) {
+  'season' => 'Neue Staffeln',
+  'dub' => 'Dub-News',
+  'streaming' => 'Streaming',
+  _ => 'Anime-News',
+};
+
+class NewsCard extends StatelessWidget {
+  const NewsCard({super.key, required this.news, this.featured = false});
+  final Map<String, dynamic> news;
+  final bool featured;
+  @override
+  Widget build(BuildContext context) {
+    final n = news;
+    final scheme = Theme.of(context).colorScheme;
+    final date = DateTime.tryParse(
+      n['published_at'] as String? ?? '',
+    )?.toLocal();
+    final metadata =
+        '${n['source_name']} · ${shortDate(date)}${n['language'] == 'en' ? ' · EN' : ''}';
+    void open() => openSource(context, n['source_url'] as String);
+    if (featured) {
+      return Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: open,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: 1.8,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Artwork(
+                      n['image_url'] as String?,
+                      icon: Icons.newspaper_rounded,
+                    ),
+                    Positioned(
+                      left: 14,
+                      top: 14,
+                      child: Tag(
+                        newsCategory(n['category']).toUpperCase(),
+                        color: lime,
+                        solid: true,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      metadata,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 9),
+                    Text(
+                      n['headline'] as String,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -.4,
+                        height: 1.16,
+                      ),
+                    ),
+                    if ((n['summary'] as String? ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        n['summary'] as String,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.5,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Text(
+                          'Original lesen',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: scheme.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.north_east_rounded,
+                          size: 16,
+                          color: scheme.primary,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18, top: 4),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: open,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: SizedBox(
+                width: 105,
+                height: 112,
+                child: Artwork(
+                  n['image_url'] as String?,
+                  icon: Icons.newspaper_rounded,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    newsCategory(n['category']).toUpperCase(),
+                    style: TextStyle(
+                      color: scheme.primary,
+                      fontSize: 9,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    n['headline'] as String,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      height: 1.25,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    metadata,
+                    maxLines: 2,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 9,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/app_store.dart';
 import '../models/anime.dart';
 import '../models/content.dart';
-import 'catalog_screen.dart';
 import 'common.dart';
+import 'visuals.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.anime, required this.store});
@@ -108,51 +108,79 @@ class _DetailScreenState extends State<DetailScreen> {
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Cover(anime.image, width: 110, height: 160),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      anime.title,
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '★ ${anime.score?.toStringAsFixed(1) ?? '—'}  ·  ${anime.episodes ?? '?'} Folgen',
-                    ),
-                    const SizedBox(height: 12),
-                    FilledButton.icon(
-                      onPressed:
-                          widget.store.busy || widget.store.isSaved(anime.id)
-                          ? null
-                          : () => perform(
-                              context,
-                              () => widget.store.save(WatchEntry(anime: anime)),
-                            ),
-                      icon: Icon(
-                        widget.store.isSaved(anime.id)
-                            ? Icons.check
-                            : Icons.bookmark_add,
-                      ),
-                      label: Text(
-                        widget.store.isSaved(anime.id)
-                            ? 'In deiner Liste'
-                            : 'Merken',
+          ClipRRect(
+            borderRadius: BorderRadius.circular(26),
+            child: SizedBox(
+              height: 360,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Artwork(anime.image, alignment: Alignment.topCenter),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Color(0x33090F1C),
+                          Color(0xFF090F1C),
+                        ],
+                        stops: [0, .4, 1],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Positioned(
+                    left: 22,
+                    right: 22,
+                    bottom: 24,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Tag(
+                          '${anime.score?.toStringAsFixed(1) ?? '—'}  ·  ${anime.episodes ?? '?'} Folgen',
+                          icon: Icons.star_rounded,
+                          color: lime,
+                          solid: true,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          anime.title,
+                          maxLines: 4,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            height: 1.08,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: -.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: widget.store.busy || widget.store.isSaved(anime.id)
+                ? null
+                : () => perform(
+                    context,
+                    () => widget.store.save(WatchEntry(anime: anime)),
+                  ),
+            icon: Icon(
+              widget.store.isSaved(anime.id)
+                  ? Icons.bookmark_added_rounded
+                  : Icons.bookmark_add_rounded,
+            ),
+            label: Text(
+              widget.store.isSaved(anime.id)
+                  ? 'In deiner Liste'
+                  : 'Auf meine Watchlist',
+            ),
           ),
           const SizedBox(height: 20),
           Wrap(
@@ -167,7 +195,21 @@ class _DetailScreenState extends State<DetailScreen> {
             TextButton(onPressed: _load, child: const Text('Erneut versuchen')),
           ],
           const SizedBox(height: 16),
-          Text(anime.synopsis ?? 'Noch keine Beschreibung verfügbar.'),
+          Text(
+            'Die Geschichte',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            anime.synopsis ?? 'Noch keine Beschreibung verfügbar.',
+            style: TextStyle(
+              height: 1.65,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 20),
           ...releases.map(
             (e) => Card(
               child: Padding(

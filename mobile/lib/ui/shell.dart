@@ -5,6 +5,7 @@ import 'catalog_screen.dart';
 import 'watchlist_screen.dart';
 import 'content_screens.dart';
 import 'profile_screen.dart';
+import 'visuals.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.store, this.startupWarning});
@@ -41,20 +42,64 @@ class _AppShellState extends State<AppShell> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'AniApp',
-          style: TextStyle(fontWeight: FontWeight.w800),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: Text(
-                'Dein Anime-Begleiter',
-                style: Theme.of(context).textTheme.labelMedium,
+        toolbarHeight: 62,
+        titleSpacing: 20,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 31,
+              height: 31,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [coral, Color(0xFFA47FEF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.bolt_rounded,
+                color: Colors.white,
+                size: 24,
               ),
             ),
+            const SizedBox(width: 9),
+            Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(text: 'ani'),
+                  TextSpan(
+                    text: 'app',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1.3,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          ListenableBuilder(
+            listenable: widget.store,
+            builder: (context, _) => Tag(
+              widget.store.region,
+              icon: Icons.language_rounded,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
+          IconButton(
+            tooltip: 'Profil öffnen',
+            onPressed: () => setState(() => index = 4),
+            icon: const Icon(Icons.account_circle_outlined),
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
