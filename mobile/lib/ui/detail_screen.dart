@@ -17,46 +17,82 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late Anime anime;
   List<Availability> availability = [];
+  List<ReleaseEvent> releases = [];
   bool loading = true;
-  String? error, availabilityError;
+  String? error, availabilityError, releaseError;
+  String get _settings =>
+      '${widget.store.region}|${widget.store.language}|${widget.store.languageMode}';
+  late String _loadedSettings;
+  int _loadVersion = 0;
   @override
   void initState() {
     super.initState();
     anime = widget.anime;
+    _loadedSettings = _settings;
     widget.store.addListener(_changed);
     _load();
   }
 
   void _changed() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    if (_loadedSettings != _settings) {
+      _loadedSettings = _settings;
+      _load();
+    } else {
+      setState(() {});
+    }
   }
 
   Future<void> _load() async {
+    final version = ++_loadVersion;
+    bool current() => mounted && version == _loadVersion;
     setState(() {
       loading = true;
       error = null;
       availabilityError = null;
+      availability = [];
+      releases = [];
     });
-    try {
-      final value = await widget.store.catalog.detail(anime.id);
-      if (mounted) setState(() => anime = value);
-    } catch (_) {
-      if (mounted) {
-        setState(() => error = 'Details konnten nicht geladen werden.');
-      }
-    }
-    try {
-      final value = await widget.store.availability(anime.id);
-      if (mounted) setState(() => availability = value);
-    } catch (_) {
-      if (mounted) {
-        setState(
-          () => availabilityError =
-              'Streaming-Daten sind gerade nicht erreichbar.',
-        );
-      }
-    }
-    if (mounted) setState(() => loading = false);
+    releaseError = null;
+    await Future.wait([
+      (() async {
+        try {
+          final value = await widget.store.catalog.detail(anime.id);
+          if (current()) setState(() => anime = value);
+        } catch (_) {
+          if (current()) {
+            setState(() => error = 'Details konnten nicht geladen werden.');
+          }
+        }
+      })(),
+      (() async {
+        try {
+          final value = await widget.store.availability(anime.id);
+          if (current()) setState(() => availability = value);
+        } catch (_) {
+          if (current()) {
+            setState(
+              () => availabilityError =
+                  'Streaming-Daten sind gerade nicht erreichbar.',
+            );
+          }
+        }
+      })(),
+      (() async {
+        try {
+          final value = await widget.store.releases(animeId: anime.id);
+          if (current()) setState(() => releases = value);
+        } catch (_) {
+          if (current()) {
+            setState(
+              () => releaseError =
+                  'Release-Termine sind gerade nicht erreichbar.',
+            );
+          }
+        }
+      })(),
+    ]);
+    if (current()) setState(() => loading = false);
   }
 
   @override
@@ -124,12 +160,42 @@ class _DetailScreenState extends State<DetailScreen> {
             children: anime.genres.map((g) => Chip(label: Text(g))).toList(),
           ),
           if (loading) const LinearProgressIndicator(),
-          if (error != null || availabilityError != null) ...[
-            Text(error ?? availabilityError!),
+          if (error != null ||
+              availabilityError != null ||
+              releaseError != null) ...[
+            Text(error ?? availabilityError ?? releaseError!),
             TextButton(onPressed: _load, child: const Text('Erneut versuchen')),
           ],
           const SizedBox(height: 16),
           Text(anime.synopsis ?? 'Noch keine Beschreibung verfügbar.'),
+          ...releases.map(
+            (e) => Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      e.kind == 'japan'
+                          ? 'Nächste Ausstrahlung in Japan'
+                          : 'Nächster Release',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(dateLabel(e.startsAt)),
+                    Text(
+                      e.status == 'estimated'
+                          ? 'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
+                          : 'Angekündigter Termin',
+                    ),
+                    TextButton(
+                      onPressed: () => openSource(context, e.source),
+                      child: const Text('Terminquelle öffnen'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           if (anime.broadcast != null) ...[
             const SizedBox(height: 20),
             Text(
@@ -150,7 +216,16 @@ class _DetailScreenState extends State<DetailScreen> {
           if (availability.isEmpty && !loading)
             Text(
               availabilityError ??
-                  'Für diese Region sind noch keine geprüften Anbieter- und Sprachdaten hinterlegt.',
+                  'Für diesen Titel und diese Region ist noch keine verlässliche Sprachangabe verfügbar.',
+            ),
+          if (availability.isEmpty && !loading)
+            TextButton.icon(
+              onPressed: () => openSource(
+                context,
+                'https://myanimelist.net/anime/${anime.id}',
+              ),
+              icon: const Icon(Icons.open_in_new),
+              label: const Text('Anbieterübersicht auf MyAnimeList'),
             ),
           ...availability.map(
             (a) => Card(

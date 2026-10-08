@@ -416,3 +416,6 @@ enabled = true
 
 [functions.catalog]
 verify_jwt = false
+
+[functions.content-sync]
+verify_jwt = false # Internal Vault token + service-role-only authorization RPC.

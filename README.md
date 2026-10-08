@@ -32,3 +32,6 @@ This is a training project for Syntax Institute, it is not intended to publish t
 *Character and Manga Search 
 
 *More filter options
+
+
+Live content (0.2.4): hourly free RSS/API news from Anime2You and MyAnimeList/Tenrai, an automatically refreshed Japanese broadcast calendar, and dated provider-verified language observations. All displayed production content comes from real sources. See [implementation details and coverage](docs/IMPLEMENTATION.md).

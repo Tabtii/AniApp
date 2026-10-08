@@ -7,7 +7,7 @@ test('RLS isolates watchlists and hides unpublished content', async () => {
   const db = new PGlite();
   const a = '11111111-1111-4111-8111-111111111111', b = '22222222-2222-4222-8222-222222222222';
   await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
-    create schema auth; create table auth.users(id uuid primary key);
+    create schema vault; create table vault.decrypted_secrets(name text,decrypted_secret text); create schema auth; create table auth.users(id uuid primary key);
     create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
     grant usage on schema auth to authenticated; grant execute on function auth.uid() to authenticated;
     insert into auth.users values ('${a}'), ('${b}');`);
@@ -25,6 +25,13 @@ test('RLS isolates watchlists and hides unpublished content', async () => {
   await assert.rejects(db.query('select * from public.watchlist'));
   assert.equal((await db.query('select * from public.news')).rows.length, 1);
   await assert.rejects(db.query("update public.news set published=true"));
+  await assert.rejects(db.query("select public.begin_content_sync('wrong')"));
+  await assert.rejects(db.query("select public.replace_broadcast_events('[]')"));
+  await assert.rejects(db.query("select * from public.content_sync_state"));
+  await db.exec("reset role; insert into vault.decrypted_secrets values ('aniapp_content_sync','test-token'); set role service_role;");
+  assert.equal((await db.query("select public.begin_content_sync('wrong') as state")).rows[0].state, 'denied');
+  assert.equal((await db.query("select public.begin_content_sync('test-token') as state")).rows[0].state, 'ready');
+  assert.equal((await db.query("select public.begin_content_sync('test-token') as state")).rows[0].state, 'recent');
   await db.exec('reset role;');
   const rls = await db.query("select relname from pg_class where relnamespace='public'::regnamespace and relkind='r' and not relrowsecurity");
   assert.deepEqual(rls.rows, []);

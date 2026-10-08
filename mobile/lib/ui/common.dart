@@ -74,6 +74,19 @@ String languageLabel(String code) =>
       'fr': 'Französisch',
       'es': 'Spanisch',
       'it': 'Italienisch',
+      'pl': 'Polnisch',
+      'pt': 'Portugiesisch',
+      'ko': 'Koreanisch',
+      'ru': 'Russisch',
+      'hi': 'Hindi',
+      'ta': 'Tamil',
+      'te': 'Telugu',
+      'id': 'Indonesisch',
+      'ms': 'Malaiisch',
+      'vi': 'Vietnamesisch',
+      'ar': 'Arabisch',
+      'zh': 'Chinesisch',
+      'th': 'Thailändisch',
     }[code] ??
     code;
 String dateLabel(DateTime? date) => date == null

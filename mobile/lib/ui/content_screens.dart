@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../data/app_store.dart';
 import '../models/content.dart';
+import '../models/anime.dart';
+import 'detail_screen.dart';
 import 'common.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -52,7 +54,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           children: [
             Expanded(
               child: Text(
-                'Nächste Folgen · ${widget.store.region}',
+                'Release-Kalender · ${widget.store.region}',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -72,7 +74,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
-          'Zeiten in deiner Gerätezeitzone. Japanische Ausstrahlung, Streaming und Dub haben eigene Termine.',
+          'Zeiten in deiner Gerätezeitzone. Voraussichtliche Japan-Termine folgen dem regulären Sendeplan; Sonderpausen sind möglich.',
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
@@ -120,7 +122,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             Text(
-                              '${e.episode == null ? 'Start' : 'Folge ${e.episode}'} · ${dateLabel(e.startsAt)}',
+                              '${e.episode == null ? (e.kind == 'japan' ? 'Nächste Ausstrahlung' : 'Start') : 'Folge ${e.episode}'} · ${dateLabel(e.startsAt)}',
                             ),
                             const SizedBox(height: 8),
                             Wrap(
@@ -145,6 +147,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               ],
                             ),
                             Text('${e.provider} · ${e.region}'),
+                            if (e.animeId != null)
+                              TextButton.icon(
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => DetailScreen(
+                                      anime: Anime(
+                                        id: e.animeId!,
+                                        title: e.title,
+                                      ),
+                                      store: widget.store,
+                                    ),
+                                  ),
+                                ),
+                                icon: const Icon(Icons.movie_outlined),
+                                label: const Text('Anime ansehen'),
+                              ),
                             TextButton.icon(
                               onPressed: () => openSource(context, e.source),
                               icon: const Icon(Icons.open_in_new),
@@ -235,7 +253,12 @@ class _NewsScreenState extends State<NewsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              n['category'] as String? ?? 'Ankündigung',
+                              switch (n['category']) {
+                                'season' => 'Staffel-News',
+                                'dub' => 'Synchronisation',
+                                'streaming' => 'Streaming',
+                                _ => 'Ankündigung',
+                              },
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
@@ -249,7 +272,7 @@ class _NewsScreenState extends State<NewsScreen> {
                             Text(n['summary'] as String? ?? ''),
                             const SizedBox(height: 8),
                             Text(
-                              '${n['source_name']} · ${dateLabel(DateTime.tryParse(n['published_at'] as String? ?? '')?.toLocal())}',
+                              '${n['source_name']} · ${n['language'] == 'en' ? 'Englisch' : 'Deutsch'} · ${dateLabel(DateTime.tryParse(n['published_at'] as String? ?? '')?.toLocal())}',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             TextButton.icon(
