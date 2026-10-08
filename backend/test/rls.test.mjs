@@ -1,0 +1,32 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync, readdirSync} from 'node:fs';
+import {PGlite} from '@electric-sql/pglite';
+
+test('RLS isolates watchlists and hides unpublished content', async () => {
+  const db = new PGlite();
+  const a = '11111111-1111-4111-8111-111111111111', b = '22222222-2222-4222-8222-222222222222';
+  await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
+    create schema auth; create table auth.users(id uuid primary key);
+    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+    grant usage on schema auth to authenticated; grant execute on function auth.uid() to authenticated;
+    insert into auth.users values ('${a}'), ('${b}');`);
+  const files = readdirSync('../supabase/migrations').filter(f => f.endsWith('.sql')).sort();
+  for (const file of files) await db.exec(readFileSync(`../supabase/migrations/${file}`, 'utf8'));
+  await db.exec(`insert into public.watchlist values ('${a}', 1, '{"id":1,"title":"Example"}', 'planned', 0), ('${b}', 2, '{"id":2,"title":"Private"}', 'watching', 3);
+    insert into public.news (headline,summary,category,source_name,source_url,published) values ('Draft','Summary','dub','Official','https://example.com/draft',false), ('Public','Summary','season','Official','https://example.com/public',true);
+    set role authenticated; set request.jwt.claim.sub = '${a}';`);
+  assert.equal((await db.query('select * from public.watchlist')).rows.length, 1);
+  assert.equal((await db.query('select * from public.news')).rows.length, 1);
+  assert.equal((await db.query(`update public.watchlist set watched_episodes=4 where user_id='${b}' returning *`)).rows.length, 0);
+  await assert.rejects(db.query(`update public.watchlist set user_id='${b}' where user_id='${a}'`));
+  await assert.rejects(db.query(`insert into public.watchlist values ('${b}', 3, '{"id":3}', 'planned', 0)`));
+  await db.exec('reset role; set role anon;');
+  await assert.rejects(db.query('select * from public.watchlist'));
+  assert.equal((await db.query('select * from public.news')).rows.length, 1);
+  await assert.rejects(db.query("update public.news set published=true"));
+  await db.exec('reset role;');
+  const rls = await db.query("select relname from pg_class where relnamespace='public'::regnamespace and relkind='r' and not relrowsecurity");
+  assert.deepEqual(rls.rows, []);
+  await db.close();
+});

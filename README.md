@@ -1,3 +1,9 @@
+# AniApp — Android & iOS
+
+The new shared Flutter app is in [`mobile/`](mobile/). It includes seasonal discovery, watchlists and the Supabase integration for news, release dates and language availability. See [setup and implementation status](docs/IMPLEMENTATION.md).
+
+The original Kotlin application below remains as a historical training reference.
+
 # AniMe
 
 Keep track of current and past anime and add your favorites to a list. You will also find information about the animes and their characters.
