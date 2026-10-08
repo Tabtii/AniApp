@@ -159,6 +159,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 children: [
                   Artwork(
                     enrichment.banner ?? anime.image,
+                    fallbackUrl: anime.image,
                     alignment: Alignment.topCenter,
                   ),
                   const DecoratedBox(

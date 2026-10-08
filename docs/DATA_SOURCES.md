@@ -6,7 +6,7 @@
 
 The public JSON:API at <https://kitsu.app/api/edge> adds an independent source for episode totals, running time, original airing dates/status, cover/banner images, synopsis fallback and external YouTube trailer links. It needs no account/API credential. Official API reference: <https://hummingbird-me.github.io/api-docs/>.
 
-`mappings?filter[externalSite]=myanimelist/anime&filter[externalId]=<MAL_ID>&include=item` resolves exact identities. Returned mapping IDs are checked even if upstream filters were ignored. Missing, conflicting, paginated or adult mappings are not used. Detail requests are cached for an hour per instance and fail independently of dub/streaming sources. The UI labels Kitsu and original airing dates; they do not imply local streaming availability or a German dub date. Primary search/season discovery still uses the existing catalog gateway; Kitsu is a detail supplement, not a complete offline catalog replacement.
+`mappings?filter[externalSite]=myanimelist/anime&filter[externalId]=<MAL_ID>&include=item` resolves exact identities. Returned mapping IDs are checked even if upstream filters were ignored. Missing, conflicting, paginated or adult mappings are not used. Detail requests are cached for an hour per instance and fail independently of dub/streaming sources. The UI labels Kitsu and original airing dates; they do not imply local streaming availability or a German dub date. Banner failures fall back to the catalog cover: Kitsu's image CDN returned 403 to the development runner even though the data API was available. No CDN restriction is bypassed. Primary search/season discovery still uses the existing catalog gateway; Kitsu is a detail supplement, not a complete offline catalog replacement.
 
 ## Own ADN News scraper — active, no paid crawler service
 
@@ -61,3 +61,5 @@ Deploy `supabase/functions/anime-enrichment/index.ts` with its `deno.json`, `pro
 Tests cover ID/season/region separation, language uncertainty, outages, attribution, AniList approval gating, cooldown and calendar merging. Fixtures are test-only. MyDubList can be smoke-tested live immediately; TMDb and AniList require the prerequisites above before a real upstream smoke test can be claimed.
 
 2026-10-08 live check: the deployed gateway returned HTTP 200 and sourced `available` observations for Frieren (MAL 52991, German), One Piece (MAL 21, English and French). It reported TMDb `unconfigured` and AniList `approval_required`; their live integrations are **not active**. Missing project keys returned 401; invalid regions returned 400. No production mock content was inserted.
+
+0.3.4 live check: Kitsu returned `ok` for Frieren and One Piece. The deployed content-sync completed with eight new ADN News previews, 86 weekly Japanese estimates, one reviewed undated pause and 18 ADN provider episodes; all five source adapters succeeded. Missing ADN → MAL mappings remain excluded instead of guessed.

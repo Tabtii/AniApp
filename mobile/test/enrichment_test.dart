@@ -11,8 +11,38 @@ import 'package:aniapp/models/enrichment.dart';
 import 'package:aniapp/ui/dub_panel.dart';
 import 'package:aniapp/ui/sources_screen.dart';
 import 'package:aniapp/ui/kitsu_panel.dart';
+import 'package:aniapp/ui/visuals.dart';
 
 void main() {
+  testWidgets('unreachable banner falls back to the catalog cover', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 200,
+            height: 200,
+            child: Artwork(
+              'https://example.com/banner.jpg',
+              fallbackUrl: 'https://example.com/cover.jpg',
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Image &&
+            w.image is NetworkImage &&
+            (w.image as NetworkImage).url == 'https://example.com/cover.jpg',
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
   test(
     'reviewed pause suppresses calculated slots but preserves local releases',
     () {

@@ -11,11 +11,13 @@ class Artwork extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.alignment = Alignment.center,
     this.icon = Icons.auto_awesome,
+    this.fallbackUrl,
   });
   final String? url;
   final BoxFit fit;
   final Alignment alignment;
   final IconData icon;
+  final String? fallbackUrl;
   @override
   Widget build(BuildContext context) {
     final fallback = DecoratedBox(
@@ -36,7 +38,10 @@ class Artwork extends StatelessWidget {
       fit: fit,
       alignment: alignment,
       filterQuality: FilterQuality.medium,
-      errorBuilder: (_, error, stack) => fallback,
+      errorBuilder: (_, error, stack) =>
+          fallbackUrl != null && fallbackUrl != url
+          ? Artwork(fallbackUrl, fit: fit, alignment: alignment, icon: icon)
+          : fallback,
       frameBuilder: (context, child, frame, sync) =>
           frame == null ? fallback : child,
     );
