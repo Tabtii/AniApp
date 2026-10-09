@@ -1,6 +1,6 @@
 # AniApp — Android & iOS
 
-The shared Flutter app is in [`mobile/`](mobile/). Version 0.3.4 adds keyless Kitsu detail metadata, images and trailer links, plus an own ADN News scraper serving short sourced previews through Supabase. It also corrects the One Piece weekly estimate using a reviewed publisher pause notice. Seasonal discovery, watchlists, multilingual dub observations, news previews and a season-independent calendar run on Android and iOS. TMDb and AniList adapters still require their [activation prerequisites](docs/DATA_SOURCES.md). See [setup and implementation status](docs/IMPLEMENTATION.md).
+The shared Flutter app is in [`mobile/`](mobile/). Version 0.3.5 adds a redesigned login/registration flow with password recovery, AniNews previews and broader verified ADN episode coverage. Existing live catalog, Kitsu details, watchlists, language observations and source-aware calendar work on Android and iOS. See the [current source coverage and release gates](docs/RELEASE_READINESS.md); provider coverage, production email and store release setup are not yet complete.
 
 The original Kotlin application below remains as a historical training reference.
 

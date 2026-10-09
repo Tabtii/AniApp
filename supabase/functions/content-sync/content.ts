@@ -43,7 +43,8 @@ function category(title:string) {
   if (/stream|crunchyroll|netflix|simulcast|\bADN\b/i.test(title)) return 'streaming';
   return 'announcement';
 }
-export function rssNews(xml:string, now=new Date()):Row[] {
+export function rssNews(xml:string, now=new Date(), publisher:'Anime2You'|'AniNews'='Anime2You'):Row[] {
+  const host=publisher==='AniNews'?'www.aninews.de':'www.anime2you.de';
   if (!xml.includes('<rss') || xml.length>2000000 || /<!DOCTYPE/i.test(xml)) throw new Error('Invalid RSS document');
   const items=[...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/g)];
   const get=(item:string,tag:string)=>cleanText(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`).exec(item)?.[1] ?? '');
@@ -51,10 +52,11 @@ export function rssNews(xml:string, now=new Date()):Row[] {
   for(const match of items.slice(0,40)) {
     const headline=get(match[1],'title'), link=get(match[1],'link'), date=new Date(get(match[1],'pubDate'));
     let url:URL; try {url=new URL(link);} catch {continue;}
-    if(url.protocol!=='https:' || url.hostname!=='www.anime2you.de' || !url.pathname.startsWith('/news/') || !headline || !Number.isFinite(date.getTime()) || date>now || now.getTime()-date.getTime()>30*86400000) continue;
+    if(url.protocol!=='https:' || url.hostname!==host || url.username || url.password || !/^\/news\/\d+(?:\/|$)/.test(url.pathname) || !headline || !Number.isFinite(date.getTime()) || date>now || now.getTime()-date.getTime()>30*86400000) continue;
+    if(publisher==='AniNews' && !/<category[^>]*>(?:<!\[CDATA\[)?Anime(?: News)?(?:\]\]>)?<\/category>/i.test(match[1]))continue;
     const description = /<description[^>]*>([\s\S]*?)<\/description>/.exec(match[1])?.[1] ?? '';
     const image = /<img\b[^>]*\bsrc=["']([^"']+)["']/i.exec(description)?.[1];
-    rows.push({headline:headline.slice(0,250),image_url:sourceImage(image ? cleanText(image) : null,'www.anime2you.de'),summary:newsPreview(description) || 'Neue Meldung von Anime2You.',category:category(headline),source_name:'Anime2You',source_url:url.href,published_at:date.toISOString(),checked_at:now.toISOString(),published:true,language:'de'});
+    rows.push({headline:headline.slice(0,250),image_url:sourceImage(image ? cleanText(image) : null,host),summary:newsPreview(description) || `Neue Meldung von ${publisher}.`,category:category(headline),source_name:publisher,source_url:url.href,published_at:date.toISOString(),checked_at:now.toISOString(),published:true,language:'de'});
   }
   if (!rows.length) throw new Error('RSS has no recent news');
   return rows;

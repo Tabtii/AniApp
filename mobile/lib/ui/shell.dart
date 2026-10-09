@@ -7,6 +7,7 @@ import 'content_screens.dart';
 import 'profile_screen.dart';
 import 'visuals.dart';
 import 'brand.dart';
+import 'login_dialog.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.store, this.startupWarning});
@@ -18,9 +19,12 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int index = 0;
+  bool _recoveryOpen = false;
   @override
   void initState() {
     super.initState();
+    widget.store.addListener(_checkRecovery);
+    _checkRecovery();
     if (widget.startupWarning != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -30,6 +34,38 @@ class _AppShellState extends State<AppShell> {
         }
       });
     }
+  }
+
+  void _checkRecovery() {
+    if (_recoveryOpen ||
+        !widget.store.passwordRecoveryPending ||
+        widget.store.backend == null) {
+      return;
+    }
+    _recoveryOpen = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final done = await showDialog<bool>(
+        context: context,
+        builder: (_) => LoginDialog(
+          backend: widget.store.backend!,
+          initialMode: LoginMode.newPassword,
+        ),
+      );
+      widget.store.finishPasswordRecovery();
+      _recoveryOpen = false;
+      if (mounted && done == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Dein Passwort wurde geändert.')),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.store.removeListener(_checkRecovery);
+    super.dispose();
   }
 
   @override

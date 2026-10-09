@@ -43,7 +43,7 @@ void main() {
       find.widgetWithText(TextField, 'Passwort'),
       'test-password',
     );
-    await tester.tap(find.text('Abbrechen'));
+    await tester.tap(find.byTooltip('Schließen'));
     // Include the dismissal animation: showDialog completes before its fields unmount.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
@@ -67,7 +67,7 @@ void main() {
     );
     await tester.tapAt(const Offset(10, 10));
     await tester.pumpAndSettle();
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byType(Dialog), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
     store.dispose();

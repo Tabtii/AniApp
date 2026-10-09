@@ -20,6 +20,12 @@ class AppStore extends ChangeNotifier {
   bool busy = false;
   bool cloudLoaded = false;
   String? watchError;
+  bool passwordRecoveryPending = false;
+  void finishPasswordRecovery() {
+    passwordRecoveryPending = false;
+    _notify();
+  }
+
   int _sessionVersion = 0;
   int _mutationVersion = 0;
   bool _disposed = false;
@@ -40,6 +46,13 @@ class AppStore extends ChangeNotifier {
     _userId = backend?.auth.currentUser?.id;
     _readLocal();
     _auth = backend?.auth.onAuthStateChange.listen((event) {
+      if (event.event == AuthChangeEvent.passwordRecovery) {
+        passwordRecoveryPending = true;
+        _notify();
+      }
+      if (event.event == AuthChangeEvent.signedOut) {
+        passwordRecoveryPending = false;
+      }
       final next = event.session?.user.id;
       if (next != _userId) {
         _sessionVersion++;

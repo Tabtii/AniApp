@@ -22,6 +22,10 @@ test('ADN rejects wrong locales, untrusted links and wrong days without inventin
  assert.equal(berlinDay(new Date('2026-10-25T23:30:00Z')),'2026-10-26');
  assert.deepEqual(adnDays({dateRules:['2026-09-01','2026-10-10','2026-10-10','2026-11-01']},now),['2026-10-10']);
 });
+test('back-catalog additions remain provider releases, not new original broadcasts',()=>{
+ const row=adnEvents({videos:[{...video,show:{id:213,distributions:'de'},shortNumber:'39',url:'https://animationdigitalnetwork.com/de/video/213-revolutionary-girl-utena/39'}]},'2026-10-10',now).rows[0];
+ assert.equal(row.mal_id,440);assert.equal(row.episode,39);assert.equal(row.kind,'streaming');assert.match(row.release_note,/ADN-Katalog/);assert.match(row.release_note,/deutschen Untertiteln/);
+});
 test('a failed ADN day is excluded from replacement; valid empty days can clear cancellations',async()=>{
  const result=await loadAdn(async url=>{
   if(url.endsWith('/rule'))return JSON.stringify({dateRules:['2026-10-10','2026-10-11','2026-10-12']});

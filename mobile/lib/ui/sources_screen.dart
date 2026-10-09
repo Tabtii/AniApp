@@ -95,7 +95,7 @@ class SourcesScreen extends StatelessWidget {
           child: const Text('Tenrai / MyAnimeList'),
         ),
         const Text(
-          'Anbietertermine: unter anderem ADN und geprüfte Ankündigungen. News: Anime2You, MyAnimeList und ADN News. Der eigene ADN-Scraper übernimmt öffentliche Artikel-Metadaten und kurze Vorschauen. Originalquellen und Abrufdatum stehen an den jeweiligen Inhalten. Bilder bleiben Eigentum ihrer Rechteinhaber.',
+          'Anbietertermine: unter anderem ADN und geprüfte Ankündigungen. News: Anime2You, AniNews, MyAnimeList und ADN News. Der eigene ADN-Scraper übernimmt öffentliche Artikel-Metadaten und kurze Vorschauen. Originalquellen und Abrufdatum stehen an den jeweiligen Inhalten. Bilder bleiben Eigentum ihrer Rechteinhaber.',
         ),
       ],
     ),

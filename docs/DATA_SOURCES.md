@@ -1,4 +1,4 @@
-# Enrichment sources (0.3.4)
+# Enrichment sources (0.3.5)
 
 `anime-enrichment` is a read-only Edge Function. The mobile app calls it with a MAL ID, selected country and language; the project publishable key is required. It has bounded requests, timeouts, input validation, in-flight request coalescing and isolate-local caches/quotas. There are no new tables, no service-role client operations, and no edits to users' watchlists.
 
@@ -63,3 +63,9 @@ Tests cover ID/season/region separation, language uncertainty, outages, attribut
 2026-10-08 live check: the deployed gateway returned HTTP 200 and sourced `available` observations for Frieren (MAL 52991, German), One Piece (MAL 21, English and French). It reported TMDb `unconfigured` and AniList `approval_required`; their live integrations are **not active**. Missing project keys returned 401; invalid regions returned 400. No production mock content was inserted.
 
 0.3.4 live check: Kitsu returned `ok` for Frieren and One Piece. The deployed content-sync completed with eight new ADN News previews, 86 weekly Japanese estimates, one reviewed undated pause and 18 ADN provider episodes; all five source adapters succeeded. Missing ADN → MAL mappings remain excluded instead of guessed.
+
+## AniNews and expanded ADN identities (0.3.5)
+
+The free German https://www.aninews.de/feed supplies anime headlines. The own adapter validates source/age/category, checks robots, fetches at most eight article pages with one-second spacing, validates German article identity and extracts a source image. Pages are cached for a day; requests are bounded, redirects and arbitrary hosts are rejected, and failed imports preserve existing data. No full articles are copied and no release date is inferred from a news date. Include `aninews.ts` when deploying content-sync.
+
+Four additional ADN show/season identities were reviewed against official title/type/description and MAL, increasing mapped titles from 10 to 14. Older Utena episodes are explicitly labelled as ADN catalog additions. See [current coverage and release gates](RELEASE_READINESS.md) for the source audit and outstanding account/provider requirements.

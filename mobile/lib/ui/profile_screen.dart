@@ -30,10 +30,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _login() => showDialog<void>(
-    context: context,
-    builder: (_) => LoginDialog(backend: widget.store.backend!),
-  );
+  Future<void> _login() async {
+    await showDialog<bool>(
+      context: context,
+      builder: (_) => LoginDialog(backend: widget.store.backend!),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
