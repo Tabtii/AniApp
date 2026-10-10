@@ -1,9 +1,70 @@
 # AniApp mobile
 
-Shared Flutter application for Android and iOS. See [implementation and setup](../docs/IMPLEMENTATION.md).
+Shared Flutter application for **Android and iOS**, version **0.3.6+13**, with a German/English interface. The current code is on `feature/anime-companion`.
 
-Without cloud configuration, catalog browsing and a local guest watchlist work. With Supabase configured, the app supports account sign-in and cloud watchlists. News, releases and streaming-language cards read reviewed content from the backend.
+[Project overview](../README.md) · [Data sources](../docs/DATA_SOURCES.md) · [Release readiness](../docs/RELEASE_READINESS.md)
 
-Use `flutter pub get`, then `flutter run --dart-define-from-file=config/supabase.json` to connect to the active AniApp project. The file contains only the public project URL and publishable client key. CI uses this configuration for both Android and iOS builds.
+## Start the app
 
-Email confirmation opens `com.tabtii.aniapp://login-callback/`. The default Supabase mail service currently allows confirmation emails only to organization team members; custom SMTP is required for other testers. Never put a database password, service-role key or provider secret in the app configuration.
+Use **Flutter 3.47.6**, matching `.github/workflows/flutter.yml`. Android needs the Android SDK and a device/emulator; iOS development needs macOS and Xcode.
+
+From this directory:
+
+```bash
+flutter pub get
+flutter run --dart-define-from-file=config/supabase.json
+```
+
+The configuration connects to the active AniApp backend. It contains only the public project URL and publishable client key. For a different project, supply your own file with the same two fields and pass its path to `--dart-define-from-file`:
+
+```json
+{
+  "SUPABASE_URL": "https://YOUR_PROJECT.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "YOUR_PUBLISHABLE_KEY"
+}
+```
+
+Never include a database password, service-role key or provider secret in app configuration. Backend schema/function setup is separate; see [implementation details](../docs/IMPLEMENTATION.md).
+
+Without cloud configuration, catalog browsing and a local guest watchlist work. Supabase enables shared news, release events, account access and cloud watchlists. Automatic announcement extraction runs server-side; the app reads published, sourced records rather than scraping websites itself.
+
+## Language and calendar settings
+
+- **Interface:** device language, German or English. The device default is German for a German device locale, otherwise English.
+- **News:** follow the app language, German, English or both.
+- **Dub audio:** German, English or both, independent of interface language.
+- **Country:** DE, AT, CH, US or GB, independent of language.
+- **Calendar:** include original/provider releases, or show selected dubs only. Continuing shows from older seasons remain eligible.
+
+Article text and source notes retain their source language. Unknown dates remain TBA, date-only releases do not invent a clock time, and missing provider/language evidence is not treated as availability.
+
+## Authentication
+
+The app includes login, registration and password recovery. Confirmation/recovery links use:
+
+```text
+com.tabtii.aniapp://login-callback/
+```
+
+Configure the allowed redirect and email delivery for your Supabase project. The current test deployment still needs owned SMTP and end-to-end confirmation/recovery tests for public signup. A local guest watchlist can be used without an account.
+
+## Validate and build
+
+```bash
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test
+flutter build apk --debug --dart-define-from-file=config/supabase.json
+```
+
+Android output: `build/app/outputs/flutter-apk/app-debug.apk`.
+
+On macOS, for the simulator:
+
+```bash
+flutter build ios --simulator --debug --dart-define-from-file=config/supabase.json
+```
+
+Physical iPhone distribution requires Apple signing. CI produces Android debug artifacts and validates the iOS simulator build; neither is a public store release.
+
+Localization resources live in `lib/l10n/app_de.arb` and `lib/l10n/app_en.arb`. Run `flutter gen-l10n` after editing them.
