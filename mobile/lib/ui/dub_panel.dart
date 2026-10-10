@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 import '../models/content.dart';
 import 'common.dart';
 import 'visuals.dart';
 
-String dubDateLabel(ReleaseEvent event) {
+String dubDateLabel(ReleaseEvent event, [BuildContext? context]) {
+  final strings = stringsFor(context);
   if (event.startsAt != null) {
-    return '${dateLabel(event.startsAt)} · Gerätezeit';
+    return strings.deviceTime(dateLabel(event.startsAt, context));
   }
   if (event.startsOn != null) {
-    return '${shortDate(event.startsOn)} · Uhrzeit offen';
+    return strings.timeUnknown(shortDate(event.startsOn, context));
   }
-  return 'Starttermin noch offen';
+  return strings.startTba;
 }
 
 class DubPanel extends StatelessWidget {
@@ -58,8 +60,10 @@ class DubPanel extends StatelessWidget {
                 Expanded(
                   child: Text(
                     language == 'de'
-                        ? 'Deutsche Synchro'
-                        : 'Synchro · ${languageLabel(language)}',
+                        ? context.l10n.germanDub
+                        : context.l10n.dubHeading(
+                            languageLabel(language, context),
+                          ),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -73,57 +77,58 @@ class DubPanel extends StatelessWidget {
               if (['available', 'partial'].contains(observation['status'])) ...[
                 Text(
                   observation['status'] == 'partial'
-                      ? 'Teilweise synchronisiert'
-                      : 'Synchronfassung vorhanden',
+                      ? context.l10n.partialDub
+                      : context.l10n.dubExists,
                   style: TextStyle(
                     color: scheme.primary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Laut MyDubList. Anbieter, Region und Veröffentlichung einzelner Folgen sind damit noch nicht bestätigt.',
-                  style: TextStyle(fontSize: 12),
+                Text(
+                  context.l10n.dubEvidenceHint,
+                  style: const TextStyle(fontSize: 12),
                 ),
                 if (observation['checked_at'] is String)
                   Text(
-                    'Abgerufen: ${shortDate(DateTime.tryParse(observation['checked_at'] as String))}',
+                    context.l10n.fetchedOn(
+                      shortDate(
+                        DateTime.tryParse(observation['checked_at'] as String),
+                        context,
+                      ),
+                    ),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 TextButton(
                   onPressed: () => openSource(context, 'https://mydublist.com'),
-                  child: const Text('Quelle: MyDubList'),
+                  child: Text(context.l10n.mydubSource),
                 ),
                 if (events.isNotEmpty || available.isNotEmpty)
                   const Divider(height: 24),
               ],
               if (observation['status'] == 'original_language')
-                const Text(
-                  'Japanisch ist die Originalsprache der meisten Anime. Die Audioauswahl bitte beim Anbieter prüfen.',
-                ),
+                Text(context.l10n.japaneseOriginalHint),
               if (error != null) ...[
                 Text(error!),
                 TextButton(
                   onPressed: onRetry,
-                  child: const Text('Erneut laden'),
+                  child: Text(context.l10n.reload),
                 ),
               ],
               if (observation['status'] == 'unavailable')
-                const Text(
-                  'Die zusätzliche Sprachquelle MyDubList ist gerade nicht erreichbar.',
-                ),
+                Text(context.l10n.mydubUnavailable),
               if (available.isNotEmpty) ...[
                 Text(
-                  'Als verfügbar gemeldet',
+                  context.l10n.reportedAvailable,
                   style: TextStyle(
                     color: scheme.primary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 Text(available.map((a) => a.provider).toSet().join(' · ')),
-                const Text(
-                  'Die Sprachangabe kann je Staffel und Folge abweichen.',
-                  style: TextStyle(fontSize: 12),
+                Text(
+                  context.l10n.languageVaries,
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
               if (events.isEmpty &&
@@ -135,18 +140,16 @@ class DubPanel extends StatelessWidget {
                     'original_language',
                     'unavailable',
                   ].contains(observation['status']))
-                const Text(
-                  'Noch keine belegte Dub-Ankündigung für diesen Titel und diese Region hinterlegt.',
-                ),
+                Text(context.l10n.noDubEvidence),
               for (final e in events) ...[
                 if (available.isNotEmpty || e != events.first)
                   const Divider(height: 28),
                 Text(
                   e.status == 'delayed'
-                      ? 'Verschoben'
+                      ? context.l10n.delayed
                       : e.date == null
-                      ? 'Angekündigt'
-                      : 'Angekündigter Start',
+                      ? context.l10n.announced
+                      : context.l10n.announcedStart,
                   style: TextStyle(
                     color: scheme.primary,
                     fontWeight: FontWeight.w800,
@@ -154,12 +157,12 @@ class DubPanel extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  dubDateLabel(e),
+                  dubDateLabel(e, context),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '${e.provider}${e.episode == null ? '' : ' · Folge ${e.episode}'}',
+                  '${e.provider}${e.episode == null ? '' : ' · ${context.l10n.episodeNumber('${e.episode}')}'}',
                 ),
                 if (e.note != null) ...[
                   const SizedBox(height: 6),
@@ -174,14 +177,14 @@ class DubPanel extends StatelessWidget {
                 if (e.startsAt?.isBefore(DateTime.now()) ??
                     (e.startsOn?.isBefore(DateUtils.dateOnly(DateTime.now())) ??
                         false))
-                  const Text(
-                    'Der angekündigte Termin liegt in der Vergangenheit. Aktuelle Verfügbarkeit beim Anbieter prüfen.',
-                    style: TextStyle(fontSize: 12),
+                  Text(
+                    context.l10n.pastAnnouncement,
+                    style: const TextStyle(fontSize: 12),
                   ),
                 if (e.checkedAt != null) ...[
                   const SizedBox(height: 8),
                   Text(
-                    'Geprüft am ${shortDate(e.checkedAt)}',
+                    context.l10n.checkedOn(shortDate(e.checkedAt, context)),
                     style: TextStyle(
                       fontSize: 10,
                       color: scheme.onSurfaceVariant,
@@ -191,7 +194,7 @@ class DubPanel extends StatelessWidget {
                 TextButton.icon(
                   onPressed: () => openSource(context, e.source),
                   icon: const Icon(Icons.north_east_rounded, size: 16),
-                  label: const Text('Ankündigung ansehen'),
+                  label: Text(context.l10n.viewAnnouncement),
                 ),
               ],
             ],

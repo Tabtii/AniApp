@@ -20,7 +20,7 @@ void main() {
   testWidgets('catalog loading stops on timeout and retry can recover', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'app_language': 'de'});
     final response = Completer<http.Response>();
     final store = AppStore(
       await SharedPreferences.getInstance(),
@@ -63,7 +63,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      SharedPreferences.setMockInitialValues({});
+      SharedPreferences.setMockInitialValues({'app_language': 'de'});
       final store = AppStore(
         await SharedPreferences.getInstance(),
         catalog: FakeCatalog(),

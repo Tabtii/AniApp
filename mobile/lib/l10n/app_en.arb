@@ -1,0 +1,378 @@
+{
+  "@@locale": "en",
+  "retry": "Try again",
+  "reload": "Reload",
+  "refresh": "Refresh",
+  "close": "Close",
+  "cancel": "Cancel",
+  "remove": "Remove",
+  "openProfile": "Open profile",
+  "discover": "Discover",
+  "myList": "My list",
+  "calendar": "Calendar",
+  "profile": "Profile",
+  "season": "Season",
+  "spring": "Spring",
+  "summer": "Summer",
+  "autumn": "Autumn",
+  "allGenres": "All genres",
+  "catalogHeading": "Your next favourite anime.",
+  "searchHint": "Titles, worlds, new stories …",
+  "search": "Search",
+  "loadingAnime": "Loading anime …",
+  "noAnime": "No anime found. Try different search terms or filters.",
+  "searchResults": "Your search results",
+  "moreSeason": "More from this season",
+  "results": "Results",
+  "newWorlds": "Discover new worlds",
+  "loadMore": "Load more anime",
+  "savedWatchlist": "In your watchlist",
+  "addWatchlist": "Add to watchlist",
+  "discoverAnime": "Explore anime",
+  "watchlistHeading": "Your anime. Your pace.",
+  "myWatchlist": "My watchlist",
+  "retrySync": "Retry sync",
+  "watchlistEmpty": "Save an anime in Discover. Track your next episodes here.",
+  "oneLess": "One episode less",
+  "oneWatched": "One episode watched",
+  "removeAnime": "Remove anime?",
+  "removeProgress": "Your saved progress will be removed.",
+  "yourProfile": "YOUR PROFILE",
+  "profileHeading": "Your everyday anime.",
+  "signedIn": "Signed in",
+  "guest": "Guest mode",
+  "watchlistCloud": "Your watchlist syncs with your account.",
+  "watchlistLocal": "Your watchlist stays on this device.",
+  "loginRegister": "Sign in or register",
+  "importGuest": "Import guest watchlist",
+  "signOut": "Sign out",
+  "region": "Streaming country",
+  "germany": "Germany",
+  "austria": "Austria",
+  "switzerland": "Switzerland",
+  "unitedKingdom": "United Kingdom",
+  "appLanguage": "App language",
+  "systemLanguage": "Device language",
+  "newsLanguage": "News language",
+  "followApp": "Same as app",
+  "bothLanguages": "German & English",
+  "dubLanguages": "Preferred dubs",
+  "dubSelectionHint": "Choose at least one language. News and app language are independent.",
+  "calendarDisplay": "Calendar contents",
+  "calendarAll": "Original, streaming & selected dubs",
+  "calendarDubs": "Selected dubs only",
+  "availabilityHint": "Audio and subtitles are shown separately. Availability can vary by provider, country, season and episode.",
+  "sources": "Sources & notes",
+  "nextEpisode": "Your next episode.",
+  "aboutTimes": "About release times",
+  "calendarLoadError": "Release dates could not be loaded.",
+  "allSeasons": "All seasons · ongoing series & announced premieres",
+  "allProviders": "All providers",
+  "allDays": "All days",
+  "undated": "TBA",
+  "calendarEmpty": "Nothing scheduled here yet. Choose another day or show all anime.",
+  "undatedUpper": "TBA",
+  "noTime": "NO TIME",
+  "timeUpper": "TIME",
+  "japaneseBroadcast": "Japanese TV broadcast",
+  "estimated": "Estimated",
+  "confirmed": "Confirmed",
+  "delayed": "Delayed",
+  "announced": "Announced",
+  "openDateSource": "Open release source",
+  "newsHeading": "News from your world.",
+  "newsAnnouncements": "News & announcements",
+  "all": "All",
+  "seasons": "Seasons",
+  "newsLoadError": "News could not be loaded.",
+  "newsEmpty": "No news for this topic in your selected language(s) yet.",
+  "newSeasons": "New seasons",
+  "readOriginal": "Read original",
+  "detailTitle": "Anime details",
+  "inYourList": "In your list",
+  "saveWatchlist": "Add to my watchlist",
+  "story": "The story",
+  "noSynopsis": "No description available yet.",
+  "tmdbSynopsis": "Description: TMDb",
+  "anilistCredit": "Artwork & episode dates: AniList",
+  "kitsuCredit": "Additional artwork & details: Kitsu",
+  "nextJapan": "Next broadcast in Japan",
+  "nextRelease": "Next release",
+  "dateTba": "Date to be announced",
+  "weeklyEstimate": "Estimated from the regular schedule. Breaks are possible.",
+  "pausedTba": "Paused or delayed – date to be announced",
+  "announcedDate": "Announced date",
+  "regularJapan": "Regular broadcast in Japan",
+  "japanNotLocal": "This is not a confirmed streaming or dub release in your country.",
+  "noProviders": "No reliable provider information is available for this title and country yet.",
+  "malProviders": "Provider overview on MyAnimeList",
+  "tmdbUnavailable": "TMDb / JustWatch is currently unavailable.",
+  "providerCredit": "Provider information: JustWatch via TMDb. Check availability and languages with the provider.",
+  "titleMapping": "Title mapping: Fribb / anime-lists",
+  "reportedAvailable": "Reported as available",
+  "movieScope": "Information applies to this film.",
+  "seriesScope": "Information applies to the series; it may vary by season and episode.",
+  "subscription": "Subscription",
+  "free": "Free",
+  "withAds": "With ads",
+  "rent": "Rent",
+  "buy": "Buy",
+  "unknown": "Unknown",
+  "noInformation": "Not specified",
+  "tmdbOffers": "View offers on TMDb",
+  "checkProvider": "Check with provider",
+  "startTba": "Premiere date to be announced",
+  "germanDub": "German dub",
+  "partialDub": "Partially dubbed",
+  "dubExists": "Dub exists",
+  "dubEvidenceHint": "According to MyDubList. This does not confirm the provider, country or individual episode releases.",
+  "mydubSource": "Source: MyDubList",
+  "japaneseOriginalHint": "Japanese is the original language of most anime. Check audio options with the provider.",
+  "mydubUnavailable": "The additional language source MyDubList is currently unavailable.",
+  "languageVaries": "Audio languages may vary by season and episode.",
+  "noDubEvidence": "No verified dub announcement is recorded for this title and country yet.",
+  "announcedStart": "Announced premiere",
+  "pastAnnouncement": "The announced date is in the past. Check current availability with the provider.",
+  "viewAnnouncement": "View announcement",
+  "moreAboutSeries": "More about this series",
+  "airing": "Airing",
+  "completed": "Completed",
+  "dateOpen": "Date TBA",
+  "unreleased": "Not released yet",
+  "kitsuDatesHint": "Information applies to this anime entry; local releases may differ.",
+  "kitsuSource": "Source: Kitsu",
+  "youtubeTrailer": "Trailer on YouTube",
+  "signIn": "Sign in",
+  "createAccount": "Create account",
+  "email": "Email",
+  "emailHint": "you@example.com",
+  "password": "Password",
+  "newPassword": "New password",
+  "repeatPassword": "Confirm password",
+  "minPassword": "At least 8 characters",
+  "hidePassword": "Hide password",
+  "showPassword": "Show password",
+  "forgotPassword": "Forgot password?",
+  "savePassword": "Save password",
+  "sendLink": "Send link",
+  "backSignIn": "Back to sign in",
+  "toSignIn": "Go to sign in",
+  "later": "Later",
+  "continueGuest": "Continue as guest",
+  "guestHint": "Without an account, your list stays on this device.",
+  "invalidEmail": "Enter a valid email address.",
+  "enterPassword": "Enter your password.",
+  "passwordLength": "Use at least 8 characters.",
+  "passwordMismatch": "The passwords do not match.",
+  "checkInbox": "Check your inbox.",
+  "freshStart": "A fresh start.",
+  "backReady": "Ready to return.",
+  "loginRegisterTitle": "Your anime.\nYour home.",
+  "loginTitle": "Your next episode\nis waiting.",
+  "setNewPassword": "Set your new password now.",
+  "recoverySubtitle": "Let's get you back to your watchlist.",
+  "loginSubtitle": "Collect favourites. Save your progress. Pick up on any device.",
+  "yourWatchlist": "Your watchlist",
+  "allDevices": "On every device",
+  "recoverySent": "If an account exists for this email, you will receive a reset link. Open it on this device.",
+  "confirmationSent": "If confirmation is required, you will receive an email. Open the link on this device, then sign in.",
+  "checkSpam": "Check your spam folder too.",
+  "invalidCredentials": "Email or password is incorrect. Please try again.",
+  "confirmEmail": "Please confirm your email using the link first.",
+  "authRateLimit": "Too many attempts. Please wait a moment and try again.",
+  "emailNotEnabled": "Email delivery is not enabled yet. You can still use your local watchlist.",
+  "weakPassword": "Choose a stronger password with at least 8 characters.",
+  "samePassword": "Choose a different password from your current one.",
+  "authError": "That did not work. Check your details and try again.",
+  "authTimeout": "The connection is taking too long. Please try again.",
+  "authOffline": "No connection. Check your internet and try again.",
+  "passwordChanged": "Your password has been changed.",
+  "actionFailed": "Your changes could not be saved. Please try again.",
+  "linkFailed": "The link could not be opened.",
+  "enrichmentError": "Additional language and provider details are currently unavailable.",
+  "detailLoadError": "Details could not be loaded.",
+  "streamingError": "Streaming information is currently unavailable.",
+  "dubLoadError": "Dub announcements could not be loaded.",
+  "releaseError": "Release dates are currently unavailable.",
+  "episodeCount": "{count} episodes",
+  "@episodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "episodeNumber": "Episode {number}",
+  "@episodeNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "listCount": "{count} anime in your list",
+  "@listCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "titleCount": "{count} titles",
+  "@titleCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "allCount": "All ({count})",
+  "@allCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "releaseCalendar": "Release calendar · {region}",
+  "@releaseCalendar": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "dubHeading": "Dub · {language}",
+  "@dubHeading": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "checkedOn": "Checked on {date}",
+  "@checkedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fetchedOn": "Fetched: {date}",
+  "@fetchedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceName": "Source: {name}",
+  "@sourceName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lastChecked": "Last checked: {date}",
+  "@lastChecked": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "audioLabel": "Audio: {languages}",
+  "@audioLabel": {
+    "placeholders": {
+      "languages": {
+        "type": "String"
+      }
+    }
+  },
+  "subtitleLabel": "Subtitles: {languages}",
+  "@subtitleLabel": {
+    "placeholders": {
+      "languages": {
+        "type": "String"
+      }
+    }
+  },
+  "whereWatch": "Where to watch · {region}",
+  "@whereWatch": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "seasonScope": "Information applies to season {number}; check episode coverage.",
+  "@seasonScope": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "runtime": "{minutes} min / episode",
+  "@runtime": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "originalDates": "Original broadcast: {dates}",
+  "@originalDates": {
+    "placeholders": {
+      "dates": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceTime": "{date} · device time",
+  "@deviceTime": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "timeUnknown": "{date} · time TBA",
+  "@timeUnknown": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "planned": "Planned",
+  "watching": "Watching",
+  "paused": "Paused",
+  "dropped": "Dropped",
+  "languageDe": "German",
+  "languageEn": "English",
+  "languageJa": "Japanese",
+  "calendarHint": "The calendar includes ongoing anime from all seasons. Provider releases and dubs can continue after the Japanese broadcast ends. Times use your device time zone. Estimated dates come from weekly schedules; breaks and delays are possible. Provider coverage is incomplete. Each event includes its source and check date.",
+  "cloudWarning": "The cloud connection could not start. Your local watchlist is still available.",
+  "catalogRateLimit": "Too many requests. Please wait a moment and try again.",
+  "catalogUnavailable": "Anime data is currently unavailable.",
+  "catalogTimeout": "The request is taking too long. Please try again.",
+  "catalogOffline": "No connection. Please check your internet.",
+  "catalogNoResponse": "The anime source is not responding. Please try again later.",
+  "catalogInvalid": "The anime source returned invalid data.",
+  "localListError": "Your local watchlist could not be read.",
+  "syncError": "Sync is unavailable. Your last saved list remains visible.",
+  "dubsCreditHeading": "Dubs",
+  "dubCredit": "Dub data © MyDubList – CC BY 4.0. AniApp uses entries backed by multiple sources or manual confirmation, filtered by title and selected language. Display labels have been translated. Missing entries mean unknown. Evidence that a dub exists does not confirm a provider or an episode release date.",
+  "license": "License: CC BY 4.0",
+  "reportDub": "Report incorrect dub information",
+  "kitsuInfo": "Additional anime information: Kitsu",
+  "kitsuAttribution": "Artwork, runtime, episode counts, original broadcast dates and trailers are from Kitsu where indicated. Titles are matched using their recorded MyAnimeList ID. These are not local streaming or dub release dates.",
+  "providerDescriptions": "Providers & descriptions",
+  "justwatchCredit": "Streaming offers are from JustWatch via TMDb. Information applies to the displayed country and the matched film, series or season. Audio languages and future episode release dates are not inferred from it. Availability may change.",
+  "idMapping": "ID mapping: Fribb / anime-lists",
+  "catalogCalendarNews": "Catalog, calendar & news",
+  "catalogAttribution": "Anime catalog: MyAnimeList via Tenrai or the official API. Episode dates may also come from AniList if enabled for AniApp; each event names its source. Japanese broadcasts and local streaming or dub releases are separate facts.",
+  "newsAttribution": "Provider dates: ADN and reviewed announcements, among others. News: Anime2You, AniNews, MyAnimeList and ADN News. The ADN scraper collects public article metadata and short previews. Original sources and fetch dates are shown with the content. Images belong to their rights holders."
+}

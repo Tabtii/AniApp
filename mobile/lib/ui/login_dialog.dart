@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'brand.dart';
@@ -106,35 +107,24 @@ class _LoginDialogState extends State<LoginDialog> {
       if (_active) {
         setState(
           () => _message = switch (e.code) {
-            'invalid_credentials' =>
-              'E-Mail oder Passwort stimmen nicht. Bitte versuche es noch einmal.',
-            'email_not_confirmed' =>
-              'Bitte bestätige zuerst den Link in deiner E-Mail.',
-            'over_request_rate_limit' || 'over_email_send_rate_limit' =>
-              'Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.',
-            'email_address_not_authorized' =>
-              'Der E-Mail-Versand ist noch nicht freigeschaltet. Deine lokale Watchlist bleibt nutzbar.',
-            'weak_password' =>
-              'Bitte wähle ein stärkeres Passwort mit mindestens 8 Zeichen.',
-            'same_password' => 'Bitte wähle ein anderes Passwort als bisher.',
-            _ =>
-              'Das hat gerade nicht geklappt. Prüfe deine Angaben und versuche es erneut.',
+            'invalid_credentials' => context.l10n.invalidCredentials,
+            'email_not_confirmed' => context.l10n.confirmEmail,
+            'over_request_rate_limit' ||
+            'over_email_send_rate_limit' => context.l10n.authRateLimit,
+            'email_address_not_authorized' => context.l10n.emailNotEnabled,
+            'weak_password' => context.l10n.weakPassword,
+            'same_password' => context.l10n.samePassword,
+            _ => context.l10n.authError,
           },
         );
       }
     } on TimeoutException {
       if (_active) {
-        setState(
-          () => _message =
-              'Die Verbindung dauert zu lange. Bitte versuche es erneut.',
-        );
+        setState(() => _message = context.l10n.authTimeout);
       }
     } catch (_) {
       if (_active) {
-        setState(
-          () => _message =
-              'Keine Verbindung. Bitte prüfe dein Internet und versuche es erneut.',
-        );
+        setState(() => _message = context.l10n.authOffline);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -145,19 +135,19 @@ class _LoginDialogState extends State<LoginDialog> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final title = _sent
-        ? 'Schau in dein Postfach.'
+        ? context.l10n.checkInbox
         : _newPassword
-        ? 'Ein neuer Anfang.'
+        ? context.l10n.freshStart
         : _recovery
-        ? 'Wieder startklar.'
+        ? context.l10n.backReady
         : _register
-        ? 'Deine Anime.\nDein Zuhause.'
-        : 'Deine nächste Folge\nwartet schon.';
+        ? context.l10n.loginRegisterTitle
+        : context.l10n.loginTitle;
     final subtitle = _newPassword
-        ? 'Lege jetzt dein neues Passwort fest.'
+        ? context.l10n.setNewPassword
         : _recovery
-        ? 'Wir helfen dir zurück zu deiner Watchlist.'
-        : 'Lieblingsserien sammeln. Fortschritt speichern. Auf jedem Gerät weitermachen.';
+        ? context.l10n.recoverySubtitle
+        : context.l10n.loginSubtitle;
     return Dialog(
       backgroundColor: scheme.surface,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -187,7 +177,7 @@ class _LoginDialogState extends State<LoginDialog> {
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Schließen',
+                    tooltip: context.l10n.close,
                     onPressed: _busy ? null : () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded),
                   ),
@@ -239,16 +229,16 @@ class _LoginDialogState extends State<LoginDialog> {
                               ),
                               if (!_recovery && !_newPassword && !_sent) ...[
                                 const SizedBox(height: 16),
-                                const Wrap(
+                                Wrap(
                                   spacing: 8,
                                   runSpacing: 8,
                                   children: [
                                     Tag(
-                                      'Deine Watchlist',
+                                      context.l10n.yourWatchlist,
                                       icon: Icons.bookmark_outline_rounded,
                                     ),
                                     Tag(
-                                      'Überall dabei',
+                                      context.l10n.allDevices,
                                       icon: Icons.devices_rounded,
                                     ),
                                   ],
@@ -271,18 +261,18 @@ class _LoginDialogState extends State<LoginDialog> {
                                 const SizedBox(height: 16),
                                 Text(
                                   _recovery
-                                      ? 'Falls ein Konto für diese E-Mail existiert, erhältst du einen Link zum Zurücksetzen. Öffne ihn auf diesem Gerät.'
-                                      : 'Falls eine Bestätigung erforderlich ist, erhältst du eine E-Mail. Öffne den Link auf diesem Gerät und melde dich danach an.',
+                                      ? context.l10n.recoverySent
+                                      : context.l10n.confirmationSent,
                                 ),
                                 const SizedBox(height: 10),
-                                const Text(
-                                  'Prüfe auch deinen Spam-Ordner.',
-                                  style: TextStyle(fontSize: 12),
+                                Text(
+                                  context.l10n.checkSpam,
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                                 const SizedBox(height: 20),
                                 FilledButton(
                                   onPressed: () => _change(LoginMode.signIn),
-                                  child: const Text('Zur Anmeldung'),
+                                  child: Text(context.l10n.toSignIn),
                                 ),
                               ] else ...[
                                 if (!_recovery && !_newPassword) ...[
@@ -290,14 +280,14 @@ class _LoginDialogState extends State<LoginDialog> {
                                     children: [
                                       Expanded(
                                         child: _modeButton(
-                                          'Anmelden',
+                                          context.l10n.signIn,
                                           LoginMode.signIn,
                                         ),
                                       ),
                                       const SizedBox(width: 6),
                                       Expanded(
                                         child: _modeButton(
-                                          'Konto erstellen',
+                                          context.l10n.createAccount,
                                           LoginMode.register,
                                         ),
                                       ),
@@ -315,10 +305,10 @@ class _LoginDialogState extends State<LoginDialog> {
                                         : TextInputAction.next,
                                     autofillHints: const [AutofillHints.email],
                                     autocorrect: false,
-                                    decoration: const InputDecoration(
-                                      labelText: 'E-Mail',
-                                      hintText: 'du@beispiel.de',
-                                      prefixIcon: Icon(
+                                    decoration: InputDecoration(
+                                      labelText: context.l10n.email,
+                                      hintText: context.l10n.emailHint,
+                                      prefixIcon: const Icon(
                                         Icons.alternate_email_rounded,
                                       ),
                                     ),
@@ -327,7 +317,7 @@ class _LoginDialogState extends State<LoginDialog> {
                                           r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
                                         ).hasMatch(v?.trim() ?? '')
                                         ? null
-                                        : 'Bitte gib eine gültige E-Mail ein.',
+                                        : context.l10n.invalidEmail,
                                     onFieldSubmitted: (_) {
                                       if (_recovery) _submit();
                                     },
@@ -351,18 +341,18 @@ class _LoginDialogState extends State<LoginDialog> {
                                         : TextInputAction.done,
                                     decoration: InputDecoration(
                                       labelText: _newPassword
-                                          ? 'Neues Passwort'
-                                          : 'Passwort',
+                                          ? context.l10n.newPassword
+                                          : context.l10n.password,
                                       helperText: _register || _newPassword
-                                          ? 'Mindestens 8 Zeichen'
+                                          ? context.l10n.minPassword
                                           : null,
                                       prefixIcon: const Icon(
                                         Icons.lock_outline_rounded,
                                       ),
                                       suffixIcon: IconButton(
                                         tooltip: _visible
-                                            ? 'Passwort verbergen'
-                                            : 'Passwort anzeigen',
+                                            ? context.l10n.hidePassword
+                                            : context.l10n.showPassword,
                                         onPressed: () => setState(
                                           () => _visible = !_visible,
                                         ),
@@ -374,10 +364,10 @@ class _LoginDialogState extends State<LoginDialog> {
                                       ),
                                     ),
                                     validator: (v) => (v?.isEmpty ?? true)
-                                        ? 'Bitte gib dein Passwort ein.'
+                                        ? context.l10n.enterPassword
                                         : ((_register || _newPassword) &&
                                               v!.length < 8)
-                                        ? 'Nutze mindestens 8 Zeichen.'
+                                        ? context.l10n.passwordLength
                                         : null,
                                     onFieldSubmitted: (_) {
                                       if (!_register && !_newPassword) {
@@ -397,15 +387,15 @@ class _LoginDialogState extends State<LoginDialog> {
                                       autofillHints: const [
                                         AutofillHints.newPassword,
                                       ],
-                                      decoration: const InputDecoration(
-                                        labelText: 'Passwort wiederholen',
-                                        prefixIcon: Icon(
+                                      decoration: InputDecoration(
+                                        labelText: context.l10n.repeatPassword,
+                                        prefixIcon: const Icon(
                                           Icons.lock_reset_rounded,
                                         ),
                                       ),
                                       validator: (v) => v == _password.text
                                           ? null
-                                          : 'Die Passwörter stimmen nicht überein.',
+                                          : context.l10n.passwordMismatch,
                                       onFieldSubmitted: (_) => _submit(),
                                     ),
                                   ],
@@ -416,8 +406,8 @@ class _LoginDialogState extends State<LoginDialog> {
                                         onPressed: _busy
                                             ? null
                                             : () => _change(LoginMode.recovery),
-                                        child: const Text(
-                                          'Passwort vergessen?',
+                                        child: Text(
+                                          context.l10n.forgotPassword,
                                         ),
                                       ),
                                     ),
@@ -451,12 +441,12 @@ class _LoginDialogState extends State<LoginDialog> {
                                         )
                                       : Text(
                                           _newPassword
-                                              ? 'Passwort speichern'
+                                              ? context.l10n.savePassword
                                               : _recovery
-                                              ? 'Link senden'
+                                              ? context.l10n.sendLink
                                               : _register
-                                              ? 'Konto erstellen'
-                                              : 'Anmelden',
+                                              ? context.l10n.createAccount
+                                              : context.l10n.signIn,
                                         ),
                                 ),
                                 if (_recovery)
@@ -464,7 +454,7 @@ class _LoginDialogState extends State<LoginDialog> {
                                     onPressed: _busy
                                         ? null
                                         : () => _change(LoginMode.signIn),
-                                    child: const Text('Zurück zur Anmeldung'),
+                                    child: Text(context.l10n.backSignIn),
                                   ),
                               ],
                               const SizedBox(height: 12),
@@ -474,13 +464,13 @@ class _LoginDialogState extends State<LoginDialog> {
                                     : () => Navigator.of(context).pop(),
                                 child: Text(
                                   _newPassword
-                                      ? 'Später'
-                                      : 'Ohne Konto weitermachen',
+                                      ? context.l10n.later
+                                      : context.l10n.continueGuest,
                                 ),
                               ),
                               if (!_newPassword)
                                 Text(
-                                  'Ohne Konto bleibt deine Liste auf diesem Gerät.',
+                                  context.l10n.guestHint,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 11,

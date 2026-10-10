@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../l10n/strings.dart';
 import '../data/app_store.dart';
 import '../models/content.dart';
 import '../models/anime.dart';
@@ -16,14 +18,13 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late Future<List<ReleaseEvent>> future;
   bool onlyMine = false;
-  bool onlyDub = false;
   String _settings = '';
   String? selectedDay;
   String? selectedProvider;
   String providerLabel(ReleaseEvent e) =>
       e.kind == 'japan' ? 'Japan (TV)' : e.provider;
   String get _key =>
-      '${widget.store.region}|${widget.store.language}|${widget.store.languageMode}';
+      '${widget.store.region}|${widget.store.dubLanguages.join(',')}|${widget.store.languageMode}';
   @override
   void initState() {
     super.initState();
@@ -64,41 +65,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
   String dayKey(DateTime? date) =>
       date == null ? 'offen' : '${date.year}-${date.month}-${date.day}';
   String dayLabel(DateTime? date) {
-    if (date == null) return 'Termin noch offen';
-    const days = [
-      'Montag',
-      'Dienstag',
-      'Mittwoch',
-      'Donnerstag',
-      'Freitag',
-      'Samstag',
-      'Sonntag',
-    ];
-    const months = [
-      'Januar',
-      'Februar',
-      'März',
-      'April',
-      'Mai',
-      'Juni',
-      'Juli',
-      'August',
-      'September',
-      'Oktober',
-      'November',
-      'Dezember',
-    ];
-    return '${days[date.weekday - 1]}, ${date.day}. ${months[date.month - 1]}';
+    if (date == null) return context.l10n.dateTba;
+    return DateFormat(
+      context.l10n.localeName == 'de' ? 'EEEE, d. MMMM' : 'EEEE, MMMM d',
+      context.l10n.localeName,
+    ).format(date);
   }
 
   @override
   Widget build(BuildContext context) => Column(
     children: [
       SectionHeading(
-        'Deine nächste Folge.',
-        eyebrow: 'Release-Kalender · ${widget.store.region}',
+        context.l10n.nextEpisode,
+        eyebrow: context.l10n.releaseCalendar(widget.store.region),
         trailing: IconButton(
-          tooltip: 'Aktualisieren',
+          tooltip: context.l10n.refresh,
           onPressed: reload,
           icon: const Icon(Icons.refresh_rounded),
         ),
@@ -110,7 +91,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             FilterChip(
-              label: const Text('Meine Watchlist'),
+              label: Text(context.l10n.myWatchlist),
               selected: onlyMine,
               onSelected: (v) => setState(() {
                 onlyMine = v;
@@ -119,24 +100,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
               avatar: const Icon(Icons.bookmark_outline_rounded, size: 16),
             ),
             FilterChip(
-              label: Text('Dub · ${languageLabel(widget.store.language)}'),
-              selected: onlyDub,
-              onSelected: (value) => setState(() {
-                onlyDub = value;
-                selectedDay = null;
-              }),
+              label: Text(
+                'Dub · ${widget.store.dubLanguages.map((code) => languageLabel(code, context)).join(' / ')}',
+              ),
+              selected: widget.store.languageMode == 'dub',
+              onSelected: (value) => perform(
+                context,
+                () => widget.store.setCalendarMode(value ? 'dub' : 'any'),
+              ),
               avatar: const Icon(Icons.record_voice_over_rounded, size: 16),
             ),
             IconButton(
-              tooltip: 'Zu den Zeiten',
+              tooltip: context.l10n.aboutTimes,
               onPressed: () => showModalBottomSheet<void>(
                 context: context,
                 showDragHandle: true,
-                builder: (context) => const Padding(
-                  padding: EdgeInsets.fromLTRB(24, 0, 24, 32),
-                  child: Text(
-                    'Der Kalender berücksichtigt laufende Anime aus allen Seasons. Anbieter-Termine und deutsche Dubs können auch nach dem Ende der japanischen Ausstrahlung weiterlaufen. Uhrzeiten gelten in deiner Gerätezeitzone. „Voraussichtlich“ ist aus einem Wochenplan abgeleitet; Pausen und Verschiebungen sind möglich. Die Anbieterabdeckung ist noch unvollständig. Quelle und Prüfdatum findest du am Termin.',
-                  ),
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                  child: Text(context.l10n.calendarHint),
                 ),
               ),
               icon: const Icon(Icons.info_outline_rounded, size: 16),
@@ -153,10 +134,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
             }
             if (snapshot.hasError) {
               return EmptyPanel(
-                'Release-Termine konnten nicht geladen werden.',
+                context.l10n.calendarLoadError,
                 action: OutlinedButton(
                   onPressed: reload,
-                  child: const Text('Erneut versuchen'),
+                  child: Text(context.l10n.retry),
                 ),
               );
             }
@@ -168,11 +149,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 : null;
             final all = source
                 .where((e) => provider == null || providerLabel(e) == provider)
-                .where(
-                  (e) =>
-                      !onlyDub ||
-                      (e.kind == 'dub' && e.language == widget.store.language),
-                )
                 .where(
                   (e) =>
                       !onlyMine ||
@@ -195,7 +171,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                     child: Text(
-                      'Alle Seasons · laufende Serien & angekündigte Starts',
+                      context.l10n.allSeasons,
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -211,7 +187,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ChoiceChip(
-                              label: Text(name ?? 'Alle Anbieter'),
+                              label: Text(name ?? context.l10n.allProviders),
                               selected: provider == name,
                               onSelected: (_) => setState(() {
                                 selectedProvider = name;
@@ -230,7 +206,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ChoiceChip(
-                            label: const Text('Alle Tage'),
+                            label: Text(context.l10n.allDays),
                             selected: day == null,
                             onSelected: (_) =>
                                 setState(() => selectedDay = null),
@@ -242,7 +218,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             child: ChoiceChip(
                               label: Text(
                                 d.value == null
-                                    ? 'Offen'
+                                    ? context.l10n.undated
                                     : '${d.value!.day}.${d.value!.month}.',
                               ),
                               selected: day == d.key,
@@ -255,10 +231,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                   ),
                   if (items.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 70),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 70),
                       child: EmptyPanel(
-                        'Hier ist noch nichts geplant. Wähle einen anderen Tag oder zeige alle Anime.',
+                        context.l10n.calendarEmpty,
                         icon: Icons.event_available_rounded,
                       ),
                     ),
@@ -325,8 +301,10 @@ class _ReleaseTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     e.startsAt == null
-                        ? (e.startsOn == null ? 'OFFEN' : 'OHNE ZEIT')
-                        : 'UHR',
+                        ? (e.startsOn == null
+                              ? context.l10n.undatedUpper
+                              : context.l10n.noTime)
+                        : context.l10n.timeUpper,
                     style: TextStyle(
                       fontSize: 8,
                       letterSpacing: 1.5,
@@ -392,8 +370,8 @@ class _ReleaseTile extends StatelessWidget {
                               '${e.kind == 'japan'
                                   ? 'Japan'
                                   : e.kind == 'dub'
-                                  ? 'Dub · ${languageLabel(e.language ?? '?')}'
-                                  : 'Streaming'}${e.episode == null ? '' : ' · Folge ${e.episode}'}',
+                                  ? 'Dub · ${languageLabel(e.language ?? '?', context)}'
+                                  : 'Streaming'}${e.episode == null ? '' : ' · ${context.l10n.episodeNumber('${e.episode}')}'}',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: scheme.onSurfaceVariant,
@@ -402,7 +380,7 @@ class _ReleaseTile extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               e.kind == 'japan'
-                                  ? 'Japanische TV-Ausstrahlung'
+                                  ? context.l10n.japaneseBroadcast
                                   : e.provider,
                               style: TextStyle(
                                 fontSize: 11,
@@ -423,12 +401,12 @@ class _ReleaseTile extends StatelessWidget {
                             const SizedBox(height: 6),
                             Text(
                               e.status == 'estimated'
-                                  ? 'Voraussichtlich'
+                                  ? context.l10n.estimated
                                   : e.status == 'confirmed'
-                                  ? 'Bestätigt'
+                                  ? context.l10n.confirmed
                                   : e.status == 'delayed'
-                                  ? 'Verschoben'
-                                  : 'Angekündigt',
+                                  ? context.l10n.delayed
+                                  : context.l10n.announced,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: scheme.secondary,
@@ -437,7 +415,9 @@ class _ReleaseTile extends StatelessWidget {
                             ),
                             if (e.checkedAt != null)
                               Text(
-                                'Geprüft ${e.checkedAt!.day}.${e.checkedAt!.month}.${e.checkedAt!.year}',
+                                context.l10n.checkedOn(
+                                  shortDate(e.checkedAt, context),
+                                ),
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: scheme.onSurfaceVariant,
@@ -451,7 +431,7 @@ class _ReleaseTile extends StatelessWidget {
                         height: 30,
                         child: IconButton(
                           padding: EdgeInsets.zero,
-                          tooltip: 'Terminquelle öffnen',
+                          tooltip: context.l10n.openDateSource,
                           onPressed: () => openSource(context, e.source),
                           icon: Icon(
                             Icons.north_east_rounded,
@@ -482,10 +462,34 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   late Future<List<Map<String, dynamic>>> future;
   String? category;
+  late String _languages;
   @override
   void initState() {
     super.initState();
+    _languages = widget.store.newsLanguages.join(',');
     future = widget.store.news();
+    widget.store.addListener(_changed);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _changed();
+  }
+
+  void _changed() {
+    final next = widget.store.newsLanguages.join(',');
+    if (!mounted || _languages == next) return;
+    setState(() {
+      _languages = next;
+      future = widget.store.news();
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.store.removeListener(_changed);
+    super.dispose();
   }
 
   Future<void> reload() async {
@@ -502,10 +506,10 @@ class _NewsScreenState extends State<NewsScreen> {
   Widget build(BuildContext context) => Column(
     children: [
       SectionHeading(
-        'Neues aus deiner Welt.',
-        eyebrow: 'News & Ankündigungen',
+        context.l10n.newsHeading,
+        eyebrow: context.l10n.newsAnnouncements,
         trailing: IconButton(
-          tooltip: 'Aktualisieren',
+          tooltip: context.l10n.refresh,
           onPressed: reload,
           icon: const Icon(Icons.refresh_rounded),
         ),
@@ -516,8 +520,8 @@ class _NewsScreenState extends State<NewsScreen> {
         child: Row(
           children: [
             for (final entry in <String?, String>{
-              null: 'Alles',
-              'season': 'Staffeln',
+              null: context.l10n.all,
+              'season': context.l10n.seasons,
               'streaming': 'Streaming',
               'dub': 'Dubs',
             }.entries)
@@ -541,10 +545,10 @@ class _NewsScreenState extends State<NewsScreen> {
             }
             if (snapshot.hasError) {
               return EmptyPanel(
-                'News konnten nicht geladen werden.',
+                context.l10n.newsLoadError,
                 action: OutlinedButton(
                   onPressed: reload,
-                  child: const Text('Erneut versuchen'),
+                  child: Text(context.l10n.retry),
                 ),
               );
             }
@@ -552,8 +556,8 @@ class _NewsScreenState extends State<NewsScreen> {
                 .where((n) => category == null || n['category'] == category)
                 .toList();
             if (rows.isEmpty) {
-              return const EmptyPanel(
-                'Zu diesem Thema gibt es gerade keine Meldungen.',
+              return EmptyPanel(
+                context.l10n.newsEmpty,
                 icon: Icons.auto_awesome_rounded,
               );
             }
@@ -574,8 +578,8 @@ class _NewsScreenState extends State<NewsScreen> {
   );
 }
 
-String newsCategory(dynamic value) => switch (value) {
-  'season' => 'Neue Staffeln',
+String newsCategory(BuildContext context, dynamic value) => switch (value) {
+  'season' => context.l10n.newSeasons,
   'dub' => 'Dub-News',
   'streaming' => 'Streaming',
   _ => 'Anime-News',
@@ -593,7 +597,7 @@ class NewsCard extends StatelessWidget {
       n['published_at'] as String? ?? '',
     )?.toLocal();
     final metadata =
-        '${n['source_name']} · ${shortDate(date)}${n['language'] == 'en' ? ' · EN' : ''}';
+        '${n['source_name']} · ${shortDate(date, context)} · ${(n['language'] as String? ?? '?').toUpperCase()}';
     void open() => openSource(context, n['source_url'] as String);
     if (featured) {
       return Card(
@@ -616,7 +620,7 @@ class NewsCard extends StatelessWidget {
                       left: 14,
                       top: 14,
                       child: Tag(
-                        newsCategory(n['category']).toUpperCase(),
+                        newsCategory(context, n['category']).toUpperCase(),
                         color: lime,
                         solid: true,
                       ),
@@ -664,7 +668,7 @@ class NewsCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Original lesen',
+                          context.l10n.readOriginal,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
@@ -712,7 +716,7 @@ class NewsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    newsCategory(n['category']).toUpperCase(),
+                    newsCategory(context, n['category']).toUpperCase(),
                     style: TextStyle(
                       color: scheme.primary,
                       fontSize: 9,

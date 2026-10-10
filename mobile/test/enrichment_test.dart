@@ -1,3 +1,4 @@
+import 'package:aniapp/l10n/strings.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +20,9 @@ void main() {
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
+        locale: Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: SizedBox(
             width: 200,
@@ -88,10 +92,13 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(
               context,
-            ).copyWith(textScaler: TextScaler.linear(1.3)),
+            ).copyWith(textScaler: const TextScaler.linear(1.3)),
             child: child!,
           ),
           home: const Scaffold(
@@ -158,7 +165,7 @@ void main() {
     () async {
       SharedPreferences.setMockInitialValues({
         'region': 'AT',
-        'language': 'fr',
+        'language': 'en',
       });
       var wrong = false;
       final backend = SupabaseClient(
@@ -169,7 +176,7 @@ void main() {
           final body = jsonDecode(r.body) as Map;
           expect(body['mal_id'], 21);
           expect(body['region'], 'AT');
-          expect(body['language'], 'fr');
+          expect(body['language'], 'en');
           return http.Response(
             jsonEncode({
               ...body,
@@ -197,6 +204,9 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: DubPanel(
             language: 'de',
@@ -220,6 +230,9 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: SingleChildScrollView(
               child: DubPanel(
@@ -249,10 +262,13 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(
               context,
-            ).copyWith(textScaler: TextScaler.linear(1.3)),
+            ).copyWith(textScaler: const TextScaler.linear(1.3)),
             child: child!,
           ),
           home: const SourcesScreen(),

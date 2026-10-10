@@ -50,3 +50,40 @@ Deployed content-sync v6 completed all six source checks: 25 Anime2You records, 
 5. Physical-device accessibility/offline/background-link testing, signed Android release, Apple developer signing/device build and store submission details. Current artifacts are debug/simulator builds.
 
 These are concrete remaining release gates, not features claimed as finished. No paid subscriptions, account creation or terms acceptance was performed for new services.
+
+## German / English launch scope — 10 October 2026 (0.3.6+13)
+
+The mobile UI now uses Flutter ARB localization resources for German and English,
+including login, validation, source credits, watchlists, calendar and detail pages.
+The initial UI follows the device language (German, otherwise English); users can
+choose either language explicitly or return to the device setting. iOS declares
+both supported localizations.
+
+Preferences are independent and persisted on the device:
+- **App language:** device / German / English.
+- **News language:** follow app / German / English / both. The Supabase language
+  filter is applied before the 40-item limit. An already mounted news screen
+  reloads when its effective language filter changes.
+- **Dub audio:** German, English or both; at least one remains selected. Existing
+  German/English audio preferences are migrated. Unsupported earlier preferences
+  fall back to the initial UI language. UI changes do not change saved audio choices.
+- **Country:** Germany, Austria, Switzerland, US or UK, independent of language.
+  Selecting a country does not imply that all providers have verified coverage.
+- **Calendar:** original/streaming releases plus selected dubs, or selected dubs
+  only. Japanese broadcasts stay independent of country; local provider releases
+  must match the selected country. Detail pages show separate dub evidence and
+  announcements for each selected audio language.
+
+Original news articles, synopses and source notes retain their source language;
+AniApp does not generate translations or invent local release dates. The existing
+hourly ingestion remains unchanged. Automatic announcement-to-calendar extraction
+for Crunchyroll, Netflix and aniverse is still a separate, unimplemented work item.
+
+Validation for this language update: all 40 Flutter tests pass locally and Flutter
+analysis reports no issues. New tests cover device-language fallback, live locale
+changes, preference persistence/migration, filtering before the news limit,
+multiple dub languages with country isolation, immediate news reloads and a
+320px English profile with enlarged text. The app wordmark now scales down when
+needed to avoid a narrow-screen overflow. Read-only requests with the app's public
+key verified German/English news filtering and combined calendar filters against
+live Supabase data. Android/iOS artifacts are verified separately in CI.

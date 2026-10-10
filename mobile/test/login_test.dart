@@ -1,3 +1,4 @@
+import 'package:aniapp/l10n/strings.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -59,6 +60,9 @@ Future<void> openLogin(
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
     MaterialApp(
+      locale: const Locale('de'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: Builder(
           builder: (context) => TextButton(
@@ -228,9 +232,12 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(1.3),
+              textScaler: const TextScaler.linear(1.3),
               viewInsets: const EdgeInsets.only(bottom: 250),
             ),
             child: child!,
@@ -260,7 +267,7 @@ void main() {
         backend: backend,
       );
       await store.initialize();
-      events.add(AuthState(AuthChangeEvent.passwordRecovery, null));
+      events.add(const AuthState(AuthChangeEvent.passwordRecovery, null));
       await Future<void>.delayed(Duration.zero);
       expect(store.passwordRecoveryPending, true);
       store.finishPasswordRecovery();

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../l10n/strings.dart';
 
 const coral = Color(0xFFFF806B);
 const lavender = Color(0xFFB9A5FF);
@@ -130,9 +132,15 @@ class SectionHeading extends StatelessWidget {
   );
 }
 
-String shortDate(DateTime? date) => date == null
-    ? 'Termin offen'
-    : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+String shortDate(DateTime? date, [BuildContext? context]) {
+  final strings = stringsFor(context);
+  if (date == null) return strings.dateOpen;
+  if (strings.localeName == 'de') {
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+  return DateFormat('MMM d, yyyy', strings.localeName).format(date);
+}
+
 String timeLabel(DateTime? date) => date == null
     ? '—'
     : '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';

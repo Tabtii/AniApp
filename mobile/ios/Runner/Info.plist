@@ -17,6 +17,8 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>AniApp</string>
+	<key>CFBundleLocalizations</key>
+	<array><string>de</string><string>en</string></array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

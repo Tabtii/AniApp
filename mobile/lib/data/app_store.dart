@@ -11,11 +11,19 @@ import '../models/enrichment.dart';
 import 'catalog.dart';
 
 class AppStore extends ChangeNotifier {
-  AppStore(this.preferences, {this.backend, Catalog? catalog})
-    : catalog = catalog ?? Catalog(backend: backend);
+  AppStore(
+    this.preferences, {
+    this.backend,
+    Catalog? catalog,
+    String Function()? deviceLanguage,
+  }) : catalog = catalog ?? Catalog(backend: backend),
+       _deviceLanguage =
+           deviceLanguage ??
+           (() => PlatformDispatcher.instance.locale.languageCode);
   final SharedPreferences preferences;
   final SupabaseClient? backend;
   final Catalog catalog;
+  final String Function() _deviceLanguage;
   List<WatchEntry> entries = [];
   bool busy = false;
   bool cloudLoaded = false;
@@ -34,8 +42,44 @@ class AppStore extends ChangeNotifier {
   String get scope => _userId ?? 'guest';
   String? get email => backend?.auth.currentUser?.email;
   bool get signedIn => _userId != null;
-  String get region => preferences.getString('region') ?? 'DE';
-  String get language => preferences.getString('language') ?? 'de';
+  static const supportedLanguages = ['de', 'en'];
+  String get region {
+    final value = preferences.getString('region');
+    return ['DE', 'AT', 'CH', 'US', 'GB'].contains(value) ? value! : 'DE';
+  }
+
+  String get appLanguage {
+    final value = preferences.getString('app_language');
+    return supportedLanguages.contains(value) ? value! : 'system';
+  }
+
+  String get resolvedAppLanguage => appLanguage == 'system'
+      ? (_deviceLanguage() == 'de' ? 'de' : 'en')
+      : appLanguage;
+
+  String get newsLanguage {
+    final value = preferences.getString('news_language');
+    return [...supportedLanguages, 'both'].contains(value) ? value! : 'app';
+  }
+
+  List<String> get newsLanguages => newsLanguage == 'both'
+      ? supportedLanguages
+      : [newsLanguage == 'app' ? resolvedAppLanguage : newsLanguage];
+
+  List<String> get dubLanguages {
+    final saved = preferences.getStringList('dub_languages');
+    final valid = supportedLanguages
+        .where((l) => saved?.contains(l) ?? false)
+        .toList();
+    if (valid.isNotEmpty) return valid;
+    final legacy = preferences.getString('language');
+    return [
+      supportedLanguages.contains(legacy) ? legacy! : resolvedAppLanguage,
+    ];
+  }
+
+  // Kept for single-language enrichment requests; never used for news or UI.
+  String get language => dubLanguages.first;
   String get languageMode => preferences.getString('language_mode') ?? 'any';
   bool isSaved(int id) => entries.any((e) => e.anime.id == id);
   void _notify() {
@@ -43,6 +87,9 @@ class AppStore extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
+    // Capture the initial audio preference once. Later UI/device-language
+    // changes must not silently change the user's dub selection.
+    await preferences.setStringList('dub_languages', dubLanguages);
     _userId = backend?.auth.currentUser?.id;
     _readLocal();
     _auth = backend?.auth.onAuthStateChange.listen((event) {
@@ -211,14 +258,35 @@ class AppStore extends ChangeNotifier {
     }
   }
 
-  Future<void> setPreferences(
-    String region,
-    String language,
-    String mode,
-  ) async {
-    await preferences.setString('region', region);
-    await preferences.setString('language', language);
-    await preferences.setString('language_mode', mode);
+  Future<void> setAppLanguage(String value) async {
+    if (![...supportedLanguages, 'system'].contains(value)) return;
+    await preferences.setStringList('dub_languages', dubLanguages);
+    await preferences.setString('app_language', value);
+    _notify();
+  }
+
+  Future<void> setNewsLanguage(String value) async {
+    if (![...supportedLanguages, 'both', 'app'].contains(value)) return;
+    await preferences.setString('news_language', value);
+    _notify();
+  }
+
+  Future<void> setDubLanguages(List<String> values) async {
+    final valid = supportedLanguages.where(values.contains).toList();
+    if (valid.isEmpty) return;
+    await preferences.setStringList('dub_languages', valid);
+    _notify();
+  }
+
+  Future<void> setRegion(String value) async {
+    if (!['DE', 'AT', 'CH', 'US', 'GB'].contains(value)) return;
+    await preferences.setString('region', value);
+    _notify();
+  }
+
+  Future<void> setCalendarMode(String value) async {
+    if (!['any', 'dub'].contains(value)) return;
+    await preferences.setString('language_mode', value);
     _notify();
   }
 
@@ -228,6 +296,7 @@ class AppStore extends ChangeNotifier {
         .from('news')
         .select()
         .eq('published', true)
+        .inFilter('language', newsLanguages)
         .order('published_at', ascending: false)
         .limit(40)
         .timeout(const Duration(seconds: 15));
@@ -236,9 +305,9 @@ class AppStore extends ChangeNotifier {
   Future<List<ReleaseEvent>> releases({int? animeId}) =>
       _loadReleases(animeId).timeout(const Duration(seconds: 20));
 
-  Future<AnimeEnrichment> enrichment(int id) async {
+  Future<AnimeEnrichment> enrichment(int id, {String? audioLanguage}) async {
     if (backend == null) return AnimeEnrichment.empty;
-    final selectedRegion = region, selectedLanguage = language;
+    final selectedRegion = region, selectedLanguage = audioLanguage ?? language;
     final result = await backend!.functions
         .invoke(
           'anime-enrichment',
@@ -291,7 +360,8 @@ class AppStore extends ChangeNotifier {
     if (backend == null) return [];
     final now = DateTime.now();
     final deadline = now.add(const Duration(seconds: 20));
-    final selectedRegion = region, selectedLanguage = language;
+    final selectedRegion = region;
+    final selectedLanguages = dubLanguages;
     final dubOnly = languageMode == 'dub';
     final result = <ReleaseEvent>[];
     // Provider schedules can contain more than 200 episodes. Read every page;
@@ -308,7 +378,13 @@ class AppStore extends ChangeNotifier {
             'and(starts_at.is.null,starts_on.is.null),starts_at.gte.${now.toUtc().subtract(const Duration(hours: 24)).toIso8601String()},starts_on.gte.${now.toIso8601String().split('T').first}',
           );
       if (dubOnly) {
-        query = query.eq('kind', 'dub').eq('audio_language', selectedLanguage);
+        query = query
+            .eq('kind', 'dub')
+            .inFilter('audio_language', selectedLanguages);
+      } else {
+        query = query.or(
+          'kind.neq.dub,audio_language.in.(${selectedLanguages.join(',')})',
+        );
       }
       final remaining = deadline.difference(DateTime.now());
       if (remaining <= Duration.zero) {
@@ -327,8 +403,8 @@ class AppStore extends ChangeNotifier {
               (e) =>
                   e.isUpcoming(now) &&
                   (e.kind == 'japan' || e.region == selectedRegion) &&
-                  (!dubOnly ||
-                      (e.kind == 'dub' && e.language == selectedLanguage)),
+                  (e.kind != 'dub' || selectedLanguages.contains(e.language)) &&
+                  (!dubOnly || e.kind == 'dub'),
             ),
       );
       if (rows.length < 200) {
@@ -354,7 +430,7 @@ class AppStore extends ChangeNotifier {
         .eq('mal_id', id)
         .eq('kind', 'dub')
         .eq('region', region)
-        .eq('audio_language', language)
+        .inFilter('audio_language', dubLanguages)
         .order('checked_at', ascending: false)
         .limit(50)
         .timeout(const Duration(seconds: 15));

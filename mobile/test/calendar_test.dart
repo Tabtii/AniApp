@@ -1,3 +1,4 @@
+import 'package:aniapp/l10n/strings.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -50,7 +51,7 @@ void main() {
         authOptions: const AuthClientOptions(autoRefreshToken: false),
         httpClient: MockClient((request) async {
           requests.add(request.url);
-          expect(request.url.queryParametersAll['or']!.length, 2);
+          expect(request.url.queryParametersAll['or']!.length, 3);
           final offset = int.parse(
             request.url.queryParameters['offset'] ?? '0',
           );
@@ -91,6 +92,9 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: CalendarScreen(store: store)),
         ),
       );

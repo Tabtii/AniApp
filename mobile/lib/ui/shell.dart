@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 
 import '../data/app_store.dart';
 import 'catalog_screen.dart';
@@ -30,7 +31,7 @@ class _AppShellState extends State<AppShell> {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(widget.startupWarning!)));
+          ).showSnackBar(SnackBar(content: Text(context.l10n.cloudWarning)));
         }
       });
     }
@@ -55,9 +56,9 @@ class _AppShellState extends State<AppShell> {
       widget.store.finishPasswordRecovery();
       _recoveryOpen = false;
       if (mounted && done == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Dein Passwort wurde geändert.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.passwordChanged)));
       }
     });
   }
@@ -81,30 +82,34 @@ class _AppShellState extends State<AppShell> {
       appBar: AppBar(
         toolbarHeight: 62,
         titleSpacing: 20,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const AniAppMark(size: 35),
-            const SizedBox(width: 9),
-            Text.rich(
-              TextSpan(
-                children: [
-                  const TextSpan(text: 'ani'),
-                  TextSpan(
-                    text: 'app',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AniAppMark(size: 35),
+              const SizedBox(width: 9),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(text: 'ani'),
+                    TextSpan(
+                      text: 'app',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -1.3,
+                ),
               ),
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -1.3,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           ListenableBuilder(
@@ -116,7 +121,7 @@ class _AppShellState extends State<AppShell> {
             ),
           ),
           IconButton(
-            tooltip: 'Profil öffnen',
+            tooltip: context.l10n.openProfile,
             onPressed: () => setState(() => index = 4),
             icon: const Icon(Icons.account_circle_outlined),
           ),
@@ -129,28 +134,28 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (value) => setState(() => index = value),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
-            label: 'Entdecken',
+            icon: const Icon(Icons.explore_outlined),
+            selectedIcon: const Icon(Icons.explore),
+            label: context.l10n.discover,
           ),
           NavigationDestination(
-            icon: Icon(Icons.bookmark_outline),
-            selectedIcon: Icon(Icons.bookmark),
-            label: 'Meine Liste',
+            icon: const Icon(Icons.bookmark_outline),
+            selectedIcon: const Icon(Icons.bookmark),
+            label: context.l10n.myList,
           ),
           NavigationDestination(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Kalender',
+            icon: const Icon(Icons.calendar_month_outlined),
+            label: context.l10n.calendar,
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.newspaper_outlined),
             label: 'News',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            label: 'Profil',
+            icon: const Icon(Icons.person_outline),
+            label: context.l10n.profile,
           ),
         ],
       ),

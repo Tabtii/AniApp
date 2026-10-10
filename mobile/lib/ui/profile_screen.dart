@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 
 import '../data/app_store.dart';
 import 'common.dart';
@@ -44,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(20),
       children: [
         Text(
-          'DEIN PROFIL',
+          context.l10n.yourProfile,
           style: TextStyle(
             color: Theme.of(context).colorScheme.secondary,
             fontSize: 10,
@@ -53,9 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Dein Anime-Alltag.',
-          style: TextStyle(
+        Text(
+          context.l10n.profileHeading,
+          style: const TextStyle(
             fontSize: 27,
             height: 1.15,
             fontWeight: FontWeight.w900,
@@ -84,18 +85,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  store.signedIn ? store.email ?? 'Angemeldet' : 'Gastmodus',
+                  store.signedIn
+                      ? store.email ?? context.l10n.signedIn
+                      : context.l10n.guest,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   store.signedIn
-                      ? 'Deine Watchlist wird mit deinem Konto synchronisiert.'
-                      : 'Deine Watchlist bleibt lokal auf diesem Gerät.',
+                      ? context.l10n.watchlistCloud
+                      : context.l10n.watchlistLocal,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  '${store.entries.length} Anime in deiner Liste',
+                  context.l10n.listCount('${store.entries.length}'),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.secondary,
                     fontWeight: FontWeight.w700,
@@ -105,19 +108,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (store.backend != null && !store.signedIn)
                   FilledButton(
                     onPressed: _login,
-                    child: const Text('Anmelden oder registrieren'),
+                    child: Text(context.l10n.loginRegister),
                   ),
                 if (store.signedIn) ...[
                   TextButton(
                     onPressed: store.busy
                         ? null
                         : () => perform(context, store.importGuestList),
-                    child: const Text('Lokale Gast-Watchlist übernehmen'),
+                    child: Text(context.l10n.importGuest),
                   ),
                   TextButton(
                     onPressed: () =>
                         perform(context, () => store.backend!.auth.signOut()),
-                    child: const Text('Abmelden'),
+                    child: Text(context.l10n.signOut),
                   ),
                 ],
               ],
@@ -126,80 +129,128 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 20),
         Text(
-          'Streaming-Region',
+          context.l10n.region,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         DropdownButton<String>(
           isExpanded: true,
           value: store.region,
-          items: const [
-            DropdownMenuItem(value: 'DE', child: Text('Deutschland')),
-            DropdownMenuItem(value: 'AT', child: Text('Österreich')),
-            DropdownMenuItem(value: 'CH', child: Text('Schweiz')),
-            DropdownMenuItem(value: 'US', child: Text('USA')),
+          items: [
+            DropdownMenuItem(value: 'DE', child: Text(context.l10n.germany)),
+            DropdownMenuItem(value: 'AT', child: Text(context.l10n.austria)),
+            DropdownMenuItem(
+              value: 'CH',
+              child: Text(context.l10n.switzerland),
+            ),
+            const DropdownMenuItem(value: 'US', child: Text('USA')),
+            DropdownMenuItem(
+              value: 'GB',
+              child: Text(context.l10n.unitedKingdom),
+            ),
           ],
-          onChanged: (r) => perform(
-            context,
-            () => store.setPreferences(r!, store.language, store.languageMode),
-          ),
+          onChanged: (r) => perform(context, () => store.setRegion(r!)),
         ),
         const SizedBox(height: 16),
         Text(
-          'Bevorzugte Sprache',
+          context.l10n.appLanguage,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         DropdownButton<String>(
+          key: const ValueKey('app-language'),
           isExpanded: true,
-          value: store.language,
-          items: ['de', 'en', 'ja', 'fr', 'es', 'it']
-              .map(
-                (l) =>
-                    DropdownMenuItem(value: l, child: Text(languageLabel(l))),
-              )
-              .toList(),
-          onChanged: (l) => perform(
-            context,
-            () => store.setPreferences(store.region, l!, store.languageMode),
-          ),
+          value: store.appLanguage,
+          items: [
+            DropdownMenuItem(
+              value: 'system',
+              child: Text(context.l10n.systemLanguage),
+            ),
+            const DropdownMenuItem(value: 'de', child: Text('Deutsch')),
+            const DropdownMenuItem(value: 'en', child: Text('English')),
+          ],
+          onChanged: (value) =>
+              perform(context, () => store.setAppLanguage(value!)),
         ),
         const SizedBox(height: 16),
         Text(
-          'Kalender anzeigen',
+          context.l10n.newsLanguage,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         DropdownButton<String>(
+          key: const ValueKey('news-language'),
+          isExpanded: true,
+          value: store.newsLanguage,
+          items: [
+            DropdownMenuItem(value: 'app', child: Text(context.l10n.followApp)),
+            const DropdownMenuItem(value: 'de', child: Text('Deutsch')),
+            const DropdownMenuItem(value: 'en', child: Text('English')),
+            DropdownMenuItem(
+              value: 'both',
+              child: Text(context.l10n.bothLanguages),
+            ),
+          ],
+          onChanged: (value) =>
+              perform(context, () => store.setNewsLanguage(value!)),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          context.l10n.dubLanguages,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (final code in AppStore.supportedLanguages)
+              FilterChip(
+                key: ValueKey('dub-$code'),
+                label: Text(languageLabel(code, context)),
+                selected: store.dubLanguages.contains(code),
+                onSelected: (selected) => perform(
+                  context,
+                  () => store.setDubLanguages([
+                    ...store.dubLanguages.where((l) => l != code),
+                    if (selected) code,
+                  ]),
+                ),
+              ),
+          ],
+        ),
+        Text(context.l10n.dubSelectionHint),
+        const SizedBox(height: 16),
+        Text(
+          context.l10n.calendarDisplay,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        DropdownButton<String>(
+          key: const ValueKey('calendar-mode'),
           isExpanded: true,
           value: store.languageMode,
-          items: const [
+          items: [
             DropdownMenuItem(
               value: 'any',
               child: Text(
-                'Alle Veröffentlichungen',
+                context.l10n.calendarAll,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             DropdownMenuItem(
               value: 'dub',
               child: Text(
-                'Nur Dub in meiner Sprache',
+                context.l10n.calendarDubs,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
-          onChanged: (m) => perform(
-            context,
-            () => store.setPreferences(store.region, store.language, m!),
-          ),
+          onChanged: (value) =>
+              perform(context, () => store.setCalendarMode(value!)),
         ),
         const SizedBox(height: 24),
-        const Text(
-          'Audio und Untertitel werden getrennt ausgewiesen. Angaben können sich je Anbieter, Region, Staffel und Folge unterscheiden.',
-        ),
+        Text(context.l10n.availabilityHint),
         const SizedBox(height: 16),
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.info_outline_rounded),
-          title: const Text('Datenquellen & Hinweise'),
+          title: Text(context.l10n.sources),
           trailing: const Icon(Icons.chevron_right_rounded),
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute<void>(builder: (_) => const SourcesScreen()),

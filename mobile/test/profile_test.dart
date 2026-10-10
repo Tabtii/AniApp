@@ -1,3 +1,4 @@
+import 'package:aniapp/l10n/strings.dart';
 import 'package:aniapp/data/app_store.dart';
 import 'package:aniapp/ui/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,9 @@ void main() {
     await store.initialize();
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: ProfileScreen(store: store)),
       ),
     );

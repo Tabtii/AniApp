@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
+import '../models/anime.dart';
+import 'visuals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> perform(
@@ -9,13 +12,9 @@ Future<void> perform(
     await action();
   } catch (_) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Die Aktion konnte nicht gespeichert werden. Bitte versuche es erneut.',
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.actionFailed)));
     }
   }
 }
@@ -26,15 +25,15 @@ Future<void> openSource(BuildContext context, String value) async {
   try {
     final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!opened && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Der Link konnte nicht geöffnet werden.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.linkFailed)));
     }
   } catch (_) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Der Link konnte nicht geöffnet werden.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.linkFailed)));
     }
   }
 }
@@ -66,29 +65,43 @@ class EmptyPanel extends StatelessWidget {
   );
 }
 
-String languageLabel(String code) =>
-    const {
-      'de': 'Deutsch',
-      'en': 'Englisch',
-      'ja': 'Japanisch',
-      'fr': 'Französisch',
-      'es': 'Spanisch',
-      'it': 'Italienisch',
-      'pl': 'Polnisch',
-      'pt': 'Portugiesisch',
-      'ko': 'Koreanisch',
-      'ru': 'Russisch',
-      'hi': 'Hindi',
-      'ta': 'Tamil',
-      'te': 'Telugu',
-      'id': 'Indonesisch',
-      'ms': 'Malaiisch',
-      'vi': 'Vietnamesisch',
-      'ar': 'Arabisch',
-      'zh': 'Chinesisch',
-      'th': 'Thailändisch',
-    }[code] ??
-    code;
-String dateLabel(DateTime? date) => date == null
-    ? 'Termin noch offen'
-    : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} · ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+String languageLabel(String code, [BuildContext? context]) {
+  final strings = stringsFor(context);
+  return switch (code) {
+    'de' => strings.languageDe,
+    'en' => strings.languageEn,
+    'ja' => strings.languageJa,
+    _ => code.toUpperCase(),
+  };
+}
+
+String watchStatusLabel(BuildContext context, WatchStatus value) =>
+    switch (value) {
+      WatchStatus.planned => context.l10n.planned,
+      WatchStatus.watching => context.l10n.watching,
+      WatchStatus.completed => context.l10n.completed,
+      WatchStatus.paused => context.l10n.paused,
+      WatchStatus.dropped => context.l10n.dropped,
+    };
+
+String catalogErrorText(BuildContext context, String error) => switch (error) {
+  "Zu viele Anfragen. Bitte warte kurz und versuche es erneut." =>
+    context.l10n.catalogRateLimit,
+  "Anime-Daten sind gerade nicht erreichbar." =>
+    context.l10n.catalogUnavailable,
+  "Die Anfrage dauert zu lange. Bitte versuche es erneut." =>
+    context.l10n.catalogTimeout,
+  "Keine Verbindung. Bitte prüfe dein Internet." => context.l10n.catalogOffline,
+  "Die Anime-Quelle antwortet gerade nicht. Bitte versuche es später erneut." =>
+    context.l10n.catalogNoResponse,
+  "Die Anime-Quelle liefert gerade ungültige Daten." =>
+    context.l10n.catalogInvalid,
+  _ => context.l10n.catalogUnavailable,
+};
+String watchErrorText(BuildContext context, String error) =>
+    error == 'Die lokale Watchlist konnte nicht gelesen werden.'
+    ? context.l10n.localListError
+    : context.l10n.syncError;
+String dateLabel(DateTime? date, [BuildContext? context]) => date == null
+    ? stringsFor(context).dateTba
+    : '${shortDate(date, context)} · ${timeLabel(date)}';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 
 import '../data/app_store.dart';
 import '../models/anime.dart';
@@ -24,11 +25,12 @@ class _DetailScreenState extends State<DetailScreen> {
   List<ReleaseEvent> dubs = [];
   String? dubError;
   AnimeEnrichment enrichment = AnimeEnrichment.empty;
+  Map<String, Map<String, dynamic>> dubObservations = {};
   String? enrichmentError;
   bool loading = true;
   String? error, availabilityError, releaseError;
   String get _settings =>
-      '${widget.store.region}|${widget.store.language}|${widget.store.languageMode}';
+      '${widget.store.region}|${widget.store.dubLanguages.join(',')}|${widget.store.languageMode}';
   late String _loadedSettings;
   int _loadVersion = 0;
   @override
@@ -62,30 +64,40 @@ class _DetailScreenState extends State<DetailScreen> {
       dubs = [];
       dubError = null;
       enrichment = AnimeEnrichment.empty;
+      dubObservations = {};
       enrichmentError = null;
     });
     releaseError = null;
     await Future.wait([
-      (() async {
-        try {
-          final value = await widget.store.enrichment(anime.id);
-          if (current()) setState(() => enrichment = value);
-        } catch (_) {
-          if (current()) {
-            setState(
-              () => enrichmentError =
-                  'Zusätzliche Sprach- und Anbieterdaten sind gerade nicht erreichbar.',
+      for (final language in widget.store.dubLanguages)
+        (() async {
+          try {
+            final value = await widget.store.enrichment(
+              anime.id,
+              audioLanguage: language,
             );
+            if (current()) {
+              setState(() {
+                dubObservations[language] = value.dub;
+                if (language == widget.store.language) enrichment = value;
+              });
+            }
+          } catch (_) {
+            if (current()) {
+              setState(() {
+                dubObservations[language] = {'status': 'unavailable'};
+                enrichmentError = context.l10n.enrichmentError;
+              });
+            }
           }
-        }
-      })(),
+        })(),
       (() async {
         try {
           final value = await widget.store.catalog.detail(anime.id);
           if (current()) setState(() => anime = value);
         } catch (_) {
           if (current()) {
-            setState(() => error = 'Details konnten nicht geladen werden.');
+            setState(() => error = context.l10n.detailLoadError);
           }
         }
       })(),
@@ -95,10 +107,7 @@ class _DetailScreenState extends State<DetailScreen> {
           if (current()) setState(() => availability = value);
         } catch (_) {
           if (current()) {
-            setState(
-              () => availabilityError =
-                  'Streaming-Daten sind gerade nicht erreichbar.',
-            );
+            setState(() => availabilityError = context.l10n.streamingError);
           }
         }
       })(),
@@ -108,10 +117,7 @@ class _DetailScreenState extends State<DetailScreen> {
           if (current()) setState(() => dubs = value);
         } catch (_) {
           if (current()) {
-            setState(
-              () =>
-                  dubError = 'Dub-Ankündigungen konnten nicht geladen werden.',
-            );
+            setState(() => dubError = context.l10n.dubLoadError);
           }
         }
       })(),
@@ -121,10 +127,7 @@ class _DetailScreenState extends State<DetailScreen> {
           if (current()) setState(() => releases = value);
         } catch (_) {
           if (current()) {
-            setState(
-              () => releaseError =
-                  'Release-Termine sind gerade nicht erreichbar.',
-            );
+            setState(() => releaseError = context.l10n.releaseError);
           }
         }
       })(),
@@ -145,7 +148,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Anime-Details')),
+    appBar: AppBar(title: Text(context.l10n.detailTitle)),
     body: SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(20),
@@ -184,7 +187,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Tag(
-                          '${anime.score?.toStringAsFixed(1) ?? '—'}  ·  ${anime.episodes ?? '?'} Folgen',
+                          '${anime.score?.toStringAsFixed(1) ?? '—'}  ·  ${context.l10n.episodeCount('${anime.episodes ?? '?'}')}',
                           icon: Icons.star_rounded,
                           color: lime,
                           solid: true,
@@ -224,21 +227,22 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             label: Text(
               widget.store.isSaved(anime.id)
-                  ? 'In deiner Liste'
-                  : 'Auf meine Watchlist',
+                  ? context.l10n.inYourList
+                  : context.l10n.saveWatchlist,
             ),
           ),
           const SizedBox(height: 20),
-          DubPanel(
-            language: widget.store.language,
-            region: widget.store.region,
-            events: dubs,
-            availability: availability,
-            loading: loading,
-            error: dubError,
-            observation: enrichment.dub,
-            onRetry: _load,
-          ),
+          for (final language in widget.store.dubLanguages)
+            DubPanel(
+              language: language,
+              region: widget.store.region,
+              events: dubs.where((e) => e.language == language).toList(),
+              availability: availability,
+              loading: loading,
+              error: dubError,
+              observation: dubObservations[language] ?? const {},
+              onRetry: _load,
+            ),
           const SizedBox(height: 6),
           KitsuPanel(data: enrichment.kitsu),
           const SizedBox(height: 6),
@@ -254,11 +258,11 @@ class _DetailScreenState extends State<DetailScreen> {
             Text(
               error ?? availabilityError ?? releaseError ?? enrichmentError!,
             ),
-            TextButton(onPressed: _load, child: const Text('Erneut versuchen')),
+            TextButton(onPressed: _load, child: Text(context.l10n.retry)),
           ],
           const SizedBox(height: 16),
           Text(
-            'Die Geschichte',
+            context.l10n.story,
             style: Theme.of(
               context,
             ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
@@ -268,7 +272,7 @@ class _DetailScreenState extends State<DetailScreen> {
             enrichment.overview ??
                 anime.synopsis ??
                 enrichment.synopsis ??
-                'Noch keine Beschreibung verfügbar.',
+                context.l10n.noSynopsis,
             style: TextStyle(
               height: 1.65,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -278,19 +282,19 @@ class _DetailScreenState extends State<DetailScreen> {
             TextButton(
               onPressed: () =>
                   openSource(context, enrichment.streaming['source'] as String),
-              child: const Text('Deutsche Beschreibung: TMDb'),
+              child: Text(context.l10n.tmdbSynopsis),
             ),
           if (enrichment.anilist['status'] == 'ok')
             TextButton(
               onPressed: () =>
                   openSource(context, enrichment.anilist['source'] as String),
-              child: const Text('Bilder & Episodentermine: AniList'),
+              child: Text(context.l10n.anilistCredit),
             ),
           if (enrichment.kitsu['status'] == 'ok')
             TextButton(
               onPressed: () =>
                   openSource(context, enrichment.kitsu['source'] as String),
-              child: const Text('Zusätzliche Bilder & Infos: Kitsu'),
+              child: Text(context.l10n.kitsuCredit),
             ),
           const SizedBox(height: 20),
           ...mergeJapanSchedule(releases, [
@@ -306,28 +310,28 @@ class _DetailScreenState extends State<DetailScreen> {
                       children: [
                         Text(
                           e.kind == 'japan'
-                              ? 'Nächste Ausstrahlung in Japan'
-                              : 'Nächster Release',
+                              ? context.l10n.nextJapan
+                              : context.l10n.nextRelease,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
                           e.startsAt != null
-                              ? dateLabel(e.startsAt)
+                              ? dateLabel(e.startsAt, context)
                               : e.startsOn != null
-                              ? shortDate(e.startsOn)
-                              : 'Termin noch offen',
+                              ? shortDate(e.startsOn, context)
+                              : context.l10n.dateTba,
                         ),
                         Text(
                           e.note ??
                               (e.status == 'estimated'
-                                  ? 'Voraussichtlich laut regulärem Sendeplan. Pausen sind möglich.'
+                                  ? context.l10n.weeklyEstimate
                                   : e.status == 'delayed'
-                                  ? 'Pause oder Verschiebung – Termin offen'
-                                  : 'Angekündigter Termin'),
+                                  ? context.l10n.pausedTba
+                                  : context.l10n.announcedDate),
                         ),
                         TextButton(
                           onPressed: () => openSource(context, e.source),
-                          child: const Text('Terminquelle öffnen'),
+                          child: Text(context.l10n.openDateSource),
                         ),
                       ],
                     ),
@@ -337,25 +341,20 @@ class _DetailScreenState extends State<DetailScreen> {
           if (anime.broadcast != null) ...[
             const SizedBox(height: 20),
             Text(
-              'Reguläre Ausstrahlung in Japan',
+              context.l10n.regularJapan,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             Text(anime.broadcast!),
-            const Text(
-              'Dies ist kein bestätigter Streaming- oder Synchronisationstermin in Deutschland.',
-            ),
+            Text(context.l10n.japanNotLocal),
           ],
           const SizedBox(height: 24),
           Text(
-            'Wo schauen? · ${widget.store.region}',
+            context.l10n.whereWatch(widget.store.region),
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 12),
           if (availability.isEmpty && enrichment.providers.isEmpty && !loading)
-            Text(
-              availabilityError ??
-                  'Für diesen Titel und diese Region liegen noch keine verlässlichen Anbieterangaben vor.',
-            ),
+            Text(availabilityError ?? context.l10n.noProviders),
           if (availability.isEmpty && enrichment.providers.isEmpty && !loading)
             TextButton.icon(
               onPressed: () => openSource(
@@ -363,18 +362,16 @@ class _DetailScreenState extends State<DetailScreen> {
                 'https://myanimelist.net/anime/${anime.id}',
               ),
               icon: const Icon(Icons.open_in_new),
-              label: const Text('Anbieterübersicht auf MyAnimeList'),
+              label: Text(context.l10n.malProviders),
             ),
           if (enrichment.streaming['status'] == 'unavailable')
-            const Text('TMDb / JustWatch ist gerade nicht erreichbar.'),
+            Text(context.l10n.tmdbUnavailable),
           if (enrichment.providers.isNotEmpty) ...[
-            const Text(
-              'Anbieterdaten: JustWatch über TMDb. Verfügbarkeit und Sprachen bitte beim Anbieter prüfen.',
-            ),
+            Text(context.l10n.providerCredit),
             TextButton(
               onPressed: () =>
                   openSource(context, 'https://github.com/Fribb/anime-lists'),
-              child: const Text('Titelzuordnung: Fribb / anime-lists'),
+              child: Text(context.l10n.titleMapping),
             ),
           ],
           ...[...availability, ...enrichment.providers].map(
@@ -390,51 +387,65 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     Text(
                       a.status == 'available'
-                          ? 'Als verfügbar gemeldet'
-                          : 'Angekündigt',
+                          ? context.l10n.reportedAvailable
+                          : context.l10n.announced,
                     ),
                     Text(
                       a.scope == 'episode'
-                          ? 'Folge ${a.episode ?? '?'}'
+                          ? context.l10n.episodeNumber('${a.episode ?? '?'}')
                           : a.scope == 'movie'
-                          ? 'Angabe für den Film.'
+                          ? context.l10n.movieScope
                           : a.scope == 'season'
-                          ? 'Angabe für Staffel ${a.season ?? '?'}; Episodenabdeckung bitte prüfen.'
-                          : 'Angabe für die Serie; kann je Staffel und Folge abweichen.',
+                          ? context.l10n.seasonScope('${a.season ?? '?'}')
+                          : context.l10n.seriesScope,
                     ),
                     if (a.offers.isNotEmpty)
                       Text(
                         a.offers
                             .map(
                               (o) =>
-                                  const {
-                                    'flatrate': 'Abo',
-                                    'free': 'Kostenlos',
-                                    'ads': 'Mit Werbung',
-                                    'rent': 'Leihen',
-                                    'buy': 'Kaufen',
+                                  {
+                                    'flatrate': context.l10n.subscription,
+                                    'free': context.l10n.free,
+                                    'ads': context.l10n.withAds,
+                                    'rent': context.l10n.rent,
+                                    'buy': context.l10n.buy,
                                   }[o] ??
                                   o,
                             )
                             .join(' · '),
                       ),
-                    if (a.sourceName != null) Text('Quelle: ${a.sourceName}'),
+                    if (a.sourceName != null)
+                      Text(context.l10n.sourceName(a.sourceName!)),
                     Text(
-                      'Audio: ${a.audio == null
-                          ? 'Unbekannt'
-                          : a.audio!.isEmpty
-                          ? 'Keine Angabe'
-                          : a.audio!.map(languageLabel).join(', ')}',
+                      context.l10n.audioLabel(
+                        a.audio == null
+                            ? context.l10n.unknown
+                            : a.audio!.isEmpty
+                            ? context.l10n.noInformation
+                            : a.audio!
+                                  .map((code) => languageLabel(code, context))
+                                  .join(', '),
+                      ),
                     ),
                     Text(
-                      'Untertitel: ${a.subtitles == null
-                          ? 'Unbekannt'
-                          : a.subtitles!.isEmpty
-                          ? 'Keine Angabe'
-                          : a.subtitles!.map(languageLabel).join(', ')}',
+                      context.l10n.subtitleLabel(
+                        a.subtitles == null
+                            ? context.l10n.unknown
+                            : a.subtitles!.isEmpty
+                            ? context.l10n.noInformation
+                            : a.subtitles!
+                                  .map((code) => languageLabel(code, context))
+                                  .join(', '),
+                      ),
                     ),
                     Text(
-                      'Zuletzt geprüft: ${dateLabel(DateTime.tryParse(a.checkedAt)?.toLocal())}',
+                      context.l10n.lastChecked(
+                        dateLabel(
+                          DateTime.tryParse(a.checkedAt)?.toLocal(),
+                          context,
+                        ),
+                      ),
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     TextButton.icon(
@@ -442,8 +453,8 @@ class _DetailScreenState extends State<DetailScreen> {
                       icon: const Icon(Icons.open_in_new),
                       label: Text(
                         a.sourceName == 'TMDb / JustWatch'
-                            ? 'Angebote auf TMDb öffnen'
-                            : 'Beim Anbieter prüfen',
+                            ? context.l10n.tmdbOffers
+                            : context.l10n.checkProvider,
                       ),
                     ),
                   ],

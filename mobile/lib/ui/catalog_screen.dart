@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 
 import '../data/app_store.dart';
 import '../models/anime.dart';
@@ -82,11 +83,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
       builder: (_) => DetailScreen(anime: anime, store: widget.store),
     ),
   );
-  String get seasonName => const {
+  String get seasonName => {
     'winter': 'Winter',
-    'spring': 'Frühling',
-    'summer': 'Sommer',
-    'fall': 'Herbst',
+    'spring': context.l10n.spring,
+    'summer': context.l10n.summer,
+    'fall': context.l10n.autumn,
   }[season]!;
   Widget controls() => SingleChildScrollView(
     scrollDirection: Axis.horizontal,
@@ -94,7 +95,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     child: Row(
       children: [
         ChoiceChip(
-          label: const Text('Saison'),
+          label: Text(context.l10n.season),
           selected: !searching,
           onSelected: loading
               ? null
@@ -133,11 +134,20 @@ class _CatalogScreenState extends State<CatalogScreen> {
               value: season,
               style: Theme.of(context).textTheme.labelLarge,
               borderRadius: BorderRadius.circular(18),
-              items: const [
-                DropdownMenuItem(value: 'winter', child: Text('Winter')),
-                DropdownMenuItem(value: 'spring', child: Text('Frühling')),
-                DropdownMenuItem(value: 'summer', child: Text('Sommer')),
-                DropdownMenuItem(value: 'fall', child: Text('Herbst')),
+              items: [
+                const DropdownMenuItem(value: 'winter', child: Text('Winter')),
+                DropdownMenuItem(
+                  value: 'spring',
+                  child: Text(context.l10n.spring),
+                ),
+                DropdownMenuItem(
+                  value: 'summer',
+                  child: Text(context.l10n.summer),
+                ),
+                DropdownMenuItem(
+                  value: 'fall',
+                  child: Text(context.l10n.autumn),
+                ),
               ],
               onChanged: loading
                   ? null
@@ -152,14 +162,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: genre ?? '',
-              items: const [
-                DropdownMenuItem(value: '', child: Text('Alle Genres')),
-                DropdownMenuItem(value: '1', child: Text('Action')),
-                DropdownMenuItem(value: '4', child: Text('Comedy')),
-                DropdownMenuItem(value: '10', child: Text('Fantasy')),
-                DropdownMenuItem(value: '7', child: Text('Mystery')),
-                DropdownMenuItem(value: '22', child: Text('Romance')),
-                DropdownMenuItem(value: '24', child: Text('Sci-Fi')),
+              items: [
+                DropdownMenuItem(
+                  value: '',
+                  child: Text(context.l10n.allGenres),
+                ),
+                const DropdownMenuItem(value: '1', child: Text('Action')),
+                const DropdownMenuItem(value: '4', child: Text('Comedy')),
+                const DropdownMenuItem(value: '10', child: Text('Fantasy')),
+                const DropdownMenuItem(value: '7', child: Text('Mystery')),
+                const DropdownMenuItem(value: '22', child: Text('Romance')),
+                const DropdownMenuItem(value: '24', child: Text('Sci-Fi')),
               ],
               onChanged: loading
                   ? null
@@ -188,10 +201,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: SectionHeading(
-                'Dein nächster Lieblingsanime.',
-                eyebrow: 'Entdecken',
+                context.l10n.catalogHeading,
+                eyebrow: context.l10n.discover,
               ),
             ),
             SliverToBoxAdapter(
@@ -201,10 +214,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   controller: search,
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
-                    hintText: 'Titel, Welten, neue Geschichten …',
+                    hintText: context.l10n.searchHint,
                     prefixIcon: const Icon(Icons.search_rounded),
                     suffixIcon: IconButton(
-                      tooltip: 'Suchen',
+                      tooltip: context.l10n.search,
                       icon: const Icon(Icons.arrow_forward_rounded),
                       onPressed: loading
                           ? null
@@ -239,10 +252,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      Text(error!),
+                      Text(catalogErrorText(context, error!)),
                       TextButton(
                         onPressed: () => _load(),
-                        child: const Text('Erneut versuchen'),
+                        child: Text(context.l10n.retry),
                       ),
                     ],
                   ),
@@ -252,9 +265,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: EmptyPanel(
-                  loading
-                      ? 'Anime werden geladen …'
-                      : 'Keine Anime gefunden. Versuche andere Suchbegriffe oder Filter.',
+                  loading ? context.l10n.loadingAnime : context.l10n.noAnime,
                   icon: loading
                       ? Icons.hourglass_top
                       : Icons.search_off_rounded,
@@ -275,10 +286,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
             if (items.isNotEmpty)
               SliverToBoxAdapter(
                 child: SectionHeading(
-                  searching ? 'Deine Suchergebnisse' : 'Mehr aus dieser Season',
-                  eyebrow: searching ? 'Treffer' : 'Neue Welten entdecken',
+                  searching
+                      ? context.l10n.searchResults
+                      : context.l10n.moreSeason,
+                  eyebrow: searching
+                      ? context.l10n.results
+                      : context.l10n.newWorlds,
                   trailing: Text(
-                    '${items.length} Titel',
+                    context.l10n.titleCount('${items.length}'),
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),
@@ -313,7 +328,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                             page++;
                             _load(append: true);
                           },
-                    child: const Text('Weitere Anime laden'),
+                    child: Text(context.l10n.loadMore),
                   ),
                 ),
               ),
@@ -332,8 +347,8 @@ class SaveAnimeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IconButton.filled(
     tooltip: store.isSaved(anime.id)
-        ? 'In deiner Watchlist'
-        : 'Zur Watchlist hinzufügen',
+        ? context.l10n.savedWatchlist
+        : context.l10n.addWatchlist,
     style: IconButton.styleFrom(
       backgroundColor: const Color(0xCF111520),
       foregroundColor: Colors.white,
@@ -453,18 +468,18 @@ class FeatureAnime extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Row(
+                    Row(
                       children: [
                         Text(
-                          'Anime entdecken',
-                          style: TextStyle(
+                          context.l10n.discoverAnime,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(
+                        const SizedBox(width: 8),
+                        const Icon(
                           Icons.arrow_forward_rounded,
                           color: coral,
                           size: 19,
@@ -563,7 +578,7 @@ class PosterCard extends StatelessWidget {
       ),
       const SizedBox(height: 5),
       Text(
-        '${anime.episodes ?? '?'} Folgen${anime.genres.isEmpty ? '' : ' · ${anime.genres.first}'}',
+        '${context.l10n.episodeCount('${anime.episodes ?? '?'}')}${anime.genres.isEmpty ? '' : ' · ${anime.genres.first}'}',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(

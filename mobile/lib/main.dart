@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -172,15 +172,20 @@ class AniApp extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'AniApp',
-    debugShowCheckedModeBanner: false,
-    theme: _theme(Brightness.light),
-    darkTheme: _theme(Brightness.dark),
-    themeMode: ThemeMode.system,
-    locale: const Locale('de'),
-    supportedLocales: const [Locale('de'), Locale('en')],
-    localizationsDelegates: GlobalMaterialLocalizations.delegates,
-    home: AppShell(store: store, startupWarning: startupWarning),
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: store,
+    builder: (context, _) => MaterialApp(
+      title: 'AniApp',
+      debugShowCheckedModeBanner: false,
+      theme: _theme(Brightness.light),
+      darkTheme: _theme(Brightness.dark),
+      themeMode: ThemeMode.system,
+      locale: store.appLanguage == 'system' ? null : Locale(store.appLanguage),
+      localeResolutionCallback: (locale, supported) =>
+          Locale(locale?.languageCode == 'de' ? 'de' : 'en'),
+      supportedLocales: const [Locale('en'), Locale('de')],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      home: AppShell(store: store, startupWarning: startupWarning),
+    ),
   );
 }

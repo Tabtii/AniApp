@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 
 import '../data/app_store.dart';
 import '../models/anime.dart';
@@ -41,9 +42,9 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeading(
-          'Deine Anime. Dein Tempo.',
-          eyebrow: 'Meine Watchlist',
+        SectionHeading(
+          context.l10n.watchlistHeading,
+          eyebrow: context.l10n.myWatchlist,
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -53,7 +54,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ChoiceChip(
-                  label: Text('Alle (${store.entries.length})'),
+                  label: Text(context.l10n.allCount('${store.entries.length}')),
                   selected: filter == null,
                   onSelected: (_) => setState(() => filter = null),
                 ),
@@ -62,7 +63,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                 (status) => Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: ChoiceChip(
-                    label: Text(status.label),
+                    label: Text(watchStatusLabel(context, status)),
                     selected: filter == status,
                     onSelected: (_) => setState(() => filter = status),
                   ),
@@ -78,18 +79,18 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(store.watchError!),
+                Text(watchErrorText(context, store.watchError!)),
                 TextButton(
                   onPressed: store.refreshWatchlist,
-                  child: const Text('Synchronisierung erneut versuchen'),
+                  child: Text(context.l10n.retrySync),
                 ),
               ],
             ),
           ),
         Expanded(
           child: entries.isEmpty
-              ? const EmptyPanel(
-                  'Merke einen Anime unter Entdecken. Hier verfolgst du deine nächsten Folgen.',
+              ? EmptyPanel(
+                  context.l10n.watchlistEmpty,
                   icon: Icons.bookmark_add_outlined,
                 )
               : RefreshIndicator(
@@ -144,7 +145,9 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                           .map(
                                             (s) => DropdownMenuItem(
                                               value: s,
-                                              child: Text(s.label),
+                                              child: Text(
+                                                watchStatusLabel(context, s),
+                                              ),
                                             ),
                                           )
                                           .toList(),
@@ -169,11 +172,13 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            '${entry.watched} / ${total ?? '?'} Folgen',
+                                            context.l10n.episodeCount(
+                                              '${entry.watched} / ${total ?? '?'}',
+                                            ),
                                           ),
                                         ),
                                         IconButton(
-                                          tooltip: 'Eine Folge weniger',
+                                          tooltip: context.l10n.oneLess,
                                           onPressed:
                                               store.busy || entry.watched == 0
                                               ? null
@@ -186,7 +191,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                           icon: const Icon(Icons.remove),
                                         ),
                                         IconButton.filledTonal(
-                                          tooltip: 'Eine Folge gesehen',
+                                          tooltip: context.l10n.oneWatched,
                                           onPressed:
                                               store.busy ||
                                                   (total != null &&
@@ -209,39 +214,49 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                         onPressed: store.busy
                                             ? null
                                             : () async {
-                                                final confirm = await showDialog<bool>(
-                                                  context: context,
-                                                  builder: (context) => AlertDialog(
-                                                    title: const Text(
-                                                      'Anime entfernen?',
-                                                    ),
-                                                    content: const Text(
-                                                      'Der gespeicherte Fortschritt wird entfernt.',
-                                                    ),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                              context,
-                                                              false,
+                                                final confirm =
+                                                    await showDialog<bool>(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialog(
+                                                            title: Text(
+                                                              context
+                                                                  .l10n
+                                                                  .removeAnime,
                                                             ),
-                                                        child: const Text(
-                                                          'Abbrechen',
-                                                        ),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                              context,
-                                                              true,
+                                                            content: Text(
+                                                              context
+                                                                  .l10n
+                                                                  .removeProgress,
                                                             ),
-                                                        child: const Text(
-                                                          'Entfernen',
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                      context,
+                                                                      false,
+                                                                    ),
+                                                                child: Text(
+                                                                  context
+                                                                      .l10n
+                                                                      .cancel,
+                                                                ),
+                                                              ),
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                      context,
+                                                                      true,
+                                                                    ),
+                                                                child: Text(
+                                                                  context
+                                                                      .l10n
+                                                                      .remove,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                    );
                                                 if (confirm == true &&
                                                     context.mounted) {
                                                   await perform(
@@ -252,7 +267,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                                   );
                                                 }
                                               },
-                                        child: const Text('Entfernen'),
+                                        child: Text(context.l10n.remove),
                                       ),
                                     ),
                                   ],
