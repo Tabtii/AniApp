@@ -56,7 +56,7 @@ Prepared functionality:
 
 ## Deployment and validation
 
-Deploy `supabase/functions/anime-enrichment/index.ts` with its `deno.json`, `providers.ts`, `kitsu.ts`, and `../catalog/auth.ts`. Deploy `content-sync/index.ts` with `deno.json`, `content.ts`, `adn.ts`, `adn-news.ts` and `reviewed-pauses.ts`. JWT gateway verification is disabled only because enrichment validates the project's publishable key itself, matching `catalog`; content-sync retains its private Vault-backed sync token and lease. Enrichment cannot read or mutate private database rows. No new schema or credentials are needed.
+Deploy `supabase/functions/anime-enrichment/index.ts` with its `deno.json`, `providers.ts`, `kitsu.ts`, and `../catalog/auth.ts`. Deploy all files in `supabase/functions/content-sync`, including the `dub-*` modules and `aninews.ts`. Apply the automatic-dub migration before deploying the new importer. JWT gateway verification is disabled only because enrichment validates the project's publishable key itself, matching `catalog`; content-sync retains its private Vault-backed sync token and lease. Enrichment cannot read or mutate private database rows. The enrichment gateway needs no new schema or credentials. The announcement importer adds server-only watch/matching/review tables and an event identity key; it requires no new provider credentials.
 
 Tests cover ID/season/region separation, language uncertainty, outages, attribution, AniList approval gating, cooldown and calendar merging. Fixtures are test-only. MyDubList can be smoke-tested live immediately; TMDb and AniList require the prerequisites above before a real upstream smoke test can be claimed.
 
@@ -69,3 +69,64 @@ Tests cover ID/season/region separation, language uncertainty, outages, attribut
 The free German https://www.aninews.de/feed supplies anime headlines. The own adapter validates source/age/category, checks robots, fetches at most eight article pages with one-second spacing, validates German article identity and extracts a source image. Pages are cached for a day; requests are bounded, redirects and arbitrary hosts are rejected, and failed imports preserve existing data. No full articles are copied and no release date is inferred from a news date. Include `aninews.ts` when deploying content-sync.
 
 Four additional ADN show/season identities were reviewed against official title/type/description and MAL, increasing mapped titles from 10 to 14. Older Utena episodes are explicitly labelled as ADN catalog additions. See [current coverage and release gates](RELEASE_READINESS.md) for the source audit and outstanding account/provider requirements.
+
+## Automatic dub announcements — 10 October 2026
+
+The existing `aniapp-content-hourly` cron runs `syncDubAnnouncements` as a seventh,
+independently reported content source. There is no paid crawler or LLM dependency.
+
+- **Discovery:** official Crunchyroll `de-DE` and `en-US` RSS at
+  `https://cr-news-api-service.prd.crunchyrollsvc.com/v1/{locale}/rss`, Anime2You/AniNews
+  feeds, existing ADN News records, and previously published dub announcement URLs.
+  The two explicitly published RSS URLs are read directly as subscriptions; the
+  API host has no public robots route. Article crawling still checks robots and
+  access denials at either a feed or article are respected. Crunchyroll also
+  contributes DE/EN news previews. Source article language and dub
+  audio are separate. The English feed uses `/news/…` URLs without an `/en` prefix.
+- **Extraction:** conservative, deterministic DE/EN release statements with a
+  single identifiable title, explicit audio, provider and territory. ADN lineup
+  cards additionally require a same-title German-dub sentence, not only `SYNC`.
+  DE editorial editions are scoped to Germany, not all DACH countries. English
+  statements require explicit territory evidence; English does not imply US/UK.
+- **Identity:** seed only the already reviewed, season-specific MAL identities.
+  New titles use exact, uniquely matching catalog titles/synonyms; no fuzzy match.
+  At most three catalog lookups per run; negative matches retry after 24 hours.
+- **Dates:** explicit days remain date-only. Article publication time, original
+  Japanese dates, a series offer and a weekly pattern do not become dub dates.
+  A premiere creates one entry; an explicit episode/range creates those episodes
+  only, including continuing seasons. Unknown dates stay announced/TBA. Ambiguous
+  scopes, conflicting dates and unsupported formats stay in the private queue.
+- **Updates:** at most eight watched pages per run and a 45-second crawl budget.
+  Current Crunchyroll feed bodies are checked hourly; article pages every six
+  hours (backlogs can delay this). Watch state survives feed disappearance for
+  180 days. SHA-256/parser version and conditional ETag/Last-Modified requests
+  avoid unnecessary parsing/downloads. Unreadable pages are recorded as failures,
+  never as cancellations. Error retries are six hours later. Full article bodies
+  are transient; storage contains short evidence, derived facts and source URLs.
+- **Reconciliation:** service-role-only transactional RPC, stable identity across
+  URL/date changes, and an advisory lock. Existing compatible manual rows retain
+  their IDs. Same-source date changes update in place. Another source contradicting
+  a known date enters conflict review. A date-only claim cannot overwrite an exact
+  provider timestamp. Missing/TBA data cannot erase a known date. No content-sync
+  source error deletes published events.
+- **Limits:** CR weekly RSS loses audio markings and is not parsed as a dub episode
+  calendar. A saved CR URL returning only a JavaScript shell remains unavailable.
+  Netflix/aniverse announcements can be recognized in supported editorial feeds;
+  there is no direct, comprehensive Netflix/aniverse scraper. Undisclosed dates,
+  blocked pages, unsupported formats and missing title/territory evidence still
+  need a human/source update. No current claim of complete international coverage.
+
+Operations (trusted SQL editor only):
+
+```sql
+select completed_at, report->'dub_announcements' from public.content_sync_state;
+select source_url, candidate_key, reason, evidence, proposal
+from public.dub_candidates where decision in ('review','conflict')
+order by checked_at desc;
+select source_url, error, next_check_at from public.dub_source_documents
+where error is not null order by last_attempt_at desc;
+```
+
+Review corrections belong in the parser or reviewed identity seed with a regression
+fixture. Bump `PARSER_VERSION` for changed parsing rules; due documents then bypass
+304/hash shortcuts and are reprocessed. No public admin/review UI has been added.

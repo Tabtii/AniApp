@@ -129,3 +129,20 @@ Calendar cards expose the provider, release note, review date and source. Provid
 Live verification on 2026-10-08: content-sync version 4 returned HTTP 200, 25 Anime2You headlines, 15 MAL headlines, 87 Japanese slots and **18 ADN events across 13 read days**. Five reviewed additions bring the published total to 123 events across Japanese TV, Crunchyroll, ADN, Netflix and aniverse / Prime Video. Coverage remains incomplete for provider episode schedules and German dubs. The existing Supabase security advisories documented above are unchanged.
 
 Validation: 19 Flutter tests, 16 backend tests and 6 Python tests, including paging past 200 rows, later-day/provider filtering, older-season schedules, locale mismatches, unknown audio, skipped days, rescheduling and DST-safe cleanup boundaries. The visual check uses production Flutter widgets and live API snapshots/source posters; it is not a physical-device screenshot.
+
+## Automatic announcement → calendar import (10 October 2026)
+
+This supersedes the earlier manual-only status for supported dub announcements.
+`dub-sources.ts`, `dub-parser.ts` and `dub-sync.ts` discover, watch, extract and
+reconcile sourced DE/EN dub dates through the existing hourly content-sync job.
+The existing Flutter calendar/detail pages consume the resulting published rows;
+no client update is required. The prior manually reviewed snapshots remain audit
+records and are not rewritten to imply they were automatically researched.
+
+The new migration adds private-by-permission/RLS watch, exact-title matching and
+candidate tables in the public schema plus a stable announcement identity on
+release events. Only service_role can invoke the transactional publication RPC.
+Unknown/ambiguous data is retained for review, not exposed as confirmed content.
+Failures preserve live data; duplicate and revised announcements reconcile without
+new calendar IDs. Detailed scope, source limitations and operator queries are in
+[DATA_SOURCES.md](DATA_SOURCES.md#automatic-dub-announcements--10-october-2026).

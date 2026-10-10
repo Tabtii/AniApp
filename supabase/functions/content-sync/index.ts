@@ -2,6 +2,7 @@ import {loadAdn,saveAdn} from './adn.ts';
 import {crawlAdnNews} from './adn-news.ts';
 import {reviewedPauses} from './reviewed-pauses.ts';
 import {loadAniNews} from './aninews.ts';
+import {syncDubAnnouncements} from './dub-sync.ts';
 import {broadcastEvents, rssNews, malNews, type Row} from './content.ts';
 const url=Deno.env.get('SUPABASE_URL')!;
 const secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -27,7 +28,8 @@ Deno.serve(async req=> {
   const report:Record<string,unknown>={};
   let successes=0;
   // Sources fail independently; existing published data survives failed imports.
-  for(const name of ['anime2you','myanimelist','schedule','adn','adn_news','aninews']) {
+  const sources=['anime2you','myanimelist','schedule','adn','adn_news','aninews','dub_announcements'];
+  for(const name of sources) {
     try {
       if(name==='anime2you') {
         const rows=rssNews(await source('https://www.anime2you.de/feed/'));
@@ -48,6 +50,8 @@ Deno.serve(async req=> {
         if(data.rows.length)await db('news?on_conflict=source_url',data.rows);
         report[name]={count:data.rows.length,cached:data.cached,failed:data.failed};
         if(!data.rows.length && !data.cached)throw new Error('No ADN news imported');
+      } else if(name==='dub_announcements') {
+        report[name]=await syncDubAnnouncements(db);
       } else if(name==='adn') {
         const data=await loadAdn(source);
         await saveAdn(data,db);
@@ -73,5 +77,5 @@ Deno.serve(async req=> {
     }catch(e){report[name]={error:e instanceof Error?e.message:'Unavailable'};}
   }
   await db('rpc/finish_content_sync',{p_report:report});
-  return reply({status:successes===6 && !Object.values(report).some(r=>(r as {failed?:unknown[]})?.failed?.length)?'ok':'partial',sources:report},successes?200:503);
+  return reply({status:successes===sources.length && !Object.values(report).some(r=>(r as {failed?:unknown[]})?.failed?.length)?'ok':'partial',sources:report},successes?200:503);
 });
