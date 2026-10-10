@@ -13,3 +13,12 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Flutter and backend development
+**/node_modules/
+**/.dart_tool/
+**/build/
+**/__pycache__/
+.env
+.env.*
+!*.example

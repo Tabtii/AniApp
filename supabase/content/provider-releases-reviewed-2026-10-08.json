@@ -1,0 +1,100 @@
+{
+  "reviewed_at": "2026-10-08T13:11:18.115256+00:00",
+  "method": "Manually checked provider announcements and season-specific MAL identities. No automatic refresh of these five rows. Estimated streaming dates follow a published weekly pattern; they are not exact episode confirmations.",
+  "supporting_sources": {
+    "57466": [
+      "https://www.crunchyroll.com/de/news/announcements/2026/4/30/ascendance-of-a-bookworm-staffel-4-deutsche-synchro-crunchyroll-stream",
+      "https://www.crunchyroll.com/de/simulcastcalendar?da=&filter=premium"
+    ],
+    "61323": [
+      "https://www.netflix.com/de/title/81663323"
+    ]
+  },
+  "events": [
+    {
+      "mal_id": 57466,
+      "title": "Ascendance of a Bookworm: Adopted Daughter of an Archduke",
+      "provider": "Crunchyroll",
+      "kind": "dub",
+      "source_url": "https://www.crunchyroll.com/de/news/seasonal-lineup/2026/10/5/crunchyroll-wochenprogramm-herbst-2026",
+      "release_note": "Weiterlaufende deutsche Synchro der Frühlings-Season. Folge 22 laut Wochenprogramm auf den 17. Oktober verschoben.",
+      "starts_at": "2026-10-17T09:30:00Z",
+      "starts_on": null,
+      "status": "delayed",
+      "episode": 22,
+      "region": "DE",
+      "audio_language": "de",
+      "image_url": "https://cdn.myanimelist.net/images/anime/1371/155054l.jpg",
+      "checked_at": "2026-10-08T13:11:18.115256+00:00",
+      "published": true
+    },
+    {
+      "mal_id": 61207,
+      "title": "Reincarnated as a Dragon Hatchling",
+      "provider": "ADN",
+      "kind": "dub",
+      "source_url": "https://news.animationdigitalnetwork.com/de/2026/09/28/line-up-zur-herbst-season-2026-neue-anime-bei-adn/",
+      "release_note": "Deutsche Synchro angekündigt. Der Anbieter nennt einen Tag, aber noch keine Uhrzeit oder Folgenaufteilung.",
+      "starts_at": null,
+      "starts_on": "2026-10-22",
+      "status": "confirmed",
+      "episode": null,
+      "region": "DE",
+      "audio_language": "de",
+      "image_url": "https://cdn.myanimelist.net/images/anime/1250/156107l.jpg",
+      "checked_at": "2026-10-08T13:11:18.115256+00:00",
+      "published": true
+    },
+    {
+      "mal_id": 61323,
+      "title": "Blue Box Season 2",
+      "provider": "Netflix",
+      "kind": "streaming",
+      "source_url": "https://about.netflix.com/en/news/romance-anime-lineup-october",
+      "release_note": "Aus dem angekündigten Wochenrhythmus abgeleitet. Uhrzeit und deutsche Synchro der nächsten Folge sind nicht bestätigt.",
+      "starts_at": null,
+      "starts_on": "2026-10-11",
+      "status": "estimated",
+      "episode": null,
+      "region": "DE",
+      "audio_language": null,
+      "image_url": "https://cdn.myanimelist.net/images/anime/1990/160267l.jpg",
+      "checked_at": "2026-10-08T13:11:18.115256+00:00",
+      "published": true
+    },
+    {
+      "mal_id": 53913,
+      "title": "Reincarnated as a Sword Season 2",
+      "provider": "aniverse / Prime Video",
+      "kind": "streaming",
+      "source_url": "https://www.anime2you.de/news/1055850/aniverse-reincarnated-as-a-sword-und-mehr/",
+      "release_note": "Japanisch mit deutschen Untertiteln. Voraussichtlicher Termin laut veröffentlichtem Wochenplan.",
+      "starts_at": "2026-10-14T15:30:00Z",
+      "starts_on": null,
+      "status": "estimated",
+      "episode": null,
+      "region": "DE",
+      "audio_language": "ja",
+      "image_url": "https://cdn.myanimelist.net/images/anime/1539/159559l.jpg",
+      "checked_at": "2026-10-08T13:11:18.115256+00:00",
+      "published": true
+    },
+    {
+      "mal_id": 63181,
+      "title": "Tougen Anki: Nikko Kegon Falls Arc",
+      "provider": "aniverse / Prime Video",
+      "kind": "streaming",
+      "source_url": "https://www.anime2you.de/news/1055850/aniverse-reincarnated-as-a-sword-und-mehr/",
+      "release_note": "Japanisch mit deutschen Untertiteln. Voraussichtlicher Termin laut veröffentlichtem Wochenplan.",
+      "starts_at": "2026-10-09T17:00:00Z",
+      "starts_on": null,
+      "status": "estimated",
+      "episode": null,
+      "region": "DE",
+      "audio_language": "ja",
+      "image_url": "https://cdn.myanimelist.net/images/anime/1332/160147l.jpg",
+      "checked_at": "2026-10-08T13:11:18.115256+00:00",
+      "published": true
+    }
+  ]
+}
