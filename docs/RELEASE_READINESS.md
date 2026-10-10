@@ -87,3 +87,7 @@ multiple dub languages with country isolation, immediate news reloads and a
 needed to avoid a narrow-screen overflow. Read-only requests with the app's public
 key verified German/English news filtering and combined calendar filters against
 live Supabase data. Android/iOS artifacts are verified separately in CI.
+
+The enrichment gateway now accepts GB as well as DE/AT/CH/US, matching all mobile
+country choices. Its existing publishable-key authentication is retained. All
+43 backend tests pass, including a DE/EN × country validation check.

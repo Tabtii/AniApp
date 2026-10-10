@@ -98,3 +98,11 @@ test('AniList rate limit honors cooldown instead of hammering the API',async()=>
   let calls=0;const service=new Enrichment({anilistApproved:true},async()=>{calls++;return new Response('{}',{status:429,headers:{'Retry-After':'60'}});});
   assert.equal((await service.anilist(21)).status,'unavailable');assert.equal((await service.anilist(1)).status,'unavailable');assert.equal(calls,1);
 });
+
+// Keep the two-language mobile launch scope accepted by the deployed gateway.
+test('launch preferences accept German and English independently of all selectable countries',()=>{
+  for(const region of ['DE','AT','CH','US','GB'])for(const language of ['de','en']){
+    const input=validateInput({mal_id:21,region,language});
+    assert.equal(input.region,region);assert.equal(input.language,language);
+  }
+});

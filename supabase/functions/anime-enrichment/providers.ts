@@ -10,7 +10,7 @@ export function validateInput(body: Json): {mode:'detail'|'calendar'; malId:numb
   const mode = body.mode ?? 'detail';
   if (!['detail','calendar'].includes(mode) || (mode === 'detail' && !positive(body.mal_id))) throw new Error('Invalid ID');
   const language = body.language ?? 'de', region = body.region ?? 'DE';
-  if (!['de','en','ja','fr','es','it'].includes(language) || !['DE','AT','CH','US'].includes(region)) throw new Error('Invalid preference');
+  if (!['de','en','ja','fr','es','it'].includes(language) || !['DE','AT','CH','US','GB'].includes(region)) throw new Error('Invalid preference');
   return {mode, malId:body.mal_id, language, region};
 }
 export function dubStatus(data: Json, malId: number): string {
