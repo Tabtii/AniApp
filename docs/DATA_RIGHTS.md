@@ -139,6 +139,61 @@ AniApp project
   die ungeprüfte Übernahme fremder Formulierungen. Der automatisierte Zugriff
   auf die jeweilige Quelle und etwaige Datenbankrechte bleiben separat zu prüfen.
 
+## Weitere Quellen und Versandversuch — 12.10.2026 nachmittags
+
+**MyAnimeList-Anfrage nicht versendet:** Der Projektinhaber hat den Versand
+ausdrücklich beauftragt. Der offizielle Support-Link führt zu
+https://help.myanimelist.net/hc/en-us/requests/new.
+Die Sicherheitsrichtlinie des Cloud-Browsers hat den Seitenaufruf blockiert;
+es erfolgte keine Formulareingabe und kein Versand. Kein Ausweichen auf
+HTTP-Formular-POSTs, andere Browser oder geratene E-Mail-Adressen.
+Der oben vorbereitete Text ist für die manuelle Einreichung durch den
+Projektinhaber fertig. Eine Suche nach bereits versendeten MAL-Anfragen
+ergab keinen Treffer. Dieser Status ist kein Warten auf eine MAL-Antwort.
+
+### Kandidatenvergleich
+
+| Quelle | Daten und Nutzen | Dokumentierte Bedingungen / Grenze | Entscheidung |
+| --- | --- | --- | --- |
+| [TVmaze API](https://www.tvmaze.com/api) | Serien, Staffeln, Folgen, TV-/Streaming-Kalender und externe IDs | Öffentliche API unter CC BY-SA; Attribution und ShareAlike beachten. [Administrator zur Bildnutzung](https://www.tvmaze.com/threads/6552/using-posters-and-data-from-tvmaze-api-on-a-commercial-website) empfiehlt direkte Bild-URLs; keine pauschale Rechtegarantie für jedes Artwork daraus ableiten. | Stärkster neuer Kandidat für Episoden-Metadaten; Datenherkunft getrennt halten und ShareAlike-Auswirkungen vor Zusammenführung prüfen. |
+| [bangumi-data](https://github.com/bangumi-data/bangumi-data) | Anime-, Sende- und Website-Zuordnungen als JSON-Datensatz | Daten ausdrücklich CC BY 4.0 mit Quellenangabe; von bangumi/Archive und der Bangumi-API unterscheiden. Lizenz gilt nicht automatisch für Inhalte verlinkter Websites. | Ergänzung für Stammdaten/Zuordnung; aktuelle Season-Abdeckung vor Import messen. Kein belegter vollständiger Dub-Kalender. |
+| [TheTVDB](https://thetvdb.com/api-information) | Serien- und Episoden-Metadaten | Aktuelle Preistabelle: unter USD 50.000 Unternehmensjahresumsatz kostenlos mit Attribution; Projekt-Key/konkrete Vertragsbedingungen erforderlich. [API-Bedingungen](https://thetvdb.com/tos) schließen Bild-, Trailer- und Programmrechte ausdrücklich aus. | Zweite Katalogoption, kein Ersatz für Artwork-Freigaben. Keine Registrierung oder kostenpflichtige Bestellung erfolgt. |
+| [anime-offline-database](https://github.com/manami-project/anime-offline-database) | Historische Stammdaten und Zuordnungen verschiedener Anime-Datenbanken | ODbL 1.0 + DbCL 1.0, nicht pauschal CC0. Repository seit 04.07.2026 archiviert; dokumentierter Stand KW 27/2026. Vorgelagerte Inhalte separat bewerten. | Höchstens geprüfter Mapping-Startbestand; nicht als laufende Quelle für neue Seasons/Dubs einplanen. |
+| [Crunchyroll News](https://www.crunchyroll.com/hi/news/about) | Mehrsprachige Originalankündigungen und RSS | Offizieller Kontakt für Partnerschaften: editorial@crunchyroll.com, Betreff PARTNERSHIP. RSS-Verfügbarkeit allein erlaubt keine beliebige Wiederveröffentlichung. | Bestehende Quelle; konkret Überschriften, Vorschaubilder und DE/EN-Terminextraktion klären. In diesem Schritt keine weitere Mail versendet. |
+| [AnimeNachrichten](https://www.animenachrichten.de/impressum) | Zusätzliche deutsche Anime-/Streaming-News | Keine freie kommerzielle Wiederverwendungslizenz gefunden; Impressum verlangt für weitergehende Verwertung schriftliche Zustimmung. | Kein neuer freigegebener Adapter. |
+| Anime News Network / Anime UK News | Kandidaten für englische News | Aktuelle Feed-/Wiederverwendungsbedingungen waren bei dieser Nachprüfung nicht ausreichend abrufbar. | Keine neue Freigabe behaupten; bestehende Einschränkungen bleiben bestehen. |
+
+### TVmaze: Live-Stichprobe und Dub-Grenze
+
+Am 12.10.2026 wurden vier öffentliche API-Abfragen durchgeführt:
+- Suche nach One Piece: Anime-ID 1505, daneben unter anderem Live-Action-ID 46065.
+  Ein Titelvergleich allein würde hier falsche Serien verbinden.
+- Suche nach Frieren: Hauptserie ID 69956, zusätzlich ein eigener Kurzserien-Eintrag.
+- `/shows/1505/alternatelists` und `/shows/69956/alternatelists`: beide leere Listen.
+
+Laut [Alternate-Episode-Richtlinie](https://www.tvmaze.com/faq/40/alternate-episodes)
+umfasst die Sprachpremiere ausdrücklich Untertitel **oder** Dub; die dort
+dokumentierte Sprachoption ist Englisch. Daraus darf weder ein deutscher noch
+ein englischer Dub ohne zusätzlichen Audiobeleg erzeugt werden. Diese zwei
+Stichproben belegen keine allgemeine Vollständigkeit oder Abwesenheit von Dubs.
+
+### Priorität für AniApp
+
+1. TVmaze als ergänzende Episodenquelle evaluieren: exakte externe ID/Staffel-
+   Zuordnung, Lizenz-/Attributionsfelder und gesonderte Datenherkunft.
+2. bangumi-data und bereits recherchierte Wikidata-Daten für Katalogzuordnungen
+   testen; Trefferquote und Aktualität statt nur Datenmenge messen.
+3. Dub-Veröffentlichungen weiter nur aus sprach-, regions- und folgenbezogenen
+   Originalbelegen übernehmen. Subtitel, Katalogsprache und Originalpremiere
+   dürfen keinen Dub-Termin erzeugen.
+4. News-Vorschauen nur im tatsächlich erlaubten Umfang übernehmen; originale
+   Anbieterankündigungen und bestätigte Publisher-Freigaben priorisieren.
+
+Alle neu genannten Quellen sind Recherchekandidaten, nicht bereits in die App
+eingebaute oder pauschal freigegebene Integrationen. Es wurde kein Vertrag
+angenommen, keine kostenpflichtige API aktiviert und kein zusätzlicher
+Lizenzkontakt ohne passenden Versandauftrag angeschrieben.
+
 ## Technische Umsetzung
 
 - `source_rights` unterscheidet `review_required`, `permission_requested`,
