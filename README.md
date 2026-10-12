@@ -6,11 +6,24 @@
 
 **Your anime companion for Android and iOS.** Discover anime, keep a watchlist, follow episode releases and read news in German or English — with real sources and clear language availability.
 
-**Current app:** `0.3.6+13` · Flutter · Deutsch / English · Development preview
+**Current app:** `0.4.0+14` · Flutter · Deutsch / English · Development preview
 
-[Download Android test build](https://github.com/Tabtii/AniApp/actions/runs/38038317106/artifacts/11663684733) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
+[Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
 
 > The current Flutter app lives on **`feature/anime-companion`**, in PR #1. The `master` branch still contains the original Kotlin application. Use the development branch to build or explore the current app.
+
+## New in 0.4.0
+
+Personal **Today** screen, offline-first progress with retry, MAL XML / AniApp JSON
+import, list/account export, confirmed-calendar ICS export, provider filters,
+source muting and optional hidden news previews. Follow DE/EN dubs for **in-app**
+announcement/date-change messages. An authenticated reviewer queue verifies
+ambiguous announcements and preserves audit history.
+
+**Data rights:** five project-specific permission enquiries were sent on
+12 October 2026. Replies are pending; no blanket commercial approval is claimed.
+Additional official publisher collectors stay disabled until approved.
+[Rights register](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/DATA_RIGHTS.md) · [Implementation and remaining gates](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/COMPANION_0_4.md)
 
 ## What you can do
 
@@ -51,7 +64,7 @@ Netflix, aniverse and other providers may appear in supported news reports. This
 
 ## Try it on Android
 
-1. Open the [verified 0.3.6+13 Android artifact](https://github.com/Tabtii/AniApp/actions/runs/38038317106/artifacts/11663684733). GitHub sign-in may be required.
+1. Open the latest successful [Android workflow run](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) for `feature/anime-companion`, then download its `aniapp-android-debug` artifact. GitHub sign-in may be required.
 2. Download and extract the ZIP, then install `app-debug.apk` on your Android device.
 3. Allow installation from that download source if Android asks. You can begin with the guest watchlist.
 
@@ -103,13 +116,14 @@ npm test --prefix backend
 python -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-As of **10 October 2026**, the project has 40 passing Flutter tests, 57 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
+As of **12 October 2026**, the project has 45 passing Flutter tests, 61 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
 
 ## Before a public release
 
 - Expand provider/region coverage and review unresolved announcement formats and title mappings.
 - Configure an owned SMTP sender and verify registration, email confirmation, recovery and app links on real devices.
-- Complete privacy/contact, account deletion/export and physical-device accessibility/offline checks.
+- Complete privacy/contact information and physical-device acceptance of the implemented account deletion/export, accessibility and offline behavior.
+- Obtain outstanding data permissions and configure/test Firebase/APNs before enabling device push.
 - Prepare signed Android/iOS releases and store distribution.
 
 See [release readiness](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md) for the verified status and remaining work.
@@ -123,3 +137,4 @@ AniApp began as **AniMe**, an Android training project for Syntax Institute. The
 ## License
 
 See [LICENSE](https://github.com/Tabtii/AniApp/blob/master/LICENSE).
+
