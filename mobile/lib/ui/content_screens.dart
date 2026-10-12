@@ -7,6 +7,10 @@ import '../models/anime.dart';
 import 'detail_screen.dart';
 import 'common.dart';
 import 'visuals.dart';
+import '../data/calendar_export.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:share_plus/share_plus.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key, required this.store});
@@ -24,7 +28,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   String providerLabel(ReleaseEvent e) =>
       e.kind == 'japan' ? 'Japan (TV)' : e.provider;
   String get _key =>
-      '${widget.store.region}|${widget.store.dubLanguages.join(',')}|${widget.store.languageMode}';
+      '${widget.store.region}|${widget.store.dubLanguages.join(',')}|${widget.store.languageMode}|${widget.store.providers}';
   @override
   void initState() {
     super.initState();
@@ -111,6 +115,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
               avatar: const Icon(Icons.record_voice_over_rounded, size: 16),
             ),
             IconButton(
+              tooltip: context.l10n.exportCalendar,
+              icon: const Icon(Icons.ios_share),
+              onPressed: () => perform(context, () async {
+                final rows = await future;
+                final data = exportCalendar(
+                  rows
+                      .where(
+                        (e) =>
+                            (!onlyMine ||
+                                widget.store.isSaved(e.animeId ?? -1)) &&
+                            (selectedProvider == null ||
+                                providerLabel(e) == selectedProvider) &&
+                            (selectedDay == null ||
+                                dayKey(e.date) == selectedDay) &&
+                            (widget.store.providers.isEmpty ||
+                                e.kind == 'japan' ||
+                                widget.store.providers.contains(e.provider)),
+                      )
+                      .toList(),
+                );
+                if (!context.mounted) return;
+                final box = context.findRenderObject() as RenderBox?;
+                await SharePlus.instance.share(
+                  ShareParams(
+                    files: [
+                      XFile.fromData(
+                        Uint8List.fromList(utf8.encode(data)),
+                        mimeType: 'text/calendar',
+                      ),
+                    ],
+                    fileNameOverrides: ['AniApp-releases.ics'],
+                    sharePositionOrigin: box == null
+                        ? null
+                        : box.localToGlobal(Offset.zero) & box.size,
+                  ),
+                );
+              }),
+            ),
+            IconButton(
               tooltip: context.l10n.aboutTimes,
               onPressed: () => showModalBottomSheet<void>(
                 context: context,
@@ -141,7 +184,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               );
             }
-            final source = snapshot.data ?? [];
+            final source = (snapshot.data ?? <ReleaseEvent>[])
+                .where(
+                  (e) =>
+                      widget.store.providers.isEmpty ||
+                      e.kind == 'japan' ||
+                      widget.store.providers.contains(e.provider),
+                )
+                .toList();
             final providers = source.map(providerLabel).toSet().toList()
               ..sort();
             final provider = providers.contains(selectedProvider)
@@ -255,7 +305,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: _ReleaseTile(event: items[i], store: widget.store),
+                      child: ReleaseTile(event: items[i], store: widget.store),
                     ),
                   ],
                 ],
@@ -268,8 +318,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   );
 }
 
-class _ReleaseTile extends StatelessWidget {
-  const _ReleaseTile({required this.event, required this.store});
+class ReleaseTile extends StatelessWidget {
+  const ReleaseTile({super.key, required this.event, required this.store});
   final ReleaseEvent event;
   final AppStore store;
   @override
@@ -290,7 +340,7 @@ class _ReleaseTile extends StatelessWidget {
                 children: [
                   Text(
                     e.startsAt == null
-                        ? (e.startsOn == null ? 'TBA' : 'Tag')
+                        ? (e.startsOn == null ? 'TBA' : context.l10n.dateOnly)
                         : timeLabel(e.startsAt),
                     style: TextStyle(
                       color: scheme.primary,
@@ -427,8 +477,8 @@ class _ReleaseTile extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 26,
-                        height: 30,
+                        width: 44,
+                        height: 48,
                         child: IconButton(
                           padding: EdgeInsets.zero,
                           tooltip: context.l10n.openDateSource,
@@ -463,10 +513,12 @@ class _NewsScreenState extends State<NewsScreen> {
   late Future<List<Map<String, dynamic>>> future;
   String? category;
   late String _languages;
+  String get _newsKey =>
+      '${widget.store.newsLanguages}|${widget.store.region}|${widget.store.personalNews}|${widget.store.providers}|${widget.store.mutedSources}|${widget.store.spoilerSafe}|${widget.store.entries.map((e) => e.anime.id).join(',')}';
   @override
   void initState() {
     super.initState();
-    _languages = widget.store.newsLanguages.join(',');
+    _languages = _newsKey;
     future = widget.store.news();
     widget.store.addListener(_changed);
   }
@@ -478,7 +530,7 @@ class _NewsScreenState extends State<NewsScreen> {
   }
 
   void _changed() {
-    final next = widget.store.newsLanguages.join(',');
+    final next = _newsKey;
     if (!mounted || _languages == next) return;
     setState(() {
       _languages = next;
@@ -567,8 +619,25 @@ class _NewsScreenState extends State<NewsScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
                 itemCount: rows.length,
-                itemBuilder: (context, i) =>
-                    NewsCard(news: rows[i], featured: i == 0),
+                itemBuilder: (context, i) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    NewsCard(
+                      news: rows[i],
+                      featured: i == 0 && !widget.store.spoilerSafe,
+                      hidePreview: widget.store.spoilerSafe,
+                    ),
+                    TextButton.icon(
+                      onPressed: () =>
+                          widget.store.setPreference('muted_sources', [
+                            ...widget.store.mutedSources,
+                            rows[i]['source_name'] as String,
+                          ]),
+                      icon: const Icon(Icons.volume_off_outlined, size: 16),
+                      label: Text(context.l10n.muteSource),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -586,9 +655,15 @@ String newsCategory(BuildContext context, dynamic value) => switch (value) {
 };
 
 class NewsCard extends StatelessWidget {
-  const NewsCard({super.key, required this.news, this.featured = false});
+  const NewsCard({
+    super.key,
+    required this.news,
+    this.featured = false,
+    this.hidePreview = false,
+  });
   final Map<String, dynamic> news;
   final bool featured;
+  final bool hidePreview;
   @override
   Widget build(BuildContext context) {
     final n = news;
@@ -699,18 +774,19 @@ class NewsCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: SizedBox(
-                width: 105,
-                height: 112,
-                child: Artwork(
-                  n['image_url'] as String?,
-                  icon: Icons.newspaper_rounded,
+            if (!hidePreview)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: SizedBox(
+                  width: 105,
+                  height: 112,
+                  child: Artwork(
+                    n['image_url'] as String?,
+                    icon: Icons.newspaper_rounded,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 14),
+            if (!hidePreview) const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -128,7 +128,7 @@ void main() {
       );
       await store.news();
       expect(requests.last.queryParameters['language'], 'in.("en")');
-      expect(requests.last.queryParameters['limit'], '40');
+      expect(requests.last.queryParameters['limit'], '120');
       await store.setNewsLanguage('both');
       await store.news();
       expect(requests.last.queryParameters['language'], 'in.("de","en")');
@@ -255,7 +255,7 @@ void main() {
       );
       await tester.pumpWidget(AniApp(store: store));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Profile'));
+      await tester.tap(find.byTooltip('Open profile'));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('dub-en')),

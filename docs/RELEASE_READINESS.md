@@ -1,3 +1,11 @@
+# Current status — 12 October 2026
+
+Version 0.4.0 adds the personal companion workflow, offline list mutations,
+import/export, in-app dub notices and an audited reviewer interface.
+See [current implementation](COMPANION_0_4.md) and [data-rights register](DATA_RIGHTS.md).
+Provider permissions, device push, signed store releases and other listed release
+gates remain open. The historical details below describe the previous baseline.
+
 # Product readiness — 10 October 2026
 
 AniApp 0.3.6 is a functioning Android/iOS companion with live content, but is not yet a complete public store release. A successful debug or simulator build does not verify email delivery, physical-device behavior or full provider coverage.

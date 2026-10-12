@@ -1549,6 +1549,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Provider dates: ADN and reviewed announcements, among others. News: Anime2You, AniNews, MyAnimeList and ADN News. The ADN scraper collects public article metadata and short previews. Original sources and fetch dates are shown with the content. Images belong to their rights holders.'**
   String get newsAttribution;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @todayHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Your next anime moment.'**
+  String get todayHeading;
+
+  /// No description provided for @todayIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress, upcoming dubs and stories in one place.'**
+  String get todayIntro;
+
+  /// No description provided for @continueWatching.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue watching'**
+  String get continueWatching;
+
+  /// No description provided for @upcomingForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up for you'**
+  String get upcomingForYou;
+
+  /// No description provided for @startYourList.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a series to make this your home.'**
+  String get startYourList;
+
+  /// No description provided for @noPersonalDates.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming dates for your list and filters. Browse the full calendar for more.'**
+  String get noPersonalDates;
+
+  /// No description provided for @noPersonalNews.
+  ///
+  /// In en, this message translates to:
+  /// **'No linked stories for your list yet. All news remains available.'**
+  String get noPersonalNews;
+
+  /// No description provided for @openCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Open calendar'**
+  String get openCalendar;
+
+  /// No description provided for @openNews.
+  ///
+  /// In en, this message translates to:
+  /// **'All news'**
+  String get openNews;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @progressSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress saved on this device.'**
+  String get progressSaved;
+
+  /// No description provided for @syncPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes waiting to sync'**
+  String get syncPending;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNow;
+
+  /// No description provided for @myProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'My streaming services'**
+  String get myProviders;
+
+  /// No description provided for @providersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No selection includes every provider. Japan TV stays visible.'**
+  String get providersHint;
+
+  /// No description provided for @spoilerSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide news previews'**
+  String get spoilerSafe;
+
+  /// No description provided for @spoilerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide images and summaries. Headlines may still contain spoilers.'**
+  String get spoilerHint;
+
+  /// No description provided for @personalNews.
+  ///
+  /// In en, this message translates to:
+  /// **'Only my series'**
+  String get personalNews;
+
+  /// No description provided for @personalNewsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only stories with a verified series ID match.'**
+  String get personalNewsHint;
+
+  /// No description provided for @mutedSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Muted news sources'**
+  String get mutedSources;
+
+  /// No description provided for @muteSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute source'**
+  String get muteSource;
+
+  /// No description provided for @listTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Import & export'**
+  String get listTransfer;
+
+  /// No description provided for @importFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import MAL XML / AniApp JSON'**
+  String get importFile;
+
+  /// No description provided for @exportList.
+  ///
+  /// In en, this message translates to:
+  /// **'Export watchlist'**
+  String get exportList;
+
+  /// No description provided for @importPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Import preview'**
+  String get importPreview;
+
+  /// No description provided for @importHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing entries are kept. Only missing series are added.'**
+  String get importHint;
+
+  /// No description provided for @importAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Import missing series'**
+  String get importAction;
+
+  /// No description provided for @importDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Import complete.'**
+  String get importDone;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelAction;
+
+  /// No description provided for @transferError.
+  ///
+  /// In en, this message translates to:
+  /// **'This file could not be imported. Use a MAL XML or AniApp JSON export (up to 2 MB / 5,000 entries).'**
+  String get transferError;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Dub updates'**
+  String get notifications;
+
+  /// No description provided for @notificationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In-app updates for followed series, selected region and audio language. No device push is active yet.'**
+  String get notificationHint;
+
+  /// No description provided for @followDub.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow dub updates'**
+  String get followDub;
+
+  /// No description provided for @unfollowDub.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow dub updates'**
+  String get unfollowDub;
+
+  /// No description provided for @followSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to follow dub announcements and date changes.'**
+  String get followSignIn;
+
+  /// No description provided for @inboxEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No updates yet. Follow a dub on a series page.'**
+  String get inboxEmpty;
+
+  /// No description provided for @alertAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'New dub announcement'**
+  String get alertAnnouncement;
+
+  /// No description provided for @alertChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Date or status updated'**
+  String get alertChanged;
+
+  /// No description provided for @alertToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled for today'**
+  String get alertToday;
+
+  /// No description provided for @alertNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled time reached'**
+  String get alertNow;
+
+  /// No description provided for @alertWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar entry withdrawn'**
+  String get alertWithdrawn;
+
+  /// No description provided for @alertSuperseded.
+  ///
+  /// In en, this message translates to:
+  /// **'An older update — the date has since changed.'**
+  String get alertSuperseded;
+
+  /// No description provided for @alertTimingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'An announced date is not a live availability check.'**
+  String get alertTimingHint;
+
+  /// No description provided for @sourceHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Source status & permissions'**
+  String get sourceHealth;
+
+  /// No description provided for @rightsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission is not yet confirmed'**
+  String get rightsPending;
+
+  /// No description provided for @editorial.
+  ///
+  /// In en, this message translates to:
+  /// **'Review dub announcements'**
+  String get editorial;
+
+  /// No description provided for @reviewQueueEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending announcements.'**
+  String get reviewQueueEmpty;
+
+  /// No description provided for @reviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence / reason for decision'**
+  String get reviewNote;
+
+  /// No description provided for @approveReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish verified event'**
+  String get approveReview;
+
+  /// No description provided for @rejectReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject proposal'**
+  String get rejectReview;
+
+  /// No description provided for @reviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the original source, exact season, region, audio and date. Leave unknown dates empty.'**
+  String get reviewHint;
+
+  /// No description provided for @accountData.
+  ///
+  /// In en, this message translates to:
+  /// **'Account data'**
+  String get accountData;
+
+  /// No description provided for @exportAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Export account data'**
+  String get exportAccount;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account permanently'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes your account, cloud watchlist, follows and messages. Sign in again first if your session is older than 10 minutes. This cannot be undone.'**
+  String get deleteAccountHint;
+
+  /// No description provided for @dateOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get dateOnly;
+
+  /// No description provided for @exportCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Export confirmed dates (.ics)'**
+  String get exportCalendar;
 }
 
 class _AppLocalizationsDelegate

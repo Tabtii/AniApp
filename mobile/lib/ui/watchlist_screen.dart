@@ -184,8 +184,9 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                               ? null
                                               : () => perform(
                                                   context,
-                                                  () => store.save(
-                                                    entry.progress(-1),
+                                                  () => store.changeProgress(
+                                                    entry,
+                                                    -1,
                                                   ),
                                                 ),
                                           icon: const Icon(Icons.remove),
@@ -200,8 +201,9 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                               ? null
                                               : () => perform(
                                                   context,
-                                                  () => store.save(
-                                                    entry.progress(1),
+                                                  () => store.changeProgress(
+                                                    entry,
+                                                    1,
                                                   ),
                                                 ),
                                           icon: const Icon(Icons.add),

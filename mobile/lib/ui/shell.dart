@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../l10n/strings.dart';
 
@@ -9,6 +10,7 @@ import 'profile_screen.dart';
 import 'visuals.dart';
 import 'brand.dart';
 import 'login_dialog.dart';
+import 'home_screen.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.store, this.startupWarning});
@@ -18,12 +20,13 @@ class AppShell extends StatefulWidget {
   State<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell> {
+class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
   int index = 0;
   bool _recoveryOpen = false;
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     widget.store.addListener(_checkRecovery);
     _checkRecovery();
     if (widget.startupWarning != null) {
@@ -64,7 +67,15 @@ class _AppShellState extends State<AppShell> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(widget.store.refreshWatchlist());
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     widget.store.removeListener(_checkRecovery);
     super.dispose();
   }
@@ -72,11 +83,14 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     final pages = [
+      HomeScreen(
+        store: widget.store,
+        navigate: (value) => setState(() => index = value),
+      ),
       CatalogScreen(store: widget.store),
-      WatchlistScreen(store: widget.store),
       CalendarScreen(store: widget.store),
       NewsScreen(store: widget.store),
-      ProfileScreen(store: widget.store),
+      WatchlistScreen(store: widget.store),
     ];
     return Scaffold(
       appBar: AppBar(
@@ -122,7 +136,14 @@ class _AppShellState extends State<AppShell> {
           ),
           IconButton(
             tooltip: context.l10n.openProfile,
-            onPressed: () => setState(() => index = 4),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => Scaffold(
+                  appBar: AppBar(title: Text(context.l10n.profile)),
+                  body: SafeArea(child: ProfileScreen(store: widget.store)),
+                ),
+              ),
+            ),
             icon: const Icon(Icons.account_circle_outlined),
           ),
           const SizedBox(width: 8),
@@ -136,14 +157,14 @@ class _AppShellState extends State<AppShell> {
         onDestinationSelected: (value) => setState(() => index = value),
         destinations: [
           NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home_rounded),
+            label: context.l10n.today,
+          ),
+          NavigationDestination(
             icon: const Icon(Icons.explore_outlined),
             selectedIcon: const Icon(Icons.explore),
             label: context.l10n.discover,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.bookmark_outline),
-            selectedIcon: const Icon(Icons.bookmark),
-            label: context.l10n.myList,
           ),
           NavigationDestination(
             icon: const Icon(Icons.calendar_month_outlined),
@@ -154,8 +175,9 @@ class _AppShellState extends State<AppShell> {
             label: 'News',
           ),
           NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            label: context.l10n.profile,
+            icon: const Icon(Icons.bookmark_outline),
+            selectedIcon: const Icon(Icons.bookmark),
+            label: context.l10n.myList,
           ),
         ],
       ),

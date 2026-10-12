@@ -28,6 +28,8 @@ void main() {
     );
     await store.initialize();
     await tester.pumpWidget(AniApp(store: store));
+    await tester.tap(find.text('Entdecken'));
+    await tester.pump();
     await tester.pump();
     expect(find.text('Anime werden geladen …'), findsOneWidget);
     expect(
@@ -70,6 +72,8 @@ void main() {
       );
       await store.initialize();
       await tester.pumpWidget(AniApp(store: store));
+      await tester.tap(find.text('Entdecken'));
+      await tester.pump();
       await tester.pumpAndSettle();
       expect(find.byType(NavigationDestination), findsNWidgets(5));
       await tester.tap(find.byTooltip('Zur Watchlist hinzufügen'));
@@ -85,7 +89,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('News'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Profil'));
+      await tester.tap(find.byTooltip('Profil öffnen'));
       await tester.pumpAndSettle();
       expect(find.text('Gastmodus'), findsOneWidget);
       expect(tester.takeException(), isNull);

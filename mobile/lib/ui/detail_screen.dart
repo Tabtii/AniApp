@@ -9,6 +9,7 @@ import 'common.dart';
 import 'visuals.dart';
 import 'dub_panel.dart';
 import 'kitsu_panel.dart';
+import 'companion_screens.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.anime, required this.store});
@@ -232,6 +233,8 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
           const SizedBox(height: 20),
+          FollowDubButton(store: widget.store, id: anime.id),
+          const SizedBox(height: 16),
           for (final language in widget.store.dubLanguages)
             DubPanel(
               language: language,

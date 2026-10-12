@@ -1,3 +1,4 @@
+import {collectOfficialNews,officialSources,type OfficialKey} from './official-news.ts';
 import {loadAdn,saveAdn} from './adn.ts';
 import {crawlAdnNews} from './adn-news.ts';
 import {reviewedPauses} from './reviewed-pauses.ts';
@@ -76,6 +77,23 @@ Deno.serve(async req=> {
       successes++;
     }catch(e){report[name]={error:e instanceof Error?e.message:'Unavailable'};}
   }
+  // Additional publishers are strictly permission-gated, including the first fetch.
+  // The existing prototype sources retain their documented review-required status.
+  try {
+    const rights=await db('source_rights?select=source_key,status,ingestion_enabled',undefined,'GET');
+    for(const key of Object.keys(officialSources) as OfficialKey[]) {
+      try {
+        const permission=rights.find((r:Row)=>r.source_key===key);
+        if(permission?.status!=='approved'||!permission.ingestion_enabled) {report[key]={state:'permission_pending'};continue;}
+        const known=await db(`news?source_name=eq.${encodeURIComponent(officialSources[key].name)}&select=source_url,checked_at&limit=100`,undefined,'GET');
+        const result=await collectOfficialNews(key,permission,fetch,known);
+        if(result.rows.length)await db('news?on_conflict=source_url',result.rows);
+        await db('source_status?on_conflict=source_key',{source_key:key,checked_at:new Date().toISOString(),state:result.state,review_count:0});
+        report[key]={state:result.state,count:result.rows.length,failed:result.failed};
+      } catch {report[key]={state:'degraded'};await db('source_status?on_conflict=source_key',{source_key:key,state:'degraded',review_count:0});}
+    }
+  }catch{report.additional_sources={state:'unavailable'};}
+  try { report.dub_alerts={delivered:await db('rpc/deliver_due_dub_alerts',{})}; await db('rpc/refresh_source_status',{}); } catch { report.dub_alerts={error:'Inbox/status refresh unavailable'}; }
   await db('rpc/finish_content_sync',{p_report:report});
   return reply({status:successes===sources.length && !Object.values(report).some(r=>(r as {failed?:unknown[]})?.failed?.length)?'ok':'partial',sources:report},successes?200:503);
 });

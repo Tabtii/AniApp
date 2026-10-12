@@ -813,4 +813,191 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get newsAttribution =>
       'Provider dates: ADN and reviewed announcements, among others. News: Anime2You, AniNews, MyAnimeList and ADN News. The ADN scraper collects public article metadata and short previews. Original sources and fetch dates are shown with the content. Images belong to their rights holders.';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get todayHeading => 'Your next anime moment.';
+
+  @override
+  String get todayIntro =>
+      'Your progress, upcoming dubs and stories in one place.';
+
+  @override
+  String get continueWatching => 'Continue watching';
+
+  @override
+  String get upcomingForYou => 'Coming up for you';
+
+  @override
+  String get startYourList => 'Save a series to make this your home.';
+
+  @override
+  String get noPersonalDates =>
+      'No upcoming dates for your list and filters. Browse the full calendar for more.';
+
+  @override
+  String get noPersonalNews =>
+      'No linked stories for your list yet. All news remains available.';
+
+  @override
+  String get openCalendar => 'Open calendar';
+
+  @override
+  String get openNews => 'All news';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get progressSaved => 'Progress saved on this device.';
+
+  @override
+  String get syncPending => 'Changes waiting to sync';
+
+  @override
+  String get syncNow => 'Sync now';
+
+  @override
+  String get myProviders => 'My streaming services';
+
+  @override
+  String get providersHint =>
+      'No selection includes every provider. Japan TV stays visible.';
+
+  @override
+  String get spoilerSafe => 'Hide news previews';
+
+  @override
+  String get spoilerHint =>
+      'Hide images and summaries. Headlines may still contain spoilers.';
+
+  @override
+  String get personalNews => 'Only my series';
+
+  @override
+  String get personalNewsHint =>
+      'Only stories with a verified series ID match.';
+
+  @override
+  String get mutedSources => 'Muted news sources';
+
+  @override
+  String get muteSource => 'Mute source';
+
+  @override
+  String get listTransfer => 'Import & export';
+
+  @override
+  String get importFile => 'Import MAL XML / AniApp JSON';
+
+  @override
+  String get exportList => 'Export watchlist';
+
+  @override
+  String get importPreview => 'Import preview';
+
+  @override
+  String get importHint =>
+      'Existing entries are kept. Only missing series are added.';
+
+  @override
+  String get importAction => 'Import missing series';
+
+  @override
+  String get importDone => 'Import complete.';
+
+  @override
+  String get cancelAction => 'Cancel';
+
+  @override
+  String get transferError =>
+      'This file could not be imported. Use a MAL XML or AniApp JSON export (up to 2 MB / 5,000 entries).';
+
+  @override
+  String get notifications => 'Dub updates';
+
+  @override
+  String get notificationHint =>
+      'In-app updates for followed series, selected region and audio language. No device push is active yet.';
+
+  @override
+  String get followDub => 'Follow dub updates';
+
+  @override
+  String get unfollowDub => 'Unfollow dub updates';
+
+  @override
+  String get followSignIn =>
+      'Sign in to follow dub announcements and date changes.';
+
+  @override
+  String get inboxEmpty => 'No updates yet. Follow a dub on a series page.';
+
+  @override
+  String get alertAnnouncement => 'New dub announcement';
+
+  @override
+  String get alertChanged => 'Date or status updated';
+
+  @override
+  String get alertToday => 'Scheduled for today';
+
+  @override
+  String get alertNow => 'Scheduled time reached';
+
+  @override
+  String get alertWithdrawn => 'Calendar entry withdrawn';
+
+  @override
+  String get alertSuperseded => 'An older update — the date has since changed.';
+
+  @override
+  String get alertTimingHint =>
+      'An announced date is not a live availability check.';
+
+  @override
+  String get sourceHealth => 'Source status & permissions';
+
+  @override
+  String get rightsPending => 'Permission is not yet confirmed';
+
+  @override
+  String get editorial => 'Review dub announcements';
+
+  @override
+  String get reviewQueueEmpty => 'No pending announcements.';
+
+  @override
+  String get reviewNote => 'Evidence / reason for decision';
+
+  @override
+  String get approveReview => 'Publish verified event';
+
+  @override
+  String get rejectReview => 'Reject proposal';
+
+  @override
+  String get reviewHint =>
+      'Check the original source, exact season, region, audio and date. Leave unknown dates empty.';
+
+  @override
+  String get accountData => 'Account data';
+
+  @override
+  String get exportAccount => 'Export account data';
+
+  @override
+  String get deleteAccount => 'Delete account permanently';
+
+  @override
+  String get deleteAccountHint =>
+      'This removes your account, cloud watchlist, follows and messages. Sign in again first if your session is older than 10 minutes. This cannot be undone.';
+
+  @override
+  String get dateOnly => 'Day';
+
+  @override
+  String get exportCalendar => 'Export confirmed dates (.ics)';
 }

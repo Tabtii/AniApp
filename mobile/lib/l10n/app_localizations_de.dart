@@ -817,4 +817,194 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get newsAttribution =>
       'Anbietertermine: unter anderem ADN und geprüfte Ankündigungen. News: Anime2You, AniNews, MyAnimeList und ADN News. Der eigene ADN-Scraper übernimmt öffentliche Artikel-Metadaten und kurze Vorschauen. Originalquellen und Abrufdatum stehen an den jeweiligen Inhalten. Bilder bleiben Eigentum ihrer Rechteinhaber.';
+
+  @override
+  String get today => 'Heute';
+
+  @override
+  String get todayHeading => 'Dein nächster Anime-Moment.';
+
+  @override
+  String get todayIntro =>
+      'Dein Fortschritt, kommende Dubs und News an einem Ort.';
+
+  @override
+  String get continueWatching => 'Weiterschauen';
+
+  @override
+  String get upcomingForYou => 'Als Nächstes für dich';
+
+  @override
+  String get startYourList =>
+      'Speichere eine Serie für deine persönliche Startseite.';
+
+  @override
+  String get noPersonalDates =>
+      'Keine kommenden Termine für deine Liste und Filter. Im Kalender findest du alle Termine.';
+
+  @override
+  String get noPersonalNews =>
+      'Noch keine zugeordneten News zu deiner Liste. Alle News sind weiterhin verfügbar.';
+
+  @override
+  String get openCalendar => 'Kalender öffnen';
+
+  @override
+  String get openNews => 'Alle News';
+
+  @override
+  String get undo => 'Rückgängig';
+
+  @override
+  String get progressSaved => 'Fortschritt auf diesem Gerät gespeichert.';
+
+  @override
+  String get syncPending => 'Änderungen warten auf Synchronisierung';
+
+  @override
+  String get syncNow => 'Jetzt synchronisieren';
+
+  @override
+  String get myProviders => 'Meine Streamingdienste';
+
+  @override
+  String get providersHint =>
+      'Ohne Auswahl werden alle Anbieter angezeigt. Japan-TV bleibt sichtbar.';
+
+  @override
+  String get spoilerSafe => 'News-Vorschau verbergen';
+
+  @override
+  String get spoilerHint =>
+      'Bilder und Zusammenfassungen verbergen. Überschriften können trotzdem Spoiler enthalten.';
+
+  @override
+  String get personalNews => 'Nur meine Serien';
+
+  @override
+  String get personalNewsHint =>
+      'Nur News mit eindeutig zugeordneter Serien-ID.';
+
+  @override
+  String get mutedSources => 'Stummgeschaltete News-Quellen';
+
+  @override
+  String get muteSource => 'Quelle stummschalten';
+
+  @override
+  String get listTransfer => 'Import & Export';
+
+  @override
+  String get importFile => 'MAL-XML / AniApp-JSON importieren';
+
+  @override
+  String get exportList => 'Watchlist exportieren';
+
+  @override
+  String get importPreview => 'Import-Vorschau';
+
+  @override
+  String get importHint =>
+      'Vorhandene Einträge bleiben erhalten. Nur fehlende Serien werden ergänzt.';
+
+  @override
+  String get importAction => 'Fehlende Serien importieren';
+
+  @override
+  String get importDone => 'Import abgeschlossen.';
+
+  @override
+  String get cancelAction => 'Abbrechen';
+
+  @override
+  String get transferError =>
+      'Datei nicht importierbar. Verwende einen MAL-XML- oder AniApp-JSON-Export (max. 2 MB / 5.000 Einträge).';
+
+  @override
+  String get notifications => 'Dub-Mitteilungen';
+
+  @override
+  String get notificationHint =>
+      'Mitteilungen in der App für abonnierte Serien, Region und Audiosprache. Geräte-Push ist noch nicht aktiv.';
+
+  @override
+  String get followDub => 'Dub-Mitteilungen abonnieren';
+
+  @override
+  String get unfollowDub => 'Dub-Mitteilungen beenden';
+
+  @override
+  String get followSignIn =>
+      'Melde dich an, um Dub-Ankündigungen und Terminänderungen zu abonnieren.';
+
+  @override
+  String get inboxEmpty =>
+      'Noch keine Mitteilungen. Abonniere einen Dub auf der Serienseite.';
+
+  @override
+  String get alertAnnouncement => 'Neue Dub-Ankündigung';
+
+  @override
+  String get alertChanged => 'Termin oder Status geändert';
+
+  @override
+  String get alertToday => 'Für heute angekündigt';
+
+  @override
+  String get alertNow => 'Angekündigter Zeitpunkt erreicht';
+
+  @override
+  String get alertWithdrawn => 'Kalendereintrag zurückgezogen';
+
+  @override
+  String get alertSuperseded =>
+      'Ältere Mitteilung – der Termin wurde inzwischen geändert.';
+
+  @override
+  String get alertTimingHint =>
+      'Ein angekündigter Termin bestätigt keine aktuelle Verfügbarkeit.';
+
+  @override
+  String get sourceHealth => 'Quellenstatus & Nutzungsrechte';
+
+  @override
+  String get rightsPending => 'Nutzungsfreigabe noch nicht bestätigt';
+
+  @override
+  String get editorial => 'Dub-Ankündigungen prüfen';
+
+  @override
+  String get reviewQueueEmpty => 'Keine offenen Ankündigungen.';
+
+  @override
+  String get reviewNote => 'Beleg / Begründung der Entscheidung';
+
+  @override
+  String get approveReview => 'Geprüften Termin veröffentlichen';
+
+  @override
+  String get rejectReview => 'Vorschlag ablehnen';
+
+  @override
+  String get reviewHint =>
+      'Originalquelle, genaue Staffel, Region, Audiosprache und Datum prüfen. Unbekannte Daten leer lassen.';
+
+  @override
+  String get accountData => 'Kontodaten';
+
+  @override
+  String get exportAccount => 'Kontodaten exportieren';
+
+  @override
+  String get deleteAccount => 'Konto dauerhaft löschen';
+
+  @override
+  String get deleteAccountHint =>
+      'Dies löscht dein Konto, deine Cloud-Watchlist, Abos und Mitteilungen. Melde dich vorher erneut an, wenn deine Anmeldung älter als 10 Minuten ist. Dies lässt sich nicht rückgängig machen.';
+
+  @override
+  String get dateOnly => 'Tag';
+
+  @override
+  String get exportCalendar => 'Bestätigte Termine exportieren (.ics)';
 }

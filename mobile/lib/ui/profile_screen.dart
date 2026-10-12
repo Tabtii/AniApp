@@ -6,6 +6,9 @@ import 'common.dart';
 import 'login_dialog.dart';
 import 'visuals.dart';
 import 'sources_screen.dart';
+import 'companion_screens.dart';
+import '../data/list_transfer.dart';
+import 'dart:convert';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.store});
@@ -244,6 +247,146 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onChanged: (value) =>
               perform(context, () => store.setCalendarMode(value!)),
         ),
+        const SizedBox(height: 24),
+        Text(
+          context.l10n.myProviders,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        Text(context.l10n.providersHint),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (final name in [
+              'Crunchyroll',
+              'Netflix',
+              'ADN',
+              'aniverse / Prime Video',
+              'HIDIVE',
+              'Disney+',
+              'ProSieben MAXX',
+              'Paramount+',
+            ])
+              FilterChip(
+                label: Text(name),
+                selected: store.providers.contains(name),
+                onSelected: (selected) => store.setPreference('providers', [
+                  ...store.providers.where((p) => p != name),
+                  if (selected) name,
+                ]),
+              ),
+          ],
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(context.l10n.spoilerSafe),
+          subtitle: Text(context.l10n.spoilerHint),
+          value: store.spoilerSafe,
+          onChanged: (value) => store.setPreference('spoiler_safe', value),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(context.l10n.personalNews),
+          subtitle: Text(context.l10n.personalNewsHint),
+          value: store.personalNews,
+          onChanged: (value) => store.setPreference('personal_news', value),
+        ),
+        if (store.mutedSources.isNotEmpty) ...[
+          Text(context.l10n.mutedSources),
+          Wrap(
+            spacing: 8,
+            children: [
+              for (final name in store.mutedSources)
+                InputChip(
+                  label: Text(name),
+                  onDeleted: () => store.setPreference(
+                    'muted_sources',
+                    store.mutedSources.where((n) => n != name).toList(),
+                  ),
+                ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 24),
+        Text(
+          context.l10n.listTransfer,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.file_open_outlined),
+          title: Text(context.l10n.importFile),
+          onTap: () => importList(context, store),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.ios_share),
+          title: Text(context.l10n.exportList),
+          onTap: () => perform(
+            context,
+            () => shareJson(
+              context,
+              exportWatchlist(store.entries),
+              'AniApp-watchlist.json',
+            ),
+          ),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.notifications_none),
+          title: Text(context.l10n.notifications),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => InboxScreen(store: store)),
+          ),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.monitor_heart_outlined),
+          title: Text(context.l10n.sourceHealth),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => SourceHealthScreen(store: store),
+            ),
+          ),
+        ),
+        if (store.isReviewer)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.fact_check_outlined),
+            title: Text(context.l10n.editorial),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => ReviewScreen(store: store),
+              ),
+            ),
+          ),
+        if (store.signedIn) ...[
+          const SizedBox(height: 16),
+          Text(
+            context.l10n.accountData,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.download_outlined),
+            title: Text(context.l10n.exportAccount),
+            onTap: () => perform(context, () async {
+              final data = await store.editorial({'action': 'export'});
+              if (context.mounted) {
+                await shareJson(
+                  context,
+                  const JsonEncoder.withIndent('  ').convert(data),
+                  'AniApp-account.json',
+                );
+              }
+            }),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.delete_forever_outlined),
+            title: Text(context.l10n.deleteAccount),
+            onTap: () => perform(context, () => deleteAccount(context, store)),
+          ),
+        ],
         const SizedBox(height: 24),
         Text(context.l10n.availabilityHint),
         const SizedBox(height: 16),
