@@ -1,0 +1,1 @@
+{"name":"aniapp-backend-checks","private":true,"type":"module","scripts":{"test":"node --import tsx --test test/*.test.ts test/*.test.mjs"},"devDependencies":{"@electric-sql/pglite":"0.3.14","tsx":"4.20.5","typescript":"5.9.2"}}
