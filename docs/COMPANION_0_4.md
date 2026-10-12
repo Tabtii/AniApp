@@ -57,10 +57,13 @@ into confirmed dub events. Existing DE/EN dub parsers remain conservative.
 An operator can add an exact owner email to the private invitation table. The
 account edge function grants a role only after Supabase Auth verifies that email
 and its confirmation timestamp. No client can read/write invitations or roles.
-No reviewer invitations are configured yet: automatic approval review rejected
-provisioning persistent review privileges without an explicit account/privilege
-confirmation from the owner. No existing user has been promoted and no owner
-address is stored in source control.
+On 12 October 2026 the owner explicitly approved one account for persistent
+review privileges: reading, editing, rejecting and publishing dub proposals.
+Its invitation is configured in the private table. The account has not yet
+registered; activation requires sign-up and a confirmed email matching that
+invitation. No existing user has been promoted and no owner address is stored
+in source control. Anonymous and authenticated clients cannot read invitations
+or grant roles; the saved invitation and these restrictions were checked live.
 
 ## Deployment
 
