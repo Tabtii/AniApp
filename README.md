@@ -23,7 +23,7 @@ ambiguous announcements and preserves audit history.
 **Data rights:** five project-specific permission enquiries were sent on
 12 October 2026. Replies are pending; no blanket commercial approval is claimed.
 Additional official publisher collectors stay disabled until approved.
-[Rights register](docs/DATA_RIGHTS.md) · [Implementation and remaining gates](docs/COMPANION_0_4.md)
+[Rights register](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/DATA_RIGHTS.md) · [Implementation and remaining gates](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/COMPANION_0_4.md)
 
 ## What you can do
 
@@ -116,13 +116,14 @@ npm test --prefix backend
 python -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-As of **10 October 2026**, the project has 40 passing Flutter tests, 57 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
+As of **12 October 2026**, the project has 45 passing Flutter tests, 61 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
 
 ## Before a public release
 
 - Expand provider/region coverage and review unresolved announcement formats and title mappings.
 - Configure an owned SMTP sender and verify registration, email confirmation, recovery and app links on real devices.
-- Complete privacy/contact, account deletion/export and physical-device accessibility/offline checks.
+- Complete privacy/contact information and physical-device acceptance of the implemented account deletion/export, accessibility and offline behavior.
+- Obtain outstanding data permissions and configure/test Firebase/APNs before enabling device push.
 - Prepare signed Android/iOS releases and store distribution.
 
 See [release readiness](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md) for the verified status and remaining work.
@@ -136,3 +137,4 @@ AniApp began as **AniMe**, an Android training project for Syntax Institute. The
 ## License
 
 See [LICENSE](https://github.com/Tabtii/AniApp/blob/master/LICENSE).
+
