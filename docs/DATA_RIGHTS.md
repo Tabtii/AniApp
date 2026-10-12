@@ -15,7 +15,7 @@ sind ein Entwicklungsstand; ihre technische Funktion ist keine Rechtsfreigabe.
 | TMDb / JustWatch | [FAQ](https://developer.themoviedb.org/docs/faq), `sales@themoviedb.org` | Anfrage am 12.10.2026 versendet; keine Zusage | Nichtkommerzielle Bedingungen mit Attribution dokumentiert; Entwicklungsphase mit Monetarisierungsabsicht, Bilder und JustWatch separat klären. Keine Bestellung oder kostenpflichtige Lizenz angenommen. |
 | Anime2You | [Impressum](https://www.anime2you.de/impressum/), `info@anime2you.de` | Anfrage am 12.10.2026 versendet; keine Zusage | Feed, Überschrift, kurze Vorschau, Bilder, automatischer Artikelabruf und strukturierte Dub-Sachangaben ausdrücklich getrennt angefragt. |
 | AniNews | [Impressum](https://www.aninews.de/impressum/), `info@aninews.de` | Anfrage am 12.10.2026 versendet; keine Zusage | Gleicher genauer Nutzungsumfang wie Anime2You; kein Artikelvolltext in der App. |
-| MyAnimeList direkt / Jikan | [API agreement](https://myanimelist.net/static/apiagreement.html), [Support](https://myanimelist.net/about.php?go=support) | Direkte projektspezifische Genehmigung offen; nicht als versendet markieren | Tenrai/Jikan umgehen keine Rechte der ursprünglichen Quelle. MAL-Bedingungen enthalten spezifische kommerzielle Regeln/Ausnahmen; das geplante Modell einzeln prüfen lassen. |
+| MyAnimeList direkt / Jikan | [API agreement](https://myanimelist.net/static/apiagreement.html), [Support](https://myanimelist.net/about.php?go=support) | Anfrage am 12.10.2026 per Gmail an support@myanimelist.net versendet; Antwort ausstehend | Tenrai/Jikan umgehen keine Rechte der ursprünglichen Quelle. MAL-Bedingungen enthalten spezifische kommerzielle Regeln/Ausnahmen; das geplante Modell einzeln prüfen lassen. |
 | AnimeSchedule | [API terms](https://animeschedule.net/api-terms-of-use), [Kontakt](https://animeschedule.net/contact) | Schriftliche Klärung offen; Kontaktseite hier zugriffsbeschränkt | Token allein genügt nicht. Kein Zugriff über interne Endpunkte oder fremde Credentials. |
 | Crunchyroll DE/EN, ADN | [Crunchyroll](https://www.crunchyroll.com/tos), [ADN](https://animationdigitalnetwork.com/) | Feed-/Kalenderzugriff technisch vorhanden; Wiederverwendung und Monetarisierung nicht vollständig geklärt | Vor kommerziellem Start konkrete Freigabe für Abruf, Vorschauen, Bilder, Caching und abgeleitete Kalenderdaten einholen. |
 | Kitsu | [API-Dokumentation](https://kitsu.docs.apiary.io/) | Öffentlich erreichbar; kommerzielle Inhaltsrechte offen | API-Verfügbarkeit nicht als Bilder-/Textlizenz ausgeben. |
@@ -24,8 +24,8 @@ sind ein Entwicklungsstand; ihre technische Funktion ist keine Rechtsfreigabe.
 | Netflix Tudum | [Offizielle Anime-Übersicht](https://www.netflix.com/tudum/articles/new-anime-shows-on-netflix), [Audio-Hilfe](https://help.netflix.com/en/node/101798) | Automatisierte Nutzung/Bilder offen | Neuer Adapter bleibt gesperrt; globale Premiere ist kein bestätigter Dub-Termin. |
 | Joyn / ProSieben MAXX | [Anime-News](https://www.joyn.de/bts/themen/anime) | Automatisierte Nutzung/Bilder offen | Neuer Adapter bleibt gesperrt; TV- und Streamingrechte getrennt behandeln. Die frühere MAXX-Seite leitet jetzt zu Joyn weiter. |
 
-Die fünf versendeten Nachrichten sind konkrete Informations- und Freigabeanfragen,
-keine Verträge. Tenrai hat geantwortet; für die übrigen vier Anfragen ist hier
+Die sechs versendeten Nachrichten sind konkrete Informations- und Freigabeanfragen,
+keine Verträge. Tenrai hat geantwortet; für die übrigen fünf Anfragen ist hier
 noch keine Freigabe dokumentiert. Private Korrespondenz und Kontoadressen
 werden nicht in diesem öffentlichen Repository veröffentlicht.
 
@@ -82,10 +82,10 @@ Diese API-Vereinbarung ist nicht automatisch ein Lizenzvertrag für den Bezug
 MAL schriftlich bestätigen. Keine Zustimmung wurde aus Schweigen oder einem
 Client-ID-Eintrag abgeleitet.
 
-### Vorbereitete Anfrage an MyAnimeList — noch nicht versendet
+### Anfrage an MyAnimeList — per Gmail versendet
 
 Offizieller Weg laut API Agreement: [Customer Support](https://myanimelist.net/about.php?go=support).
-Keine verifizierte separate Lizenz-E-Mail-Adresse ermittelt; keine Adresse geraten.
+Alternativer Kontakt support@myanimelist.net im [offiziellen Google-Play-Eintrag](https://play.google.com/store/apps/details?id=net.myanimelist.app&hl=en-US) verifiziert. Die folgende Anfrage wurde über Gmail versendet, ergänzt um die Bitte zur Weiterleitung an das API-/Inhaltslizenz-Team. Gmail bestätigte den Versand; eine Lizenzantwort liegt noch nicht vor.
 
 **Subject: AniApp — permission for catalogue content, images and future commercial use**
 
@@ -141,15 +141,14 @@ AniApp project
 
 ## Weitere Quellen und Versandversuch — 12.10.2026 nachmittags
 
-**MyAnimeList-Anfrage nicht versendet:** Der Projektinhaber hat den Versand
-ausdrücklich beauftragt. Der offizielle Support-Link führt zu
-https://help.myanimelist.net/hc/en-us/requests/new.
-Die Sicherheitsrichtlinie des Cloud-Browsers hat den Seitenaufruf blockiert;
-es erfolgte keine Formulareingabe und kein Versand. Kein Ausweichen auf
-HTTP-Formular-POSTs, andere Browser oder geratene E-Mail-Adressen.
-Der oben vorbereitete Text ist für die manuelle Einreichung durch den
-Projektinhaber fertig. Eine Suche nach bereits versendeten MAL-Anfragen
-ergab keinen Treffer. Dieser Status ist kein Warten auf eine MAL-Antwort.
+**MyAnimeList-Anfrage inzwischen per Gmail versendet:** Der zunächst beauftragte
+Formularversand wurde durch die Sicherheitsrichtlinie des Cloud-Browsers blockiert.
+Nach ausdrücklichem Auftrag für Gmail wurde support@myanimelist.net anhand des
+offiziellen Google-Play-Eintrags verifiziert. Die vorbereitete Anfrage wurde am
+12.10.2026 an diese Adresse gesendet, mit Bitte um Weiterleitung an das zuständige
+Lizenzteam. Gmail bestätigte den Versand (SENT). Das blockierte Formular wurde
+nicht erneut aufgerufen oder über einen anderen Browser/HTTP-POST angesprochen.
+Es wurde kein Vertrag angenommen; eine Antwort oder Genehmigung steht aus.
 
 ### Kandidatenvergleich
 
