@@ -17,7 +17,8 @@
 Conflict-aware multi-device progress, safe undo, local-first startup, watchlist
 search/sorting/direct count editing, focused detail sections and tablet navigation.
 Personal news filters now run before the result limit. This version requires the
-new additive database migration before distribution; it is not applied by a build.
+new additive database migration before distribution. It was applied and verified
+on the connected AniApp backend on 13 October 2026; builds do not apply migrations.
 See [implementation, validation and rollout](docs/COMPANION_0_5.md).
 
 ## Companion features from 0.4.0
