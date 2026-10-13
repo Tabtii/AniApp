@@ -1,9 +1,30 @@
-# Datenrechte und Freigaben — 12. Oktober 2026
+# Datenrechte und Freigaben — 13. Oktober 2026
 
 **Keine pauschale kommerzielle Freigabe.** Öffentliche Erreichbarkeit, ein API-Key,
 robots.txt oder die Lizenz eines Scraper-Programms ersetzen keine Nutzungsrechte
 an den gelieferten Daten, Texten und Bildern. Die bisherigen Live-Integrationen
 sind ein Entwicklungsstand; ihre technische Funktion ist keine Rechtsfreigabe.
+
+## Gmail-Nachprüfung — 13. Oktober 2026, 20:01 Uhr (Europe/Berlin)
+
+Alle sechs versendeten AniApp-Anfragen und ihre vollständigen Threads wurden
+geprüft. Ergänzende Suchen nach Projekt, Absender-Domains und Lizenz-/API-Betreffs
+schlossen Spam und Papierkorb ein. Es wurden **keine neuen Antworten** gefunden.
+
+| Anfrage | Letzter belegter Stand |
+| --- | --- |
+| Tenrai | Antwort vom 12.10.2026, 15:38 Uhr: API-Dienst darf kommerziell und nichtkommerziell verwendet werden. Tenrai besitzt die zugrunde liegenden Daten nicht und erteilt dafür keine Inhaltsrechte. Bereits dokumentierte Teilfreigabe, keine neue Zusage. |
+| AniList | Anfrage versendet; keine Antwort gefunden. |
+| TMDb / JustWatch | Anfrage versendet; keine Antwort gefunden. |
+| Anime2You | Anfrage versendet; keine Antwort gefunden. |
+| AniNews | Anfrage versendet; keine Antwort gefunden. |
+| MyAnimeList | Anfrage versendet; keine Antwort gefunden. |
+
+Der Status bleibt damit: eine Antwort mit begrenztem Umfang, fünf offene
+Anfragen. Die Prüfung änderte keine Freigabeschalter und aktivierte keine Quelle.
+Es wurden keine Erinnerungen oder weiteren Anfragen versendet. Private
+Nachrichten, Mail-Adressen des Kontoinhabers und Gmail-IDs bleiben außerhalb
+dieses öffentlichen Registers.
 
 ## Dokumentierte Grundlage und tatsächliche Anfragen
 

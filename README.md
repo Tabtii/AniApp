@@ -29,9 +29,11 @@ source muting and optional hidden news previews. Follow DE/EN dubs for **in-app*
 announcement/date-change messages. An authenticated reviewer queue verifies
 ambiguous announcements and preserves audit history.
 
-**Data rights:** five project-specific permission enquiries were sent on
-12 October 2026. Replies are pending; no blanket commercial approval is claimed.
-Additional official publisher collectors stay disabled until approved.
+**Data rights:** six project-specific enquiries were sent on 12 October 2026.
+Gmail was rechecked on 13 October: Tenrai permits API-service use but does not
+license the underlying content; the other five enquiries remain unanswered.
+No blanket commercial approval is claimed. Additional official publisher
+collectors stay disabled until approved.
 [Rights register](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/DATA_RIGHTS.md) · [Implementation and remaining gates](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/COMPANION_0_4.md)
 
 ## What you can do
