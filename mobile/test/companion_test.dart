@@ -87,20 +87,33 @@ void main() {
             );
           }
           if (offline) throw http.ClientException('offline');
-          if (request.method == 'POST') {
-            final data = jsonDecode(request.body);
-            final row = Map<String, dynamic>.from(
-              data is List ? data.single : data,
-            );
+          if (request.url.path.endsWith('/rpc/sync_watchlist')) {
+            final data = jsonDecode(request.body) as Map;
             if (hold != null) await hold.future;
-            remote[row['mal_id'] as int] = row;
-            return http.Response('', 201, request: request);
-          }
-          if (request.method == 'DELETE') {
-            remote.remove(
-              int.parse(request.url.queryParameters['mal_id']!.substring(3)),
+            final id = data['p_mal_id'] as int;
+            final value = data['p_entry'] as Map?;
+            final revision = '${DateTime.now().microsecondsSinceEpoch}';
+            if (value == null) {
+              remote.remove(id);
+            } else {
+              remote[id] = {
+                'mal_id': id,
+                'anime_snapshot': value['anime'],
+                'status': value['status'],
+                'watched_episodes': value['watched'],
+                'revision': revision,
+              };
+            }
+            return http.Response(
+              jsonEncode({
+                'applied': true,
+                'revision': value == null ? null : revision,
+                'entry': value,
+              }),
+              200,
+              headers: {'content-type': 'application/json'},
+              request: request,
             );
-            return http.Response('', 204, request: request);
           }
           return http.Response(
             jsonEncode(remote.values.toList()),

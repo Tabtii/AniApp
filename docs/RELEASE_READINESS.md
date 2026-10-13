@@ -1,3 +1,10 @@
+# Implementation update — 13 October 2026
+
+Version 0.5.0 improves conflict handling, undo, startup, personal news queries and
+adaptive everyday screens. See [implementation and migration order](COMPANION_0_5.md).
+The new database migration is staged in the repository, not deployed by this PR.
+Physical-device acceptance, signing, push and the remaining gates below stay open.
+
 # Current status — 12 October 2026
 
 Version 0.4.0 adds the personal companion workflow, offline list mutations,

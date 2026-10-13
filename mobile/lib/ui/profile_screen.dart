@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           context.l10n.yourProfile,
           style: TextStyle(
             color: Theme.of(context).colorScheme.secondary,
-            fontSize: 10,
+            fontSize: 12,
             letterSpacing: 2.2,
             fontWeight: FontWeight.w800,
           ),

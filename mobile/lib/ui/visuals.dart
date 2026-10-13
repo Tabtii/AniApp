@@ -77,7 +77,7 @@ class Tag extends StatelessWidget {
               text,
               style: TextStyle(
                 color: solid ? const Color(0xFF151924) : c,
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w800,
                 letterSpacing: .3,
               ),
@@ -109,7 +109,7 @@ class SectionHeading extends StatelessWidget {
                   eyebrow!.toUpperCase(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
-                    fontSize: 10,
+                    fontSize: 12,
                     letterSpacing: 2.2,
                     fontWeight: FontWeight.w800,
                   ),

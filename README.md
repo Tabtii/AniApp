@@ -6,13 +6,21 @@
 
 **Your anime companion for Android and iOS.** Discover anime, keep a watchlist, follow episode releases and read news in German or English — with real sources and clear language availability.
 
-**Current app:** `0.4.0+14` · Flutter · Deutsch / English · Development preview
+**Current app:** `0.5.0+15` · Flutter · Deutsch / English · Development preview
 
 [Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
 
 > The current Flutter app lives on **`feature/anime-companion`**, in PR #1. The `master` branch still contains the original Kotlin application. Use the development branch to build or explore the current app.
 
-## New in 0.4.0
+## New in 0.5.0
+
+Conflict-aware multi-device progress, safe undo, local-first startup, watchlist
+search/sorting/direct count editing, focused detail sections and tablet navigation.
+Personal news filters now run before the result limit. This version requires the
+new additive database migration before distribution; it is not applied by a build.
+See [implementation, validation and rollout](docs/COMPANION_0_5.md).
+
+## Companion features from 0.4.0
 
 Personal **Today** screen, offline-first progress with retry, MAL XML / AniApp JSON
 import, list/account export, confirmed-calendar ICS export, provider filters,
@@ -116,7 +124,7 @@ npm test --prefix backend
 python -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-As of **12 October 2026**, the project has 45 passing Flutter tests, 61 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
+As of **13 October 2026**, the project has 54 passing Flutter tests, 64 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
 
 ## Before a public release
 

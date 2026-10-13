@@ -97,7 +97,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get discoverAnime => 'Anime entdecken';
 
   @override
-  String get watchlistHeading => 'Deine Anime. Dein Tempo.';
+  String get watchlistHeading => 'Deine Watchlist';
 
   @override
   String get myWatchlist => 'Meine Watchlist';
@@ -822,7 +822,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get today => 'Heute';
 
   @override
-  String get todayHeading => 'Dein nächster Anime-Moment.';
+  String get todayHeading => 'Heute für dich';
 
   @override
   String get todayIntro =>
@@ -1007,4 +1007,82 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get exportCalendar => 'Bestätigte Termine exportieren (.ics)';
+
+  @override
+  String get conflictHeading => 'Änderungen auf zwei Geräten';
+
+  @override
+  String get conflictHint =>
+      'Beide Stände bleiben erhalten. Wähle, welchen du übernehmen möchtest.';
+
+  @override
+  String get localVersion => 'Dieses Gerät';
+
+  @override
+  String get cloudVersion => 'Cloud';
+
+  @override
+  String get entryRemoved => 'Aus der Liste entfernt';
+
+  @override
+  String get keepLocal => 'Diesen Stand behalten';
+
+  @override
+  String get useCloud => 'Cloud-Stand übernehmen';
+
+  @override
+  String get undoUnavailable =>
+      'Es gibt bereits neuere Änderungen. Der aktuelle Stand bleibt erhalten.';
+
+  @override
+  String get editProgress => 'Folgenzahl bearbeiten';
+
+  @override
+  String get progressInvalid => 'Bitte gib eine gültige Folgenzahl ein.';
+
+  @override
+  String get saveChanges => 'Speichern';
+
+  @override
+  String get listSearch => 'In meiner Liste suchen';
+
+  @override
+  String get sortList => 'Liste sortieren';
+
+  @override
+  String get sortRecent => 'Zuletzt geändert';
+
+  @override
+  String get sortTitle => 'Titel A–Z';
+
+  @override
+  String get sortProgress => 'Fortschritt';
+
+  @override
+  String get clearSearch => 'Suche löschen';
+
+  @override
+  String get noListMatches =>
+      'Keine passenden Titel. Ändere deine Suche oder Filter.';
+
+  @override
+  String get overviewTab => 'Übersicht';
+
+  @override
+  String get releasesTab => 'Folgen & Dubs';
+
+  @override
+  String get providersTab => 'Anbieter';
+
+  @override
+  String get watchActions => 'Titel verwalten';
+
+  @override
+  String get discoverFirst => 'Ersten Anime entdecken';
+
+  @override
+  String get changesToReview => 'Änderungen prüfen';
+
+  @override
+  String get newsPersonalHint => 'News zu deiner Liste';
 }
