@@ -27,7 +27,7 @@ AniApp 0.3.6 is a functioning Android/iOS companion with live content, but is no
 | Provider episode dates | Official ADN calendar | Exact provided episode/language/time for reviewed show+season identities. Now 14 mapped titles, including older catalog additions. Unknown matches are excluded. |
 | Other provider and dub announcements | Automatic DE/EN announcement importer; prior reviewed sources retained | Recognized Crunchyroll RSS, ADN cards and explicit Anime2You/AniNews claims are reconciled hourly. Unsupported/ambiguous articles require review. Partial provider/region coverage. |
 | Dub existence | MyDubList | DE/EN/FR/ES/IT observations; no inferred provider, country or dub premiere. |
-| News and previews | Anime2You, MyAnimeList via Tenrai, ADN News, AniNews, official Crunchyroll DE/EN RSS | Hourly feed checks; bounded excerpts and original source links. News metadata caches remain daily; separate dub watchers revisit article bodies every six hours. |
+| News and previews | Anime2You, MyAnimeList via Tenrai, ADN News, AniNews, official Crunchyroll DE/EN RSS | Anime2You feed checks every 15 minutes with publisher meta-descriptions, original links, corrections and 30-day content retention. Other providers keep hourly checks and existing cache intervals; separate dub watchers revisit article bodies every six hours. |
 
 The additional ADN matches checked on 9 October: Utena (TV MAL 440; movie 441), Madoka Magica Movie 1 (11977), Yuusanchi! from Yuu-hachi (64717). Official ADN titles, type and descriptions were compared against MAL catalog entries. A same-name Dreamland movie is not the French ADN series; the matching title alone is insufficient. Chiikawa provider season numbering remains unverified. Adult/absent entries and a promotional clip were not treated as the missing TV series.
 
@@ -145,3 +145,24 @@ advisors report no new warnings; the pre-existing
 [pg_net namespace](https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public)
 and [leaked-password protection](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)
 notices remain unchanged. Mobile code/version is unchanged by this server update.
+
+## Anime2You permission rollout — 14 October 2026
+
+- Applied migration `20261014145943_anime2you_permission_and_retention.sql`.
+- `content-sync` now accepts an authenticated Anime2You-only scope between the
+  hourly full runs. The existing Vault token gate remains server-only.
+- First production run at 17:00 CEST: 24 original publisher meta-descriptions
+  imported, with source image links; remaining cached articles rotate through
+  subsequent jobs. One same-article slug redirect was identified and supported
+  with an allowlisted, two-hop maximum and repeated robots/rate checks.
+- Public `companion_news` read returned HTTP 200: 75 Anime2You entries in the
+  response, including 24 publisher previews and 75 image links. Anonymous
+  `content-sync` invocation returned HTTP 401. No APK replacement is needed.
+- 71 backend tests passed, including retention/RLS, corrected/deleted articles,
+  conditional requests, bounded redirects and article-ID deduplication.
+  TypeScript checks passed for the changed importer modules.
+- Security advisor results are unchanged: existing `pg_net` schema and leaked
+  password protection notices; no new findings from this rollout.
+- Retention deletes Anime2You news and scrubs copied source evidence after
+  30 days. Independent cron cleanup also runs if the importer is unavailable.
+  Structured release events, watchlists and review decisions remain intact.

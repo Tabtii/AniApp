@@ -1,30 +1,44 @@
-# Datenrechte und Freigaben — 13. Oktober 2026
+# Datenrechte und Freigaben — 14. Oktober 2026
 
 **Keine pauschale kommerzielle Freigabe.** Öffentliche Erreichbarkeit, ein API-Key,
 robots.txt oder die Lizenz eines Scraper-Programms ersetzen keine Nutzungsrechte
 an den gelieferten Daten, Texten und Bildern. Die bisherigen Live-Integrationen
 sind ein Entwicklungsstand; ihre technische Funktion ist keine Rechtsfreigabe.
 
-## Gmail-Nachprüfung — 13. Oktober 2026, 20:01 Uhr (Europe/Berlin)
+## Anime2You-Zusage — 14. Oktober 2026, 14:51 Uhr (Europe/Berlin)
 
-Alle sechs versendeten AniApp-Anfragen und ihre vollständigen Threads wurden
-geprüft. Ergänzende Suchen nach Projekt, Absender-Domains und Lizenz-/API-Betreffs
-schlossen Spam und Papierkorb ein. Es wurden **keine neuen Antworten** gefunden.
+Die Originalantwort wurde privat in Gmail gelesen. Anime2You stimmt der
+beschriebenen AniApp-Nutzung ohne Gebühren zu. Die Anfrage beschrieb eine
+kostenlose Testphase und mögliche spätere Komfortfunktionen, Affiliate-Links
+und Werbung. Die Freigabe umfasst den Feed, Titel, Datum, Quelle, kurze Vorschauen
+und verlinkte Kalender-Sachinformationen. Jeder Eintrag braucht einen direkten
+Link zum Original. Eigene oder KI-generierte Artikelzusammenfassungen sind
+unerwünscht; bevorzugt wird die originale Meta-Beschreibung.
 
-| Anfrage | Letzter belegter Stand |
+Anime2You stimmt Vorschaubildern von seiner Seite zu, kann jedoch keine
+zusätzlichen Rechte an Material von Publishern/Studios einräumen. Deshalb
+bedeutet `images_allowed=true` hier **Publisher-Zustimmung zur beschriebenen
+Einbindung**, keine pauschale Freigabe aller Drittbildrechte. Dieser Vorbehalt
+steht auch im öffentlichen `source_rights.evidence`.
+
+Empfohlen sind 15 Minuten zwischen Feed-Abfragen. Änderungen müssen bestehende
+Einträge überschreiben; eine dauerhafte Inhaltsarchivierung ist nicht erlaubt.
+AniApp setzt dafür einen rollierenden **30-Tage-Cache** für News und kopierte
+Textbelege um. Die 30 Tage sind eine technische Projektentscheidung, keine vom
+Publisher genannte Frist. Strukturierte Kalenderfakten, Quellen-URLs und
+Prüfentscheidungen bleiben erhalten; vollständige Artikel werden nicht gespeichert.
+
+| Anfrage | Letzter geprüfter Stand am 14.10.2026 |
 | --- | --- |
-| Tenrai | Antwort vom 12.10.2026, 15:38 Uhr: API-Dienst darf kommerziell und nichtkommerziell verwendet werden. Tenrai besitzt die zugrunde liegenden Daten nicht und erteilt dafür keine Inhaltsrechte. Bereits dokumentierte Teilfreigabe, keine neue Zusage. |
-| AniList | Anfrage versendet; keine Antwort gefunden. |
-| TMDb / JustWatch | Anfrage versendet; keine Antwort gefunden. |
-| Anime2You | Anfrage versendet; keine Antwort gefunden. |
-| AniNews | Anfrage versendet; keine Antwort gefunden. |
-| MyAnimeList | Anfrage versendet; keine Antwort gefunden. |
+| Anime2You | Schriftliche Zusage mit obigen Bedingungen; technisch und im Register berücksichtigt. |
+| Tenrai | Antwort vom 12.10.: API-Dienst kommerziell/nichtkommerziell erlaubt, keine Rechte an zugrunde liegenden Inhalten. |
+| AniList | Anfrage versendet; noch keine Antwort gefunden. |
+| TMDb / JustWatch | Anfrage versendet; noch keine Antwort gefunden. |
+| AniNews | Anfrage versendet; noch keine Antwort gefunden. |
+| MyAnimeList | Anfrage versendet; noch keine Antwort gefunden. |
 
-Der Status bleibt damit: eine Antwort mit begrenztem Umfang, fünf offene
-Anfragen. Die Prüfung änderte keine Freigabeschalter und aktivierte keine Quelle.
-Es wurden keine Erinnerungen oder weiteren Anfragen versendet. Private
-Nachrichten, Mail-Adressen des Kontoinhabers und Gmail-IDs bleiben außerhalb
-dieses öffentlichen Registers.
+Zwei Antworten, vier offene Anfragen. Keine neue E-Mail wurde gesendet.
+Private Nachrichten, Kontoadressen und Gmail-IDs bleiben außerhalb des Repositorys.
 
 ## Dokumentierte Grundlage und tatsächliche Anfragen
 
@@ -34,7 +48,7 @@ dieses öffentlichen Registers.
 | AniList | [Terms](https://docs.anilist.co/guide/terms-of-use), `contact@anilist.co` | Anfrage am 12.10.2026 über Gmail versendet; keine Zusage | Tracker-/Wettbewerbsregel ausdrücklich angesprochen. Die Umsatzgrenze hebt diese nicht auf. Adapter bleibt deaktiviert. |
 | Tenrai / MAL-Katalog | [Bedingungen §§ 3, 6](https://tenrai.org/terms), Antwort vom 12.10.2026 privat geprüft | API-Dienst auch kommerziell erlaubt; Inhaltsrechte ausdrücklich nicht erteilt | Teilfreigabe dokumentiert. MAL-Metadaten, Texte, News und Bilder bleiben separat zu klären; keine pauschale kommerzielle Inhaltsfreigabe. |
 | TMDb / JustWatch | [FAQ](https://developer.themoviedb.org/docs/faq), `sales@themoviedb.org` | Anfrage am 12.10.2026 versendet; keine Zusage | Nichtkommerzielle Bedingungen mit Attribution dokumentiert; Entwicklungsphase mit Monetarisierungsabsicht, Bilder und JustWatch separat klären. Keine Bestellung oder kostenpflichtige Lizenz angenommen. |
-| Anime2You | [Impressum](https://www.anime2you.de/impressum/), `info@anime2you.de` | Anfrage am 12.10.2026 versendet; keine Zusage | Feed, Überschrift, kurze Vorschau, Bilder, automatischer Artikelabruf und strukturierte Dub-Sachangaben ausdrücklich getrennt angefragt. |
+| Anime2You | Schriftliche Antwort vom 14.10.2026, privat geprüft; [Website](https://www.anime2you.de/) | Beschriebene Nutzung gebührenfrei gestattet | Original-Meta-Vorschau, Direktlink, Aktualisierung und begrenzte Aufbewahrung; Publisher-Zustimmung für Bilder mit ausdrücklichem Drittmaterial-Vorbehalt. |
 | AniNews | [Impressum](https://www.aninews.de/impressum/), `info@aninews.de` | Anfrage am 12.10.2026 versendet; keine Zusage | Gleicher genauer Nutzungsumfang wie Anime2You; kein Artikelvolltext in der App. |
 | MyAnimeList direkt / Jikan | [API agreement](https://myanimelist.net/static/apiagreement.html), [Support](https://myanimelist.net/about.php?go=support) | Anfrage am 12.10.2026 per Gmail an support@myanimelist.net versendet; Antwort ausstehend | Tenrai/Jikan umgehen keine Rechte der ursprünglichen Quelle. MAL-Bedingungen enthalten spezifische kommerzielle Regeln/Ausnahmen; das geplante Modell einzeln prüfen lassen. |
 | AnimeSchedule | [API terms](https://animeschedule.net/api-terms-of-use), [Kontakt](https://animeschedule.net/contact) | Schriftliche Klärung offen; Kontaktseite hier zugriffsbeschränkt | Token allein genügt nicht. Kein Zugriff über interne Endpunkte oder fremde Credentials. |
@@ -46,8 +60,8 @@ dieses öffentlichen Registers.
 | Joyn / ProSieben MAXX | [Anime-News](https://www.joyn.de/bts/themen/anime) | Automatisierte Nutzung/Bilder offen | Neuer Adapter bleibt gesperrt; TV- und Streamingrechte getrennt behandeln. Die frühere MAXX-Seite leitet jetzt zu Joyn weiter. |
 
 Die sechs versendeten Nachrichten sind konkrete Informations- und Freigabeanfragen,
-keine Verträge. Tenrai hat geantwortet; für die übrigen fünf Anfragen ist hier
-noch keine Freigabe dokumentiert. Private Korrespondenz und Kontoadressen
+keine Annahme kostenpflichtiger Verträge. Tenrai und Anime2You haben geantwortet;
+für die übrigen vier Anfragen liegt noch keine Antwort vor. Private Korrespondenz und Kontoadressen
 werden nicht in diesem öffentlichen Repository veröffentlicht.
 
 ## Nachprüfung nach der Tenrai-Antwort

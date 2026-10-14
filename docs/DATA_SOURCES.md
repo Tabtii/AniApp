@@ -14,7 +14,7 @@ The public JSON:API at <https://kitsu.app/api/edge> adds an independent source f
 
 Only the fixed ADN News origin and dated German article paths are permitted. The scraper respects matching robots rules/crawl-delay, spaces requests by at least one second, rejects redirects, and stops on access/rate-limit responses. Each page has an eight-second timeout and 1.5 MB response limit; the total crawl budget is 45 seconds. Each article is refreshed at most once per day. Feed/metadata failures preserve previously published rows and appear in the private sync report. There is no browser login, CAPTCHA workaround, Firecrawl or additional scraping subscription. Existing Supabase quota/hosting limits still apply.
 
-The existing hourly content-sync schedule also collects Anime2You/MyAnimeList news and provider episode data. Flutter reads the shared published news through Supabase; each phone does not crawl the publisher independently.
+Anime2You feeds are checked every 15 minutes: the hourly content-sync at :15 plus scoped Anime2You jobs at :00/:30/:45. Other news sources and provider episode data retain the hourly schedule. Anime2You article metadata rotates through up to 25 recent/current cached URLs per run, using conditional requests. Only original publisher meta-descriptions are displayed; a source-link prompt is used when metadata is unavailable. Anime2You news and copied source evidence expire after 30 days; calendar facts remain. Flutter reads the shared published news through Supabase; each phone does not crawl the publisher independently.
 
 ### Reviewed pause notices
 

@@ -51,6 +51,7 @@ test('private follows, inbox revisions, review guards and source rights fail clo
   assert.ok((await db.query('select * from public.release_inbox')).rows.length>0);
   await assert.rejects(db.exec(`update public.release_inbox set kind='announcement'`));
   await db.exec('update public.release_inbox set read_at=now()');
-  assert.equal((await db.query(`select count(*)::int n from public.source_rights where source_key<>'mydublist' and (commercial_allowed or ingestion_enabled)`)).rows[0].n,0);
+  assert.equal((await db.query(`select count(*)::int n from public.source_rights where source_key not in ('mydublist','anime2you') and (commercial_allowed or ingestion_enabled)`)).rows[0].n,0);
+  assert.equal((await db.query(`select status from public.source_rights where source_key='anime2you'`)).rows[0].status,'approved');
  }finally{await db.close();}
 });

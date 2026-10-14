@@ -15,8 +15,11 @@ export function proposal(candidate:Candidate,match:Row|null,url:string):Row {
 export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetch,now=new Date(),pause=(ms:number)=>new Promise(r=>setTimeout(r,ms))) {
   const deadline=Date.now()+45000,read=announcementReader(fetcher,deadline,pause);
   const report={published:0,review:0,conflicts:0,checked:0,unchanged:0,discovered:0,failed:[] as Row[]};
+  const rights:Row[]=await db('source_rights?source_key=eq.anime2you&select=status,ingestion_enabled',undefined,'GET');
+  const anime2youEnabled=rights[0]?.status==='approved'&&rights[0]?.ingestion_enabled===true;
   const incoming=new Map<string,Document>();
   for(const f of feeds){
+    if(f.source==='anime2you'&&!anime2youEnabled)continue;
     try{
       const documents=parseFeed((await read(f.url)).body,f.source,now);
       if(!documents.length)throw new Error('Empty recent announcement feed');
@@ -37,6 +40,7 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
   const discoveries:Row[]=[...[...incoming.values()].map(d=>({source_url:d.url,headline:d.headline,published_at:d.published_at})),...knownNews,...existingEvents];
   for(const r of discoveries){
     const id=articleIdentity(r.source_url);if(!id||existingUrls.has(id.url))continue;
+    if(id.source==='anime2you'&&!anime2youEnabled)continue;
     const doc=incoming.get(id.url);
     const priority=doc&&extractDubs(doc).some(c=>!c.reason)?3:r.title?2:doc?1:0;
     discovered.set(id.url,{source_url:id.url,source_key:id.source,headline:(r.headline??r.title??'').slice(0,500),published_at:r.published_at??null,
@@ -69,6 +73,7 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
     return match.mal_id?match:null;
   }
   for(const watched of due){
+    if(watched.source_key==='anime2you'&&!anime2youEnabled)continue;
     if(Date.now()+1500>deadline)break;
     const url=watched.source_url;
     try{
@@ -88,6 +93,7 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
         doc=parsePage(readPage.body,url);
       }
       if(Date.parse(doc.published_at)>now.getTime())throw new Error('Future article metadata');
+      const retainText=doc.source!=='anime2you'||now.getTime()-Date.parse(doc.published_at)<=30*86400000;
       const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(doc.headline+'\n'+doc.body)))).map(n=>n.toString(16).padStart(2,'0')).join('');
       if(hash===watched.content_hash&&watched.parser_version===PARSER_VERSION&&!watched.needs_review)report.unchanged++;
       else{
@@ -96,9 +102,11 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
           // Failed identity lookup only holds this candidate, not other sources.
           let match:Row|null=null;
           try{if(!c.reason)match=await resolve(c.title);}catch(e){report.failed.push({source:url,error:e instanceof Error?e.message:'Title unavailable'});}
-          candidates.push(proposal(c,match,url));
+          const candidate=proposal(c,match,url);
+          if(!retainText)candidate.evidence='';
+          candidates.push(candidate);
         }
-        if(!candidates.length&&/dub|synchro|\bSYNC\b/i.test(doc.headline+' '+doc.body))candidates.push({key:'article-format',evidence:doc.headline.slice(0,1200),reason:'unsupported_or_ambiguous_format',event:null});
+        if(!candidates.length&&/dub|synchro|\bSYNC\b/i.test(doc.headline+' '+doc.body))candidates.push({key:'article-format',evidence:retainText?doc.headline.slice(0,1200):'',reason:'unsupported_or_ambiguous_format',event:null});
         const grouped=new Map<string,Row>();
         for(const c of candidates){
           const old=grouped.get(c.key);
@@ -111,7 +119,7 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
         report.published+=applied.published;report.review+=applied.review;report.conflicts+=applied.conflicts;
       }
       await db(`dub_source_documents?source_url=eq.${encodeURIComponent(url)}`,{
-        headline:doc.headline.slice(0,500),published_at:doc.published_at,checked_at:now.toISOString(),last_attempt_at:now.toISOString(),
+        headline:retainText?doc.headline.slice(0,500):'',published_at:doc.published_at,checked_at:now.toISOString(),last_attempt_at:now.toISOString(),
         next_check_at:new Date(now.getTime()+(doc.source.startsWith('cr_')?1:6)*3600000).toISOString(),
         content_hash:hash,parser_version:PARSER_VERSION,etag:response?.headers.get('etag')??null,last_modified:response?.headers.get('last-modified')??null,error:null},'PATCH');
       report.checked++;
