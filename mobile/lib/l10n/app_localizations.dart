@@ -275,7 +275,7 @@ abstract class AppLocalizations {
   /// No description provided for @watchlistHeading.
   ///
   /// In en, this message translates to:
-  /// **'Your anime. Your pace.'**
+  /// **'Your watchlist'**
   String get watchlistHeading;
 
   /// No description provided for @myWatchlist.
@@ -1559,7 +1559,7 @@ abstract class AppLocalizations {
   /// No description provided for @todayHeading.
   ///
   /// In en, this message translates to:
-  /// **'Your next anime moment.'**
+  /// **'Your anime today'**
   String get todayHeading;
 
   /// No description provided for @todayIntro.
@@ -1897,6 +1897,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export confirmed dates (.ics)'**
   String get exportCalendar;
+
+  /// No description provided for @conflictHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes on two devices'**
+  String get conflictHeading;
+
+  /// No description provided for @conflictHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Both versions are preserved. Choose which one to keep.'**
+  String get conflictHint;
+
+  /// No description provided for @localVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'This device'**
+  String get localVersion;
+
+  /// No description provided for @cloudVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud'**
+  String get cloudVersion;
+
+  /// No description provided for @entryRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from the list'**
+  String get entryRemoved;
+
+  /// No description provided for @keepLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this version'**
+  String get keepLocal;
+
+  /// No description provided for @useCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Use cloud version'**
+  String get useCloud;
+
+  /// No description provided for @undoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'There are newer changes. Your current progress was kept.'**
+  String get undoUnavailable;
+
+  /// No description provided for @editProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit episode count'**
+  String get editProgress;
+
+  /// No description provided for @progressInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid episode count.'**
+  String get progressInvalid;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveChanges;
+
+  /// No description provided for @listSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search my list'**
+  String get listSearch;
+
+  /// No description provided for @sortList.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort list'**
+  String get sortList;
+
+  /// No description provided for @sortRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently changed'**
+  String get sortRecent;
+
+  /// No description provided for @sortTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title A–Z'**
+  String get sortTitle;
+
+  /// No description provided for @sortProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get sortProgress;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @noListMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching titles. Change your search or filters.'**
+  String get noListMatches;
+
+  /// No description provided for @overviewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overviewTab;
+
+  /// No description provided for @releasesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Episodes & dubs'**
+  String get releasesTab;
+
+  /// No description provided for @providersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Providers'**
+  String get providersTab;
+
+  /// No description provided for @watchActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage title'**
+  String get watchActions;
+
+  /// No description provided for @discoverFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover your first anime'**
+  String get discoverFirst;
+
+  /// No description provided for @changesToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review changes'**
+  String get changesToReview;
+
+  /// No description provided for @newsPersonalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'News for your list'**
+  String get newsPersonalHint;
 }
 
 class _AppLocalizationsDelegate

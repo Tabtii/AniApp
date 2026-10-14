@@ -97,7 +97,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discoverAnime => 'Explore anime';
 
   @override
-  String get watchlistHeading => 'Your anime. Your pace.';
+  String get watchlistHeading => 'Your watchlist';
 
   @override
   String get myWatchlist => 'My watchlist';
@@ -818,7 +818,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get today => 'Today';
 
   @override
-  String get todayHeading => 'Your next anime moment.';
+  String get todayHeading => 'Your anime today';
 
   @override
   String get todayIntro =>
@@ -1000,4 +1000,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportCalendar => 'Export confirmed dates (.ics)';
+
+  @override
+  String get conflictHeading => 'Changes on two devices';
+
+  @override
+  String get conflictHint =>
+      'Both versions are preserved. Choose which one to keep.';
+
+  @override
+  String get localVersion => 'This device';
+
+  @override
+  String get cloudVersion => 'Cloud';
+
+  @override
+  String get entryRemoved => 'Removed from the list';
+
+  @override
+  String get keepLocal => 'Keep this version';
+
+  @override
+  String get useCloud => 'Use cloud version';
+
+  @override
+  String get undoUnavailable =>
+      'There are newer changes. Your current progress was kept.';
+
+  @override
+  String get editProgress => 'Edit episode count';
+
+  @override
+  String get progressInvalid => 'Enter a valid episode count.';
+
+  @override
+  String get saveChanges => 'Save';
+
+  @override
+  String get listSearch => 'Search my list';
+
+  @override
+  String get sortList => 'Sort list';
+
+  @override
+  String get sortRecent => 'Recently changed';
+
+  @override
+  String get sortTitle => 'Title A–Z';
+
+  @override
+  String get sortProgress => 'Progress';
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String get noListMatches =>
+      'No matching titles. Change your search or filters.';
+
+  @override
+  String get overviewTab => 'Overview';
+
+  @override
+  String get releasesTab => 'Episodes & dubs';
+
+  @override
+  String get providersTab => 'Providers';
+
+  @override
+  String get watchActions => 'Manage title';
+
+  @override
+  String get discoverFirst => 'Discover your first anime';
+
+  @override
+  String get changesToReview => 'Review changes';
+
+  @override
+  String get newsPersonalHint => 'News for your list';
 }

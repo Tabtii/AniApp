@@ -107,13 +107,13 @@ void main() {
         'dub_languages': ['de'],
         'region': 'DE',
       });
-      final requests = <Uri>[];
+      final requests = <Map<String, dynamic>>[];
       final backend = SupabaseClient(
         'https://example.supabase.co',
         'test-key',
         authOptions: const AuthClientOptions(autoRefreshToken: false),
         httpClient: MockClient((request) async {
-          requests.add(request.url);
+          requests.add(jsonDecode(request.body) as Map<String, dynamic>);
           return http.Response(
             '[]',
             200,
@@ -127,11 +127,12 @@ void main() {
         backend: backend,
       );
       await store.news();
-      expect(requests.last.queryParameters['language'], 'in.("en")');
-      expect(requests.last.queryParameters['limit'], '120');
+      expect(requests.last['p_languages'], ['en']);
+      expect(requests.last['p_region'], 'DE');
+      expect(requests.last['p_ids'], isNull);
       await store.setNewsLanguage('both');
       await store.news();
-      expect(requests.last.queryParameters['language'], 'in.("de","en")');
+      expect(requests.last['p_languages'], ['de', 'en']);
       expect(store.dubLanguages, ['de']);
       expect(store.region, 'DE');
       store.dispose();

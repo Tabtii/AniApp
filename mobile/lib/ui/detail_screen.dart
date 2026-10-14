@@ -10,6 +10,7 @@ import 'visuals.dart';
 import 'dub_panel.dart';
 import 'kitsu_panel.dart';
 import 'companion_screens.dart';
+import 'watch_actions.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.anime, required this.store});
@@ -21,6 +22,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   late Anime anime;
+  int section = 0;
   List<Availability> availability = [];
   List<ReleaseEvent> releases = [];
   List<ReleaseEvent> dubs = [];
@@ -155,104 +157,85 @@ class _DetailScreenState extends State<DetailScreen> {
         padding: const EdgeInsets.all(20),
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(26),
-            child: SizedBox(
-              height: 360,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Artwork(
-                    enrichment.banner ?? anime.image,
-                    fallbackUrl: anime.image,
-                    alignment: Alignment.topCenter,
-                  ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Color(0x33090F1C),
-                          Color(0xFF090F1C),
-                        ],
-                        stops: [0, .4, 1],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 22,
-                    right: 22,
-                    bottom: 24,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Tag(
-                          '${anime.score?.toStringAsFixed(1) ?? '—'}  ·  ${context.l10n.episodeCount('${anime.episodes ?? '?'}')}',
-                          icon: Icons.star_rounded,
-                          color: lime,
-                          solid: true,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          anime.title,
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 28,
-                            height: 1.08,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            letterSpacing: -.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+            borderRadius: BorderRadius.circular(22),
+            child: AspectRatio(
+              aspectRatio: 1.9,
+              child: Artwork(
+                enrichment.banner ?? anime.image,
+                fallbackUrl: anime.image,
+                alignment: Alignment.topCenter,
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: widget.store.busy || widget.store.isSaved(anime.id)
-                ? null
-                : () => perform(
-                    context,
-                    () => widget.store.save(WatchEntry(anime: anime)),
-                  ),
-            icon: Icon(
-              widget.store.isSaved(anime.id)
-                  ? Icons.bookmark_added_rounded
-                  : Icons.bookmark_add_rounded,
-            ),
-            label: Text(
-              widget.store.isSaved(anime.id)
-                  ? context.l10n.inYourList
-                  : context.l10n.saveWatchlist,
-            ),
+          const SizedBox(height: 18),
+          Text(
+            anime.title,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
-          const SizedBox(height: 20),
-          FollowDubButton(store: widget.store, id: anime.id),
-          const SizedBox(height: 16),
-          for (final language in widget.store.dubLanguages)
-            DubPanel(
-              language: language,
-              region: widget.store.region,
-              events: dubs.where((e) => e.language == language).toList(),
-              availability: availability,
-              loading: loading,
-              error: dubError,
-              observation: dubObservations[language] ?? const {},
-              onRetry: _load,
-            ),
-          const SizedBox(height: 6),
-          KitsuPanel(data: enrichment.kitsu),
-          const SizedBox(height: 6),
+          const SizedBox(height: 10),
           Wrap(
             spacing: 8,
-            children: anime.genres.map((g) => Chip(label: Text(g))).toList(),
+            runSpacing: 8,
+            children: [
+              Tag(
+                anime.score?.toStringAsFixed(1) ?? '—',
+                icon: Icons.star_rounded,
+              ),
+              Tag(context.l10n.episodeCount('${anime.episodes ?? '?'}')),
+            ],
           ),
+          const SizedBox(height: 18),
+          if (widget.store.isSaved(anime.id))
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: WatchProgress(
+                  store: widget.store,
+                  entry: widget.store.entries.firstWhere(
+                    (e) => e.anime.id == anime.id,
+                  ),
+                ),
+              ),
+            )
+          else
+            FilledButton.icon(
+              onPressed: widget.store.busy || widget.store.isSaved(anime.id)
+                  ? null
+                  : () => perform(
+                      context,
+                      () => widget.store.save(WatchEntry(anime: anime)),
+                    ),
+              icon: Icon(
+                widget.store.isSaved(anime.id)
+                    ? Icons.bookmark_added_rounded
+                    : Icons.bookmark_add_rounded,
+              ),
+              label: Text(
+                widget.store.isSaved(anime.id)
+                    ? context.l10n.inYourList
+                    : context.l10n.saveWatchlist,
+              ),
+            ),
+          const SizedBox(height: 20),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final option in <int, String>{
+                0: context.l10n.overviewTab,
+                1: context.l10n.releasesTab,
+                2: context.l10n.providersTab,
+              }.entries)
+                ChoiceChip(
+                  label: Text(option.value),
+                  selected: section == option.key,
+                  onSelected: (_) => setState(() => section = option.key),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
           if (loading) const LinearProgressIndicator(),
           if (error != null ||
               availabilityError != null ||
@@ -263,208 +246,241 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             TextButton(onPressed: _load, child: Text(context.l10n.retry)),
           ],
-          const SizedBox(height: 16),
-          Text(
-            context.l10n.story,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            enrichment.overview ??
-                anime.synopsis ??
-                enrichment.synopsis ??
-                context.l10n.noSynopsis,
-            style: TextStyle(
-              height: 1.65,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+          if (section == 0) ...[
+            KitsuPanel(data: enrichment.kitsu),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              children: anime.genres.map((g) => Chip(label: Text(g))).toList(),
             ),
-          ),
-          if (enrichment.overview != null)
-            TextButton(
-              onPressed: () =>
-                  openSource(context, enrichment.streaming['source'] as String),
-              child: Text(context.l10n.tmdbSynopsis),
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.story,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
-          if (enrichment.anilist['status'] == 'ok')
-            TextButton(
-              onPressed: () =>
-                  openSource(context, enrichment.anilist['source'] as String),
-              child: Text(context.l10n.anilistCredit),
+            const SizedBox(height: 10),
+            Text(
+              enrichment.overview ??
+                  anime.synopsis ??
+                  enrichment.synopsis ??
+                  context.l10n.noSynopsis,
+              style: TextStyle(
+                height: 1.65,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
-          if (enrichment.kitsu['status'] == 'ok')
-            TextButton(
-              onPressed: () =>
-                  openSource(context, enrichment.kitsu['source'] as String),
-              child: Text(context.l10n.kitsuCredit),
-            ),
-          const SizedBox(height: 20),
-          ...mergeJapanSchedule(releases, [
-                if (enrichment.nextRelease != null) enrichment.nextRelease!,
-              ])
-              .where((e) => e.kind != 'dub')
-              .map(
-                (e) => Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          e.kind == 'japan'
-                              ? context.l10n.nextJapan
-                              : context.l10n.nextRelease,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        Text(
-                          e.startsAt != null
-                              ? dateLabel(e.startsAt, context)
-                              : e.startsOn != null
-                              ? shortDate(e.startsOn, context)
-                              : context.l10n.dateTba,
-                        ),
-                        Text(
-                          e.note ??
-                              (e.status == 'estimated'
-                                  ? context.l10n.weeklyEstimate
-                                  : e.status == 'delayed'
-                                  ? context.l10n.pausedTba
-                                  : context.l10n.announcedDate),
-                        ),
-                        TextButton(
-                          onPressed: () => openSource(context, e.source),
-                          child: Text(context.l10n.openDateSource),
-                        ),
-                      ],
+            if (enrichment.overview != null)
+              TextButton(
+                onPressed: () => openSource(
+                  context,
+                  enrichment.streaming['source'] as String,
+                ),
+                child: Text(context.l10n.tmdbSynopsis),
+              ),
+            if (enrichment.anilist['status'] == 'ok')
+              TextButton(
+                onPressed: () =>
+                    openSource(context, enrichment.anilist['source'] as String),
+                child: Text(context.l10n.anilistCredit),
+              ),
+            if (enrichment.kitsu['status'] == 'ok')
+              TextButton(
+                onPressed: () =>
+                    openSource(context, enrichment.kitsu['source'] as String),
+                child: Text(context.l10n.kitsuCredit),
+              ),
+            const SizedBox(height: 20),
+          ],
+          if (section == 1) ...[
+            const SizedBox(height: 20),
+            FollowDubButton(store: widget.store, id: anime.id),
+            const SizedBox(height: 16),
+            for (final language in widget.store.dubLanguages)
+              DubPanel(
+                language: language,
+                region: widget.store.region,
+                events: dubs.where((e) => e.language == language).toList(),
+                availability: availability,
+                loading: loading,
+                error: dubError,
+                observation: dubObservations[language] ?? const {},
+                onRetry: _load,
+              ),
+            const SizedBox(height: 6),
+            ...mergeJapanSchedule(releases, [
+                  if (enrichment.nextRelease != null) enrichment.nextRelease!,
+                ])
+                .where((e) => e.kind != 'dub')
+                .map(
+                  (e) => Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            e.kind == 'japan'
+                                ? context.l10n.nextJapan
+                                : context.l10n.nextRelease,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Text(
+                            e.startsAt != null
+                                ? dateLabel(e.startsAt, context)
+                                : e.startsOn != null
+                                ? shortDate(e.startsOn, context)
+                                : context.l10n.dateTba,
+                          ),
+                          Text(
+                            e.note ??
+                                (e.status == 'estimated'
+                                    ? context.l10n.weeklyEstimate
+                                    : e.status == 'delayed'
+                                    ? context.l10n.pausedTba
+                                    : context.l10n.announcedDate),
+                          ),
+                          TextButton(
+                            onPressed: () => openSource(context, e.source),
+                            child: Text(context.l10n.openDateSource),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
+            if (anime.broadcast != null) ...[
+              const SizedBox(height: 20),
+              Text(
+                context.l10n.regularJapan,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-          if (anime.broadcast != null) ...[
-            const SizedBox(height: 20),
+              Text(anime.broadcast!),
+              Text(context.l10n.japanNotLocal),
+            ],
+            const SizedBox(height: 24),
+          ],
+          if (section == 2) ...[
             Text(
-              context.l10n.regularJapan,
-              style: Theme.of(context).textTheme.titleMedium,
+              context.l10n.whereWatch(widget.store.region),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            Text(anime.broadcast!),
-            Text(context.l10n.japanNotLocal),
-          ],
-          const SizedBox(height: 24),
-          Text(
-            context.l10n.whereWatch(widget.store.region),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 12),
-          if (availability.isEmpty && enrichment.providers.isEmpty && !loading)
-            Text(availabilityError ?? context.l10n.noProviders),
-          if (availability.isEmpty && enrichment.providers.isEmpty && !loading)
-            TextButton.icon(
-              onPressed: () => openSource(
-                context,
-                'https://myanimelist.net/anime/${anime.id}',
+            const SizedBox(height: 12),
+            if (availability.isEmpty &&
+                enrichment.providers.isEmpty &&
+                !loading)
+              Text(availabilityError ?? context.l10n.noProviders),
+            if (availability.isEmpty &&
+                enrichment.providers.isEmpty &&
+                !loading)
+              TextButton.icon(
+                onPressed: () => openSource(
+                  context,
+                  'https://myanimelist.net/anime/${anime.id}',
+                ),
+                icon: const Icon(Icons.open_in_new),
+                label: Text(context.l10n.malProviders),
               ),
-              icon: const Icon(Icons.open_in_new),
-              label: Text(context.l10n.malProviders),
-            ),
-          if (enrichment.streaming['status'] == 'unavailable')
-            Text(context.l10n.tmdbUnavailable),
-          if (enrichment.providers.isNotEmpty) ...[
-            Text(context.l10n.providerCredit),
-            TextButton(
-              onPressed: () =>
-                  openSource(context, 'https://github.com/Fribb/anime-lists'),
-              child: Text(context.l10n.titleMapping),
-            ),
-          ],
-          ...[...availability, ...enrichment.providers].map(
-            (a) => Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      a.provider,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(
-                      a.status == 'available'
-                          ? context.l10n.reportedAvailable
-                          : context.l10n.announced,
-                    ),
-                    Text(
-                      a.scope == 'episode'
-                          ? context.l10n.episodeNumber('${a.episode ?? '?'}')
-                          : a.scope == 'movie'
-                          ? context.l10n.movieScope
-                          : a.scope == 'season'
-                          ? context.l10n.seasonScope('${a.season ?? '?'}')
-                          : context.l10n.seriesScope,
-                    ),
-                    if (a.offers.isNotEmpty)
+            if (enrichment.streaming['status'] == 'unavailable')
+              Text(context.l10n.tmdbUnavailable),
+            if (enrichment.providers.isNotEmpty) ...[
+              Text(context.l10n.providerCredit),
+              TextButton(
+                onPressed: () =>
+                    openSource(context, 'https://github.com/Fribb/anime-lists'),
+                child: Text(context.l10n.titleMapping),
+              ),
+            ],
+            ...[...availability, ...enrichment.providers].map(
+              (a) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        a.offers
-                            .map(
-                              (o) =>
-                                  {
-                                    'flatrate': context.l10n.subscription,
-                                    'free': context.l10n.free,
-                                    'ads': context.l10n.withAds,
-                                    'rent': context.l10n.rent,
-                                    'buy': context.l10n.buy,
-                                  }[o] ??
-                                  o,
-                            )
-                            .join(' · '),
+                        a.provider,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
-                    if (a.sourceName != null)
-                      Text(context.l10n.sourceName(a.sourceName!)),
-                    Text(
-                      context.l10n.audioLabel(
-                        a.audio == null
-                            ? context.l10n.unknown
-                            : a.audio!.isEmpty
-                            ? context.l10n.noInformation
-                            : a.audio!
-                                  .map((code) => languageLabel(code, context))
-                                  .join(', '),
+                      Text(
+                        a.status == 'available'
+                            ? context.l10n.reportedAvailable
+                            : context.l10n.announced,
                       ),
-                    ),
-                    Text(
-                      context.l10n.subtitleLabel(
-                        a.subtitles == null
-                            ? context.l10n.unknown
-                            : a.subtitles!.isEmpty
-                            ? context.l10n.noInformation
-                            : a.subtitles!
-                                  .map((code) => languageLabel(code, context))
-                                  .join(', '),
+                      Text(
+                        a.scope == 'episode'
+                            ? context.l10n.episodeNumber('${a.episode ?? '?'}')
+                            : a.scope == 'movie'
+                            ? context.l10n.movieScope
+                            : a.scope == 'season'
+                            ? context.l10n.seasonScope('${a.season ?? '?'}')
+                            : context.l10n.seriesScope,
                       ),
-                    ),
-                    Text(
-                      context.l10n.lastChecked(
-                        dateLabel(
-                          DateTime.tryParse(a.checkedAt)?.toLocal(),
-                          context,
+                      if (a.offers.isNotEmpty)
+                        Text(
+                          a.offers
+                              .map(
+                                (o) =>
+                                    {
+                                      'flatrate': context.l10n.subscription,
+                                      'free': context.l10n.free,
+                                      'ads': context.l10n.withAds,
+                                      'rent': context.l10n.rent,
+                                      'buy': context.l10n.buy,
+                                    }[o] ??
+                                    o,
+                              )
+                              .join(' · '),
+                        ),
+                      if (a.sourceName != null)
+                        Text(context.l10n.sourceName(a.sourceName!)),
+                      Text(
+                        context.l10n.audioLabel(
+                          a.audio == null
+                              ? context.l10n.unknown
+                              : a.audio!.isEmpty
+                              ? context.l10n.noInformation
+                              : a.audio!
+                                    .map((code) => languageLabel(code, context))
+                                    .join(', '),
                         ),
                       ),
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    TextButton.icon(
-                      onPressed: () => openSource(context, a.url),
-                      icon: const Icon(Icons.open_in_new),
-                      label: Text(
-                        a.sourceName == 'TMDb / JustWatch'
-                            ? context.l10n.tmdbOffers
-                            : context.l10n.checkProvider,
+                      Text(
+                        context.l10n.subtitleLabel(
+                          a.subtitles == null
+                              ? context.l10n.unknown
+                              : a.subtitles!.isEmpty
+                              ? context.l10n.noInformation
+                              : a.subtitles!
+                                    .map((code) => languageLabel(code, context))
+                                    .join(', '),
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        context.l10n.lastChecked(
+                          dateLabel(
+                            DateTime.tryParse(a.checkedAt)?.toLocal(),
+                            context,
+                          ),
+                        ),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      TextButton.icon(
+                        onPressed: () => openSource(context, a.url),
+                        icon: const Icon(Icons.open_in_new),
+                        label: Text(
+                          a.sourceName == 'TMDb / JustWatch'
+                              ? context.l10n.tmdbOffers
+                              : context.l10n.checkProvider,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     ),

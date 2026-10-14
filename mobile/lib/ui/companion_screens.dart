@@ -114,10 +114,26 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   late Future<List<Map<String, dynamic>>> future;
+  late String scope;
   @override
   void initState() {
     super.initState();
     future = widget.store.inbox();
+    scope = widget.store.scope;
+    widget.store.addListener(_accountChanged);
+  }
+
+  void _accountChanged() {
+    if (mounted && scope != widget.store.scope) {
+      scope = widget.store.scope;
+      setState(() => future = widget.store.inbox());
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.store.removeListener(_accountChanged);
+    super.dispose();
   }
 
   Future<void> refresh() async {
@@ -141,6 +157,7 @@ class _InboxScreenState extends State<InboxScreen> {
       ],
     ),
     body: FutureBuilder<List<Map<String, dynamic>>>(
+      key: ValueKey(scope),
       future: future,
       builder: (context, s) {
         if (s.hasError) {
@@ -156,6 +173,7 @@ class _InboxScreenState extends State<InboxScreen> {
         return RefreshIndicator(
           onRefresh: refresh,
           child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(20),
             children: [
               Text(context.l10n.notificationHint),

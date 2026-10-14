@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/anime.dart';
 import '../models/content.dart';
 import '../models/enrichment.dart';
+import '../models/watch_sync.dart';
 import 'catalog.dart';
 
 class AppStore extends ChangeNotifier {
@@ -30,6 +31,12 @@ class AppStore extends ChangeNotifier {
   Future<void>? _syncFuture;
   int _syncSession = -1;
   Map<String, dynamic> _pending = {};
+  Map<String, String?> _revisions = {};
+  Map<String, String?> _bases = {};
+  Map<int, WatchConflict> _conflicts = {};
+  final Map<int, int> _edits = {};
+  List<WatchConflict> get conflicts => List.unmodifiable(_conflicts.values);
+  Future<void> backgroundSync = Future.value();
   Future<void> _writes = Future.value();
   int get pendingChanges => _pending.length;
   List<String> get providers => preferences.getStringList('providers') ?? [];
@@ -44,6 +51,32 @@ class AppStore extends ChangeNotifier {
   }
 
   bool get isReviewer => _isReviewer;
+  int unreadCount = 0;
+  Future<void> refreshUnreadCount() async {
+    final session = _sessionVersion;
+    if (!signedIn || backend == null) {
+      unreadCount = 0;
+      _notify();
+      return;
+    }
+    try {
+      final rows = await backend!
+          .from('release_inbox')
+          .select('id')
+          .eq('user_id', _userId!)
+          .isFilter('read_at', null)
+          .eq('superseded', false)
+          .limit(100)
+          .timeout(const Duration(seconds: 10));
+      if (session == _sessionVersion && !_disposed) {
+        unreadCount = rows.length;
+        _notify();
+      }
+    } catch (_) {
+      /* An optional badge never blocks local progress. */
+    }
+  }
+
   bool _isReviewer = false;
   Future<void> checkReviewer() async {
     _isReviewer = false;
@@ -74,6 +107,7 @@ class AppStore extends ChangeNotifier {
 
   int _sessionVersion = 0;
   int _mutationVersion = 0;
+  int _refreshVersion = 0;
   bool _disposed = false;
   String? _userId;
   StreamSubscription<AuthState>? _auth;
@@ -124,7 +158,7 @@ class AppStore extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
-  Future<void> initialize() async {
+  Future<void> initialize({bool waitForCloud = true}) async {
     // Capture the initial audio preference once. Later UI/device-language
     // changes must not silently change the user's dub selection.
     await preferences.setStringList('dub_languages', dubLanguages);
@@ -145,6 +179,9 @@ class AppStore extends ChangeNotifier {
         cloudLoaded = false;
         busy = false;
         syncing = false;
+        _edits.clear();
+        unreadCount = 0;
+        unawaited(refreshUnreadCount());
         unawaited(checkReviewer());
         watchError = null;
         _readLocal();
@@ -153,7 +190,9 @@ class AppStore extends ChangeNotifier {
       }
     });
     unawaited(checkReviewer());
-    await refreshWatchlist();
+    unawaited(refreshUnreadCount());
+    backgroundSync = refreshWatchlist();
+    if (waitForCloud) await backgroundSync;
   }
 
   void _readLocal() {
@@ -171,9 +210,20 @@ class AppStore extends ChangeNotifier {
               )
               .toList();
       _pending = Map<String, dynamic>.from(state?['pending'] as Map? ?? {});
+      _revisions = Map<String, String?>.from(state?['revisions'] as Map? ?? {});
+      _bases = Map<String, String?>.from(state?['bases'] as Map? ?? {});
+      _conflicts = {
+        for (final item in state?['conflicts'] as List? ?? [])
+          (item['id'] as num).toInt(): WatchConflict.fromJson(
+            Map<String, dynamic>.from(item as Map),
+          ),
+      };
     } catch (_) {
       entries = [];
       _pending = {};
+      _revisions = {};
+      _bases = {};
+      _conflicts = {};
       watchError = 'Die lokale Watchlist konnte nicht gelesen werden.';
     }
   }
@@ -185,6 +235,9 @@ class AppStore extends ChangeNotifier {
     final value = jsonEncode({
       'entries': entries.map((e) => e.toJson()).toList(),
       'pending': _pending,
+      'revisions': _revisions,
+      'bases': _bases,
+      'conflicts': _conflicts.values.map((e) => e.toJson()).toList(),
     });
     if (!await preferences.setString(key, value)) {
       throw StateError('Die Watchlist konnte lokal nicht gespeichert werden.');
@@ -207,43 +260,58 @@ class AppStore extends ChangeNotifier {
   Future<void> _flushPending() async {
     if (syncing || !signedIn || backend == null || _disposed) return;
     final version = _sessionVersion;
-    final user = _userId!;
     syncing = true;
     _notify();
     try {
       while (_pending.isNotEmpty && version == _sessionVersion && !_disposed) {
-        final id = _pending.keys.first;
+        final id = _pending.keys
+            .where((key) => !_conflicts.containsKey(int.parse(key)))
+            .firstOrNull;
+        if (id == null) break;
         final operation = _pending[id];
         final fingerprint = jsonEncode(operation);
-        if (operation == null) {
+        final response = Map<String, dynamic>.from(
           await backend!
-              .from('watchlist')
-              .delete()
-              .eq('user_id', user)
-              .eq('mal_id', int.parse(id))
-              .timeout(const Duration(seconds: 15));
-        } else {
-          final entry = WatchEntry.fromJson(
-            Map<String, dynamic>.from(operation as Map),
-          );
-          await backend!
-              .from('watchlist')
-              .upsert({
-                'user_id': user,
-                'mal_id': entry.anime.id,
-                'anime_snapshot': entry.anime.toJson(),
-                'status': entry.status.name,
-                'watched_episodes': entry.watched,
-              }, onConflict: 'user_id,mal_id')
-              .timeout(const Duration(seconds: 15));
-        }
-        if (version != _sessionVersion || _disposed) return;
-        // A newer tap during a request must remain queued.
-        if (_pending.containsKey(id) &&
-            jsonEncode(_pending[id]) == fingerprint) {
-          _pending.remove(id);
+                  .rpc(
+                    'sync_watchlist',
+                    params: {
+                      'p_mal_id': int.parse(id),
+                      'p_expected_revision': _bases[id],
+                      'p_entry': operation,
+                    },
+                  )
+                  .timeout(const Duration(seconds: 15))
+              as Map,
+        );
+        final applying = _writes.then((_) async {
+          if (version != _sessionVersion || _disposed) return;
+          final revision = response['revision'] as String?;
+          _revisions[id] = revision;
+          if (response['applied'] != true) {
+            _conflicts[int.parse(id)] = WatchConflict(
+              id: int.parse(id),
+              revision: revision,
+              remote: response['entry'] == null
+                  ? null
+                  : WatchEntry.fromJson(
+                      Map<String, dynamic>.from(response['entry'] as Map),
+                    ),
+            );
+            await _persist();
+            return;
+          }
+          // A newer tap during a request must remain queued.
+          if (_pending.containsKey(id) &&
+              jsonEncode(_pending[id]) == fingerprint) {
+            _pending.remove(id);
+            _bases.remove(id);
+          } else if (_pending.containsKey(id)) {
+            _bases[id] = revision;
+          }
           await _persist();
-        }
+        });
+        _writes = applying.catchError((Object _) {});
+        await applying;
       }
       if (version == _sessionVersion) watchError = null;
     } catch (_) {
@@ -268,39 +336,57 @@ class AppStore extends ChangeNotifier {
     }
     final version = _sessionVersion;
     final mutation = _mutationVersion;
+    final refresh = ++_refreshVersion;
     try {
       final rows = await backend!
           .from('watchlist')
           .select()
           .eq('user_id', _userId!)
+          .order('updated_at')
+          .order('mal_id')
           .timeout(const Duration(seconds: 15));
-      if (version != _sessionVersion ||
-          mutation != _mutationVersion ||
-          _disposed) {
-        return;
-      }
-      final merged = <int, WatchEntry>{
-        for (final r in rows)
-          (r['mal_id'] as num).toInt(): WatchEntry.fromJson({
-            'anime': r['anime_snapshot'],
-            'status': r['status'],
-            'watched': r['watched_episodes'],
-          }),
-      };
-      for (final op in _pending.entries) {
-        if (op.value == null) {
-          merged.remove(int.parse(op.key));
-        } else {
-          merged[int.parse(op.key)] = WatchEntry.fromJson(
-            Map<String, dynamic>.from(op.value as Map),
-          );
+      final applying = _writes.then((_) async {
+        if (version != _sessionVersion ||
+            mutation != _mutationVersion ||
+            refresh != _refreshVersion ||
+            _disposed) {
+          return;
         }
-      }
-      entries = merged.values.toList();
-      await _persist();
-      if (version != _sessionVersion || _disposed) return;
-      cloudLoaded = true;
-      if (_pending.isEmpty) watchError = null;
+        final merged = <int, WatchEntry>{
+          for (final r in rows)
+            (r['mal_id'] as num).toInt(): WatchEntry.fromJson({
+              'anime': r['anime_snapshot'],
+              'status': r['status'],
+              'watched': r['watched_episodes'],
+            }),
+        };
+        _revisions = {
+          for (final r in rows) '${r['mal_id']}': r['revision'] as String?,
+        };
+        for (final op in _pending.entries) {
+          if (op.value == null) {
+            merged.remove(int.parse(op.key));
+          } else {
+            merged[int.parse(op.key)] = WatchEntry.fromJson(
+              Map<String, dynamic>.from(op.value as Map),
+            );
+          }
+        }
+        for (final id in {...entries.map((e) => e.anime.id), ...merged.keys}) {
+          final before = entries.where((e) => e.anime.id == id).firstOrNull;
+          if (jsonEncode(before?.toJson()) !=
+              jsonEncode(merged[id]?.toJson())) {
+            _edits[id] = (_edits[id] ?? 0) + 1;
+          }
+        }
+        entries = merged.values.toList();
+        await _persist();
+        if (version != _sessionVersion || _disposed) return;
+        cloudLoaded = true;
+        if (_pending.isEmpty) watchError = null;
+      });
+      _writes = applying.catchError((Object _) {});
+      await applying;
     } catch (_) {
       if (version == _sessionVersion && mutation == _mutationVersion) {
         watchError =
@@ -311,36 +397,60 @@ class AppStore extends ChangeNotifier {
     if (version == _sessionVersion) _notify();
   }
 
-  Future<void> _change(int id, WatchEntry? entry, {int? delta}) {
+  Future<void> _change(
+    int id,
+    WatchEntry? entry, {
+    int? delta,
+    WatchStatus? status,
+    int? watched,
+    ProgressUndo? undo,
+    void Function(ProgressUndo)? onUndo,
+  }) {
     final version = _sessionVersion;
     final next = _writes.then((_) async {
       if (version != _sessionVersion || _disposed) {
         throw StateError('Das Konto wurde gewechselt.');
       }
-      if (delta != null) {
-        final latest = entries.where((e) => e.anime.id == id).firstOrNull;
+      final latest = entries.where((e) => e.anime.id == id).firstOrNull;
+      if (undo != null &&
+          (undo.session != _sessionVersion || _edits[id] != undo.edit)) {
+        throw StateError('undo_expired');
+      }
+      if (delta != null || status != null || watched != null) {
         if (latest == null) return;
-        entry = latest.progress(delta);
+        entry = delta != null
+            ? latest.progress(delta)
+            : status != null
+            ? latest.withStatus(status)
+            : latest.progress(watched! - latest.watched);
       }
       final changedEntry = entry;
       final previous = entries;
       final previousPending = Map<String, dynamic>.from(_pending);
+      final previousBases = Map<String, String?>.from(_bases);
       _mutationVersion++;
       entries = [
         ...entries.where((e) => e.anime.id != id),
         if (changedEntry != null) changedEntry,
       ];
-      if (signedIn) _pending['$id'] = entry?.toJson();
+      if (signedIn) {
+        if (!_pending.containsKey('$id')) _bases['$id'] = _revisions['$id'];
+        _pending['$id'] = entry?.toJson();
+      }
       try {
         await _persist();
       } catch (_) {
         if (version == _sessionVersion) {
           entries = previous;
           _pending = previousPending;
+          _bases = previousBases;
         }
         rethrow;
       }
       if (version == _sessionVersion) {
+        final edit = (_edits[id] ?? 0) + 1;
+        _edits[id] = edit;
+        if (latest != null) onUndo?.call(ProgressUndo(latest, version, edit));
         _notify();
         unawaited(flushPending());
       }
@@ -354,6 +464,86 @@ class AppStore extends ChangeNotifier {
   Future<void> remove(int id) => _change(id, null);
   Future<void> changeProgress(WatchEntry entry, int delta) =>
       _change(entry.anime.id, entry, delta: delta);
+  Future<void> setStatus(int id, WatchStatus status) =>
+      _change(id, null, status: status);
+  Future<void> setWatched(int id, int count) =>
+      _change(id, null, watched: count);
+
+  Future<ProgressUndo?> changeProgressWithUndo(
+    WatchEntry entry,
+    int delta,
+  ) async {
+    ProgressUndo? token;
+    await _change(
+      entry.anime.id,
+      entry,
+      delta: delta,
+      onUndo: (value) => token = value,
+    );
+    return token;
+  }
+
+  Future<bool> undoProgress(ProgressUndo token) async {
+    if (token.session != _sessionVersion ||
+        _edits[token.before.anime.id] != token.edit) {
+      return false;
+    }
+    try {
+      await _change(token.before.anime.id, token.before, undo: token);
+      return true;
+    } on StateError catch (e) {
+      if (e.message == 'undo_expired') return false;
+      rethrow;
+    }
+  }
+
+  Future<void> resolveConflict(
+    WatchConflict conflict, {
+    required bool keepLocal,
+  }) async {
+    final session = _sessionVersion;
+    final next = _writes.then((_) async {
+      if (session != _sessionVersion ||
+          !identical(_conflicts[conflict.id], conflict)) {
+        return;
+      }
+      final key = '${conflict.id}';
+      final oldEntries = entries;
+      final oldPending = Map<String, dynamic>.from(_pending);
+      final oldBases = Map<String, String?>.from(_bases);
+      final oldRevisions = Map<String, String?>.from(_revisions);
+      if (keepLocal) {
+        _bases[key] = conflict.revision;
+      } else {
+        _revisions[key] = conflict.revision;
+        _pending.remove(key);
+        _bases.remove(key);
+        entries = [
+          ...entries.where((e) => e.anime.id != conflict.id),
+          if (conflict.remote != null) conflict.remote!,
+        ];
+      }
+      _conflicts.remove(conflict.id);
+      _mutationVersion++;
+      _edits[conflict.id] = (_edits[conflict.id] ?? 0) + 1;
+      try {
+        await _persist();
+      } catch (_) {
+        if (session == _sessionVersion) {
+          entries = oldEntries;
+          _pending = oldPending;
+          _bases = oldBases;
+          _revisions = oldRevisions;
+          _conflicts[conflict.id] = conflict;
+        }
+        rethrow;
+      }
+      if (session == _sessionVersion) _notify();
+    });
+    _writes = next.catchError((Object _) {});
+    await next;
+    if (session == _sessionVersion) await flushPending();
+  }
 
   Future<int> importEntries(List<WatchEntry> incoming) async {
     final version = _sessionVersion;
@@ -403,6 +593,7 @@ class AppStore extends ChangeNotifier {
           .update({'read_at': DateTime.now().toUtc().toIso8601String()})
           .eq('id', id)
           .eq('user_id', _userId!);
+      await refreshUnreadCount();
     }
   }
 
@@ -487,30 +678,28 @@ class AppStore extends ChangeNotifier {
 
   Future<List<Map<String, dynamic>>> news() async {
     if (backend == null) return [];
-    final rows = await backend!
-        .from('news')
-        .select()
-        .eq('published', true)
-        .inFilter('language', newsLanguages)
-        .order('published_at', ascending: false)
-        .limit(120)
-        .timeout(const Duration(seconds: 15));
+    final rows = List<Map<String, dynamic>>.from(
+      await backend!
+              .rpc(
+                'companion_news',
+                params: {
+                  'p_languages': newsLanguages,
+                  'p_region': region,
+                  'p_providers': providers,
+                  'p_muted': mutedSources,
+                  'p_ids': personalNews
+                      ? entries.map((e) => e.anime.id).toList()
+                      : null,
+                },
+              )
+              .timeout(const Duration(seconds: 15))
+          as List,
+    );
     final seen = <String>{};
     return rows.where((n) {
       final url = Uri.tryParse(n['source_url'] as String? ?? '');
       final key = url == null ? '${n['id']}' : '${url.host}${url.path}';
-      final territories = n['regions'] as List?;
-      final offers = n['providers'] as List?;
-      return !mutedSources.contains(n['source_name']) &&
-          (providers.isEmpty ||
-              offers == null ||
-              offers.isEmpty ||
-              providers.any(offers.contains)) &&
-          (territories == null ||
-              territories.isEmpty ||
-              territories.contains(region)) &&
-          (!personalNews || entries.any((e) => e.anime.id == n['mal_id'])) &&
-          seen.add(key);
+      return seen.add(key);
     }).toList();
   }
 

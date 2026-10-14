@@ -3,11 +3,11 @@ import '../data/app_store.dart';
 import '../models/anime.dart';
 import '../models/content.dart';
 import '../l10n/strings.dart';
-import 'common.dart';
 import 'visuals.dart';
 import 'detail_screen.dart';
 import 'content_screens.dart';
-import 'companion_screens.dart';
+import 'watch_actions.dart';
+import 'common.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.store, required this.navigate});
@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Map<String, dynamic>>> news;
   String settings = '';
   String get keySettings =>
-      '${widget.store.region}|${widget.store.dubLanguages}|${widget.store.newsLanguages}|${widget.store.providers}|${widget.store.mutedSources}|${widget.store.personalNews}';
+      '${widget.store.scope}|${widget.store.region}|${widget.store.dubLanguages}|${widget.store.languageMode}|${widget.store.newsLanguages}|${widget.store.providers}|${widget.store.mutedSources}|${widget.store.personalNews}|${(widget.store.entries.map((e) => e.anime.id).toList()..sort()).join(',')}';
   @override
   void initState() {
     super.initState();
@@ -74,64 +74,24 @@ class _HomeScreenState extends State<HomeScreen> {
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  coral.withValues(alpha: .22),
-                  lavender.withValues(alpha: .1),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Tag(
-                  '${store.region} · ${store.dubLanguages.map((e) => e.toUpperCase()).join(' / ')}',
-                  icon: Icons.language_rounded,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n.todayHeading,
-                  style: const TextStyle(
-                    fontSize: 32,
-                    height: 1.1,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -1,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(context.l10n.todayIntro),
-                const SizedBox(height: 14),
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => InboxScreen(store: store),
-                    ),
-                  ),
-                  icon: const Icon(Icons.notifications_none_rounded),
-                  label: Text(context.l10n.notifications),
-                ),
-              ],
+          Text(
+            context.l10n.todayHeading,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${store.region} · ${store.dubLanguages.map((e) => languageLabel(e, context)).join(' / ')}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          if (store.pendingChanges > 0)
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.cloud_upload_outlined),
-              title: Text(
-                '${context.l10n.syncPending}: ${store.pendingChanges}',
-              ),
-              trailing: IconButton(
-                tooltip: context.l10n.syncNow,
-                onPressed: store.syncing ? null : store.refreshWatchlist,
-                icon: const Icon(Icons.sync),
-              ),
-            ),
+          const SizedBox(height: 16),
+          SyncStatus(store: store),
           const SizedBox(height: 24),
           Text(
             context.l10n.continueWatching,
@@ -147,50 +107,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => widget.navigate(1),
               ),
             ),
+          if (watching.isEmpty)
+            OutlinedButton.icon(
+              onPressed: () => widget.navigate(store.entries.isEmpty ? 1 : 4),
+              icon: const Icon(Icons.explore_outlined),
+              label: Text(
+                store.entries.isEmpty
+                    ? context.l10n.discoverFirst
+                    : context.l10n.myList,
+              ),
+            ),
           for (final entry in watching)
             Card(
-              clipBehavior: Clip.antiAlias,
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(12),
-                leading: SizedBox(
-                  width: 46,
-                  height: 68,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(9),
-                    child: Artwork(entry.anime.image),
-                  ),
-                ),
-                title: Text(
-                  entry.anime.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(
-                  '${entry.watched} / ${entry.anime.episodes ?? '?'}',
-                ),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) =>
-                        DetailScreen(anime: entry.anime, store: store),
-                  ),
-                ),
-                trailing: IconButton.filledTonal(
-                  tooltip: context.l10n.oneWatched,
-                  icon: const Icon(Icons.add),
-                  onPressed: () => perform(context, () async {
-                    await store.changeProgress(entry, 1);
-                    if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(context.l10n.progressSaved),
-                        action: SnackBarAction(
-                          label: context.l10n.undo,
-                          onPressed: () =>
-                              perform(context, () => store.save(entry)),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) =>
+                              DetailScreen(anime: entry.anime, store: store),
                         ),
                       ),
-                    );
-                  }),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: SizedBox(
+                              width: 44,
+                              height: 66,
+                              child: Artwork(entry.anime.image),
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Text(
+                              entry.anime.title,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          const Icon(Icons.chevron_right_rounded),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    WatchProgress(store: store, entry: entry),
+                  ],
                 ),
               ),
             ),

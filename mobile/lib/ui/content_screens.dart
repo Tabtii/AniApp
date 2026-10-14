@@ -296,7 +296,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         child: Text(
                           dayLabel(items[i].date).toUpperCase(),
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 12,
                             letterSpacing: 1.1,
                             fontWeight: FontWeight.w800,
                             color: Theme.of(context).colorScheme.secondary,
@@ -356,7 +356,7 @@ class ReleaseTile extends StatelessWidget {
                               : context.l10n.noTime)
                         : context.l10n.timeUpper,
                     style: TextStyle(
-                      fontSize: 8,
+                      fontSize: 12,
                       letterSpacing: 1.5,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -423,7 +423,7 @@ class ReleaseTile extends StatelessWidget {
                                   ? 'Dub · ${languageLabel(e.language ?? '?', context)}'
                                   : 'Streaming'}${e.episode == null ? '' : ' · ${context.l10n.episodeNumber('${e.episode}')}'}',
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 12,
                                 color: scheme.onSurfaceVariant,
                               ),
                             ),
@@ -433,7 +433,7 @@ class ReleaseTile extends StatelessWidget {
                                   ? context.l10n.japaneseBroadcast
                                   : e.provider,
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: scheme.primary,
                               ),
@@ -443,7 +443,7 @@ class ReleaseTile extends StatelessWidget {
                               Text(
                                 e.note!,
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 12,
                                   color: scheme.onSurfaceVariant,
                                 ),
                               ),
@@ -458,7 +458,7 @@ class ReleaseTile extends StatelessWidget {
                                   ? context.l10n.delayed
                                   : context.l10n.announced,
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 12,
                                 color: scheme.secondary,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -469,7 +469,7 @@ class ReleaseTile extends StatelessWidget {
                                   shortDate(e.checkedAt, context),
                                 ),
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   color: scheme.onSurfaceVariant,
                                 ),
                               ),
@@ -711,7 +711,7 @@ class NewsCard extends StatelessWidget {
                     Text(
                       metadata,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurfaceVariant,
                       ),
@@ -795,7 +795,7 @@ class NewsCard extends StatelessWidget {
                     newsCategory(context, n['category']).toUpperCase(),
                     style: TextStyle(
                       color: scheme.primary,
-                      fontSize: 9,
+                      fontSize: 12,
                       letterSpacing: 1,
                       fontWeight: FontWeight.w800,
                     ),
@@ -816,7 +816,7 @@ class NewsCard extends StatelessWidget {
                     maxLines: 2,
                     style: TextStyle(
                       color: scheme.onSurfaceVariant,
-                      fontSize: 9,
+                      fontSize: 12,
                       height: 1.4,
                     ),
                   ),
