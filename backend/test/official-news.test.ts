@@ -1,5 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';
-import {collectOfficialNews,officialUrl,parseOfficialPage} from '../../supabase/functions/content-sync/official-news.ts';
+import {collectOfficialNews,officialUrl,parseOfficialFeed,parseOfficialPage} from '../../supabase/functions/content-sync/official-news.ts';
 test('additional publishers make zero requests before a recorded permission',async()=>{
  let calls=0;const fetcher=async()=>{calls++;throw new Error('Must not fetch');};
  for(const permission of [undefined,{status:'permission_requested',ingestion_enabled:true},{status:'approved',ingestion_enabled:false}]){
@@ -14,4 +14,28 @@ test('official news rejects arbitrary origins and does not turn a news date into
 });
 test('approved crawler respects robots before reading an index',async()=>{
  let calls=0;await assert.rejects(collectOfficialNews('hidive',{status:'approved',ingestion_enabled:true},async()=>{calls++;return new Response('User-agent: *\nDisallow: /dubs');},[],new Date(),async()=>{}));assert.equal(calls,1);
+});
+const annFeed=`<?xml version="1.0"?><rss version="2.0"><channel><title>ANN</title>
+<item><title>Frieren Season 2 English Dub Premieres</title><link>https://www.animenewsnetwork.com/news/2026-10-14/frieren-season-2-english-dub/.231000?utm_source=rss</link>
+<description><![CDATA[Crunchyroll announced the <b>English dub</b> premiere.]]></description><pubDate>Tue, 14 Oct 2026 15:00:00 -0400</pubDate></item>
+<item><title>Off-site link</title><link>https://evil.test/news/2026-10-14/x</link><pubDate>Tue, 14 Oct 2026 15:00:00 -0400</pubDate></item>
+<item><title>Old story</title><link>https://www.animenewsnetwork.com/news/2026-08-01/old/.1</link><pubDate>Sat, 01 Aug 2026 10:00:00 +0000</pubDate></item>
+</channel></rss>`;
+test('ANN newsfeed keeps headline, date, feed preview and a clean article link only',()=>{
+ const rows=parseOfficialFeed(annFeed,'ann',new Date('2026-10-15T12:00:00Z'));
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].source_url,'https://www.animenewsnetwork.com/news/2026-10-14/frieren-season-2-english-dub/.231000');
+ assert.equal(rows[0].source_name,'Anime News Network');assert.equal(rows[0].published_at,'2026-10-14T19:00:00.000Z');
+ assert.equal(rows[0].summary,'Crunchyroll announced the English dub premiere.');assert.equal(rows[0].category,'dub');assert.equal(rows[0].language,'en');
+ assert.throws(()=>parseOfficialFeed('<html>not a feed</html>','ann'),/Invalid newsfeed/);
+ assert.throws(()=>parseOfficialFeed('<rss><channel></channel></rss>','ann'),/no recent articles/);
+});
+test('approved ANN makes exactly one feed request and no robots or article requests',async()=>{
+ const calls:string[]=[];
+ const result=await collectOfficialNews('ann',{status:'approved',ingestion_enabled:true},(async(url:any)=>{calls.push(String(url));return new Response(annFeed);}) as typeof fetch,[],new Date('2026-10-15T12:00:00Z'),async()=>{});
+ assert.deepEqual(calls,['https://www.animenewsnetwork.com/news/rss.xml?ann-edition=w']);
+ assert.equal(result.state,'ok');assert.equal(result.rows.length,1);
+ const denied:string[]=[];
+ await collectOfficialNews('ann',{status:'permission_requested',ingestion_enabled:false},(async(url:any)=>{denied.push(String(url));return new Response(annFeed);}) as typeof fetch);
+ assert.equal(denied.length,0);
 });
