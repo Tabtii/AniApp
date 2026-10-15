@@ -200,3 +200,15 @@ them at its own URL.
 - Open before a public release: controller name/address/contact, minimum age,
   Supabase DPA, final e-mail provider, a public (non-GitHub) support channel and
   a hosted privacy URL for the store listings.
+
+## Source monitoring (2026-10-15)
+
+- The hourly import now also records its own result in `source_status`: Tenrai
+  (MAL news and broadcast times) always, ADN and Anime2You when an import
+  failed on top of the dub-document state.
+- The app's source status shows *Läuft / Gestört / Noch nicht geprüft* and
+  flags any source without a successful check for more than three hours as
+  stale, which also exposes a stuck import job.
+- Article parse errors now name the failed check (no canonical/og:url,
+  mismatched URL, unexpected `og:type`). Crunchyroll article pages that have
+  left the RSS feed currently fail this check; the next runs show which one.
