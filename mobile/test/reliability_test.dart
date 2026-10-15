@@ -15,6 +15,9 @@ import 'package:aniapp/ui/home_screen.dart';
 class MemoryCloud {
   final rows = <int, Map<String, dynamic>>{};
   bool offline = false;
+  // Like PostgREST max-rows: a single response never exceeds this many rows.
+  int maxRows = 1000;
+  int reads = 0;
   Completer<void>? holdRead, holdReply;
   Completer<void>? writeApplied;
   int revision = 0;
@@ -81,7 +84,15 @@ class MemoryCloud {
         });
       }
       if (holdRead != null) await holdRead!.future;
-      return reply(rows.values.toList());
+      reads++;
+      final sorted = rows.values.toList()
+        ..sort((a, b) => (a['mal_id'] as int).compareTo(b['mal_id'] as int));
+      final query = request.url.queryParameters;
+      final offset = int.tryParse(query['offset'] ?? '') ?? 0;
+      final limit = int.tryParse(query['limit'] ?? '') ?? maxRows;
+      return reply(
+        sorted.skip(offset).take(limit < maxRows ? limit : maxRows).toList(),
+      );
     }),
   );
   Future<void> signIn(String id) async {
@@ -277,4 +288,32 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     store.dispose();
   });
+
+  test(
+    'a watchlist longer than one server response is loaded completely',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final cloud = MemoryCloud()..maxRows = 300;
+      for (var id = 1; id <= 1203; id++) {
+        cloud.rows[id] = {
+          'mal_id': id,
+          'anime_snapshot': {'id': id, 'title': 'Anime $id'},
+          'status': 'planned',
+          'watched_episodes': 0,
+          'revision': 'r$id',
+        };
+      }
+      await cloud.signIn('11111111-1111-4111-8111-111111111111');
+      final store = AppStore(
+        await SharedPreferences.getInstance(),
+        backend: cloud.client,
+      );
+      await store.initialize(waitForCloud: true);
+      expect(store.entries.length, 1203);
+      expect(store.entries.map((e) => e.anime.id).toSet().length, 1203);
+      expect(cloud.reads, greaterThan(1));
+      store.dispose();
+      await cloud.client.dispose();
+    },
+  );
 }

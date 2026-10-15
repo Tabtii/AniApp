@@ -338,13 +338,26 @@ class AppStore extends ChangeNotifier {
     final mutation = _mutationVersion;
     final refresh = ++_refreshVersion;
     try {
-      final rows = await backend!
-          .from('watchlist')
-          .select()
-          .eq('user_id', _userId!)
-          .order('updated_at')
-          .order('mal_id')
-          .timeout(const Duration(seconds: 15));
+      // The API caps every response (possibly below the page size), so long
+      // lists are read in a stable key order until an empty page arrives.
+      const pageSize = 500;
+      final deadline = DateTime.now().add(const Duration(seconds: 15));
+      final rows = <Map<String, dynamic>>[];
+      while (true) {
+        final remaining = deadline.difference(DateTime.now());
+        if (remaining <= Duration.zero || rows.length >= 100000) {
+          throw TimeoutException('Watchlist could not be loaded completely.');
+        }
+        final batch = await backend!
+            .from('watchlist')
+            .select()
+            .eq('user_id', _userId!)
+            .order('mal_id')
+            .range(rows.length, rows.length + pageSize - 1)
+            .timeout(remaining);
+        if (batch.isEmpty) break;
+        rows.addAll(batch);
+      }
       final applying = _writes.then((_) async {
         if (version != _sessionVersion ||
             mutation != _mutationVersion ||
