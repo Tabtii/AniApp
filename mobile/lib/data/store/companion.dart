@@ -18,16 +18,19 @@ mixin _Companion on _Settings {
       return;
     }
     try {
-      final rows = await backend!
+      // The total comes from the count header, so the badge is not capped by
+      // how many rows a single response may contain.
+      final response = await backend!
           .from('release_inbox')
           .select('id')
           .eq('user_id', _userId!)
           .isFilter('read_at', null)
           .eq('superseded', false)
-          .limit(100)
+          .limit(1)
+          .count(CountOption.exact)
           .timeout(const Duration(seconds: 10));
       if (session == _sessionVersion && !_disposed) {
-        unreadCount = rows.length;
+        unreadCount = response.count;
         _notify();
       }
     } catch (_) {
