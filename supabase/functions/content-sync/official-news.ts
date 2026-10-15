@@ -39,11 +39,12 @@ export function parseOfficialFeed(xml:string,key:OfficialKey,now=new Date()):Row
  for(const item of [...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)].slice(0,40)){
   const field=(name:string)=>new RegExp(`<${name}\\b[^>]*>([\\s\\S]*?)<\\/${name}>`,'i').exec(item[1])?.[1]??'';
   const title=cleanText(field('title')),date=new Date(cleanText(field('pubDate')));
+  // Descriptions arrive entity-encoded (&lt;cite&gt;); decode once so the preview strips the markup.
   // Tracking parameters are dropped; the article path must still match the approved pattern.
   let id:string|null=null;
   try{const u=new URL(cleanText(field('link')));u.search='';u.hash='';id=officialUrl(u.href,key);}catch{/* skipped below */}
   if(!id||!title||!Number.isFinite(date.getTime())||date.getTime()>now.getTime()+3600000||now.getTime()-date.getTime()>30*86400000)continue;
-  rows.push({headline:title.slice(0,250),summary:newsPreview(field('description'))||`${config.name} · Read the original announcement`,
+  rows.push({headline:title.slice(0,250),summary:newsPreview(cleanText(field('description')))||`${config.name} · Read the original announcement`,
    source_name:config.name,source_url:id,published_at:date.toISOString(),checked_at:now.toISOString(),language:config.language,
    category:/\bdub\b|synchro/i.test(title)?'dub':'announcement',image_url:null,published:true});
  }
