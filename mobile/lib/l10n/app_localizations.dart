@@ -2095,6 +2095,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Offline – saved copy from {date}'**
   String offlineSnapshot(String date);
+
+  /// No description provided for @loadOlder.
+  ///
+  /// In en, this message translates to:
+  /// **'Load older'**
+  String get loadOlder;
 }
 
 class _AppLocalizationsDelegate

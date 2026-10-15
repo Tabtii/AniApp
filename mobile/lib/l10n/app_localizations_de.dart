@@ -1113,4 +1113,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String offlineSnapshot(String date) {
     return 'Offline – gespeicherter Stand vom $date';
   }
+
+  @override
+  String get loadOlder => 'Ältere laden';
 }

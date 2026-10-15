@@ -465,5 +465,6 @@
   "healthDegraded": "Gestört",
   "healthPending": "Noch nicht geprüft",
   "healthStale": "Veraltet – seit über 3 Stunden keine erfolgreiche Prüfung",
-  "offlineSnapshot": "Offline – gespeicherter Stand vom {date}"
+  "offlineSnapshot": "Offline – gespeicherter Stand vom {date}",
+  "loadOlder": "Ältere laden"
 }

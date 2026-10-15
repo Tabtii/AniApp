@@ -115,10 +115,11 @@ class InboxScreen extends StatefulWidget {
 class _InboxScreenState extends State<InboxScreen> {
   late Future<List<Map<String, dynamic>>> future;
   late String scope;
+  int limit = AppStore.inboxPage;
   @override
   void initState() {
     super.initState();
-    future = widget.store.inbox();
+    future = widget.store.inbox(limit: limit);
     scope = widget.store.scope;
     widget.store.addListener(_accountChanged);
   }
@@ -126,7 +127,10 @@ class _InboxScreenState extends State<InboxScreen> {
   void _accountChanged() {
     if (mounted && scope != widget.store.scope) {
       scope = widget.store.scope;
-      setState(() => future = widget.store.inbox());
+      limit = AppStore.inboxPage;
+      setState(() {
+        future = widget.store.inbox(limit: limit);
+      });
     }
   }
 
@@ -137,8 +141,10 @@ class _InboxScreenState extends State<InboxScreen> {
   }
 
   Future<void> refresh() async {
-    final next = widget.store.inbox();
-    setState(() => future = next);
+    final next = widget.store.inbox(limit: limit);
+    setState(() {
+      future = next;
+    });
     try {
       await next;
     } catch (_) {}
@@ -242,6 +248,18 @@ class _InboxScreenState extends State<InboxScreen> {
                           Text((row['event'] as Map)['title'] as String? ?? ''),
                       ],
                     ),
+                  ),
+                ),
+              // A full page means older messages may exist.
+              if (s.data!.length >= limit)
+                Center(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      limit += AppStore.inboxPage;
+                      refresh();
+                    },
+                    icon: const Icon(Icons.expand_more_rounded),
+                    label: Text(context.l10n.loadOlder),
                   ),
                 ),
             ],
@@ -438,7 +456,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   void refresh() {
-    setState(() => future = widget.store.editorial({'action': 'queue'}));
+    setState(() {
+      future = widget.store.editorial({'action': 'queue'});
+    });
   }
 
   Future<void> review(Map<String, dynamic> row) async {
