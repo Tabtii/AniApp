@@ -102,8 +102,10 @@ export class Enrichment {
     }).finally(()=>this.pending.delete(key));
     this.pending.set(key,task);return task;
   }
-  async dub(malId:number, language:string):Promise<Json> {
+  // A source blocked in the register reports 'unavailable', exactly like an outage.
+  async dub(malId:number, language:string, blocked:Set<string>=new Set()):Promise<Json> {
     if(language==='ja')return {status:'original_language'};
+    if(blocked.has('mydublist'))return {status:'unavailable',language};
     const name=languages[language];if(!name)return {status:'unsupported'};
     try {
       const data=await this.cached(`dub:${language}`,86400000,async()=>{
@@ -116,8 +118,9 @@ export class Enrichment {
         confidence:'multiple_sources_or_curated'};
     } catch {return {status:'unavailable',language};}
   }
-  async tmdb(malId:number, region:string):Promise<Json> {
+  async tmdb(malId:number, region:string, blocked:Set<string>=new Set()):Promise<Json> {
     if(!this.options.tmdbToken && !this.options.tmdbKey)return {status:'unconfigured',providers:[]};
+    if(blocked.has('tmdb'))return {status:'unavailable',providers:[]};
     try {
       const mappings=await this.cached('mapping',86400000,async()=>{
         const rows=await this.json(mappingUrl,{},12_000_000);
@@ -143,7 +146,8 @@ export class Enrichment {
         overview:result.value.overview,source:`https://www.themoviedb.org/${path}`,checked_at:result.checkedAt};
     } catch {return {status:'unavailable',providers:[]};}
   }
-  async kitsu(malId:number):Promise<Json> {
+  async kitsu(malId:number, blocked:Set<string>=new Set()):Promise<Json> {
+    if(blocked.has('kitsu'))return {status:'unavailable'};
     try {
       const result=await this.cached(`kitsu:${malId}`,3600000,async()=>{
         const data=await this.json(kitsuLookupUrl(malId),{headers:{Accept:'application/vnd.api+json'}});
@@ -163,8 +167,9 @@ export class Enrichment {
     const data=await this.json('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,variables})});
     if(data.errors?.length || !data.data)throw new Error('Invalid AniList response');return data.data;
   }
-  async anilist(malId:number):Promise<Json> {
+  async anilist(malId:number, blocked:Set<string>=new Set()):Promise<Json> {
     if(!this.options.anilistApproved)return {status:'approval_required'};
+    if(blocked.has('anilist'))return {status:'unavailable'};
     try {
       const result=await this.cached(`ani:${malId}`,900000,()=>this.aniQuery(`query($id:Int!){Media(idMal:$id,type:ANIME,isAdult:false){id idMal isAdult title{english romaji} bannerImage coverImage{large} nextAiringEpisode{episode airingAt mediaId}}}`,{id:malId}));
       const m=result.value.Media;
@@ -173,8 +178,9 @@ export class Enrichment {
         banner:safeUrl(m.bannerImage,'s4.anilist.co'),next_release:airingEvent(m,m.nextAiringEpisode)};
     }catch{return {status:'unavailable'};}
   }
-  async calendar():Promise<Json> {
+  async calendar(blocked:Set<string>=new Set()):Promise<Json> {
     if(!this.options.anilistApproved)return {status:'approval_required',events:[]};
+    if(blocked.has('anilist'))return {status:'unavailable',events:[]};
     try {
       const result=await this.cached('ani:calendar',900000,async()=>{
         const now=new Date(), from=Math.floor(now.getTime()/1000), to=from+7*86400;
@@ -191,8 +197,8 @@ export class Enrichment {
       return {status:'ok',events:result.value.events.filter((e:Json)=>Date.parse(e.starts_at)>Date.now()),checked_at:result.checkedAt};
     }catch{return {status:'unavailable',events:[]};}
   }
-  async detail(malId:number, language:string,region:string):Promise<Json>{
-    const [dub,streaming,anilist,kitsu]=await Promise.all([this.dub(malId,language),this.tmdb(malId,region),this.anilist(malId),this.kitsu(malId)]);
+  async detail(malId:number, language:string,region:string,blocked:Set<string>=new Set()):Promise<Json>{
+    const [dub,streaming,anilist,kitsu]=await Promise.all([this.dub(malId,language,blocked),this.tmdb(malId,region,blocked),this.anilist(malId,blocked),this.kitsu(malId,blocked)]);
     return {mal_id:malId,language,region,dub,streaming,anilist,kitsu};
   }
 }

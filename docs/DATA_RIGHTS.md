@@ -291,3 +291,25 @@ Datenfreigabe sowie Store-/Datenschutzvorbereitung deaktiviert. Keine Zahlung,
 kein Werbe-SDK und kein Tracking wurden eingebaut. Ein erster kostenfreier Test
 ist nicht automatisch nichtkommerziell, wenn der Dienst bereits auf spätere
 Einnahmen ausgerichtet ist — diese Frage ist ausdrücklich Teil der Anfragen.
+
+## Not-Aus über das Quellenregister (ab 15.10.2026)
+
+Jede Quelle lässt sich ohne neues Deployment abschalten: In `public.source_rights`
+den `status` der Quelle auf `blocked` setzen. Danach wird sie nicht mehr kontaktiert.
+
+| Register-Schlüssel | Wirkt auf |
+| --- | --- |
+| `tenrai` | Stündliche MAL-News und Sendezeiten, Titelabgleich der Dub-Erkennung, Katalog-Gateway; die App weicht dann auch nicht mehr direkt auf Tenrai aus |
+| `jikan` | Offizielle MAL-API im Katalog-Gateway (dann nur noch Tenrai) |
+| `adn` | ADN-Folgenkalender, ADN News und ADN-Artikel der Dub-Erkennung |
+| `cr_de`, `cr_en` | Crunchyroll-News-Feeds der Dub-Erkennung |
+| `kitsu`, `tmdb`, `mydublist`, `anilist` | Jeweiliger Teil der Detail-Anreicherung (meldet dann „nicht verfügbar“) |
+
+Das ist **keine Freigabeprüfung**: Quellen mit `review_required` oder
+`permission_requested` laufen im Testbetrieb weiter. Anime2You, AniNews und die
+zusätzlichen Verlage (HIDIVE, Netflix, Joyn, ANN) brauchen weiterhin ausdrücklich
+`approved` plus `ingestion_enabled`. Die Server-Funktionen lesen das Register
+höchstens einmal pro Minute. Ist es nicht erreichbar, nutzen sie bis zu zehn
+Minuten den letzten Stand und lehnen danach ab. Die App folgt dem Sperrsignal des
+Katalog-Gateways; ist das Gateway selbst nicht erreichbar, bleibt ihr direkter
+Tenrai-Ausweichweg wie bisher aktiv.

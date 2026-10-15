@@ -2,6 +2,7 @@ import {sourceImage,type Row} from './content.ts';
 import {extractDubs,exactAnime,titleKey,PARSER_VERSION,type Document,type Candidate} from './dub-parser.ts';
 import {feeds,parseFeed,parsePage,feedNews,articleIdentity,announcementReader} from './dub-sources.ts';
 import {reviewedDubIdentities} from './dub-identities.ts';
+import {blockedSources} from '../_shared/source-rights.ts';
 type Database=(path:string,body:unknown,method?:string)=>Promise<any>;
 
 export function proposal(candidate:Candidate,match:Row|null,url:string):Row {
@@ -16,9 +17,10 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
   const deadline=Date.now()+45000,read=announcementReader(fetcher,deadline,pause);
   const report={published:0,review:0,conflicts:0,checked:0,unchanged:0,discovered:0,failed:[] as Row[]};
   // Publishers asked for permission are read only once approved and enabled.
-  const rights:Row[]=await db('source_rights?source_key=in.(anime2you,aninews)&select=source_key,status,ingestion_enabled',undefined,'GET');
-  const gated=new Set(['anime2you','aninews']);
-  const enabled=(source:string)=>!gated.has(source)||rights.some(r=>r.source_key===source&&r.status==='approved'&&r.ingestion_enabled===true);
+  // Other test-phase sources stop only when the register marks them blocked.
+  const rights:Row[]=await db('source_rights?select=source_key,status,ingestion_enabled',undefined,'GET');
+  const gated=new Set(['anime2you','aninews']),blocked=blockedSources(rights as {source_key:string;status:string}[]);
+  const enabled=(source:string)=>gated.has(source)?rights.some(r=>r.source_key===source&&r.status==='approved'&&r.ingestion_enabled===true):!blocked.has(source);
   const incoming=new Map<string,Document>();
   for(const f of feeds){
     if(!enabled(f.source))continue;
@@ -60,7 +62,7 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
     const key=titleKey(title),cached=identities.get(key);
     if(cached?.mal_id)return cached;
     if(cached&&now.getTime()-Date.parse(cached.checked_at)<86400000)return null;
-    if(searches>=3||Date.now()+5000>deadline)return null;
+    if(searches>=3||Date.now()+5000>deadline||!enabled('tenrai'))return null;
     searches++;
     if(searches>1)await pause(1100);
     const url=`https://api.tenrai.org/v1/anime?q=${encodeURIComponent(title)}&limit=25&sfw=true`;
