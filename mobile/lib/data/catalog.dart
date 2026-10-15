@@ -129,6 +129,15 @@ class Catalog {
         if (result.status == 200 && result.data is Map) {
           return Map<String, dynamic>.from(result.data as Map);
         }
+      } on FunctionException catch (error) {
+        // The server switched the catalog source off: no direct fallback either.
+        if (error.status == 403 &&
+            error.details is Map &&
+            (error.details as Map)['blocked'] == true) {
+          throw const CatalogException(
+            'Der Anime-Katalog ist vorübergehend abgeschaltet.',
+          );
+        }
       } catch (_) {
         /* The read-only public catalog still works if the backend is unavailable. */
       }

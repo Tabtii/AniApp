@@ -34,10 +34,33 @@ Prüfentscheidungen bleiben erhalten; vollständige Artikel werden nicht gespeic
 | Tenrai | Antwort vom 12.10.: API-Dienst kommerziell/nichtkommerziell erlaubt, keine Rechte an zugrunde liegenden Inhalten. |
 | AniList | Anfrage versendet; noch keine Antwort gefunden. |
 | TMDb / JustWatch | Anfrage versendet; noch keine Antwort gefunden. |
-| AniNews | Anfrage versendet; noch keine Antwort gefunden. |
+| AniNews | Anfrage versendet; noch keine Antwort gefunden. Import seit 15.10.2026 abgeschaltet, gespeicherte Vorschauen entfernt. |
 | MyAnimeList | Anfrage versendet; noch keine Antwort gefunden. |
 
-Zwei Antworten, vier offene Anfragen. Keine neue E-Mail wurde gesendet.
+Zwei Antworten, vier offene Anfragen aus der ersten Runde.
+
+### Zweite Anfragerunde — 15.10.2026 (DE/EN priorisiert)
+
+Am 15.10.2026 wurden acht weitere Anfragen per Gmail versendet. Sie beschreiben
+denselben Nutzungsumfang wie die Anime2You-Anfrage (Titel, Datum, Quelle, Direktlink,
+Meta-Beschreibung statt eigener/KI-Zusammenfassungen, Vorschaubild separat,
+belegte Kalenderfakten) und nehmen keine Konditionen an. Kein Adapter wurde dafür
+aktiviert; jede Quelle bleibt bis zu einer schriftlichen Antwort gesperrt.
+
+| Quelle | Kontakt und Herkunft der Adresse | Zweck |
+| --- | --- | --- |
+| Crunchyroll News | `editorial@crunchyroll.com`, Betreff PARTNERSHIP (offizielle News-About-Seite) | Bereits genutzte DE/EN-RSS-Feeds, Vorschauen, Dub-Termine |
+| ADN | `contact@animedigitalnetwork.fr` (offizieller App-Store-Entwicklerkontakt, Viz Media Europe), Bitte um Weiterleitung an das DE-Team | Bereits genutzter Folgenkalender und ADN News |
+| Anime News Network | `hello@animenewsnetwork.com` (offizielle Kontaktseite, Business Development) | Englische News |
+| Anime UK News | `hello@animeuknews.net` (offizielle Kontaktseite) | Englische/UK-News und UK-Termine |
+| Anime Corner | `business@animecorner.me` (offizielle Kontaktseite) | Englische News |
+| LiveChart.me | `contact@livechart.me` (offizielle Kontaktseite) | Sende-/Streamingtermine und Verschiebungen |
+| aniSearch | `info@anisearch.com` (eigene Facebook-Seite; Impressum hier nicht abrufbar) | Deutsche Titel, Synchro-/Veröffentlichungsangaben, News |
+| AnimeNachrichten | `info@animenachrichten.de` (offizieller Play-Store-Eintrag der eigenen App) | Deutsche News; Impressum verlangt schriftliche Zustimmung |
+
+Nicht angeschrieben: AnimeSchedule (nur Kontaktformular, keine Adresse belegbar),
+Kitsu (kein aktueller, belegter Kontakt gefunden), TVmaze (Lizenz CC BY-SA bereits
+dokumentiert; vor Nutzung Attribution/ShareAlike umsetzen).
 Private Nachrichten, Kontoadressen und Gmail-IDs bleiben außerhalb des Repositorys.
 
 ## Dokumentierte Grundlage und tatsächliche Anfragen
@@ -49,7 +72,7 @@ Private Nachrichten, Kontoadressen und Gmail-IDs bleiben außerhalb des Reposito
 | Tenrai / MAL-Katalog | [Bedingungen §§ 3, 6](https://tenrai.org/terms), Antwort vom 12.10.2026 privat geprüft | API-Dienst auch kommerziell erlaubt; Inhaltsrechte ausdrücklich nicht erteilt | Teilfreigabe dokumentiert. MAL-Metadaten, Texte, News und Bilder bleiben separat zu klären; keine pauschale kommerzielle Inhaltsfreigabe. |
 | TMDb / JustWatch | [FAQ](https://developer.themoviedb.org/docs/faq), `sales@themoviedb.org` | Anfrage am 12.10.2026 versendet; keine Zusage | Nichtkommerzielle Bedingungen mit Attribution dokumentiert; Entwicklungsphase mit Monetarisierungsabsicht, Bilder und JustWatch separat klären. Keine Bestellung oder kostenpflichtige Lizenz angenommen. |
 | Anime2You | Schriftliche Antwort vom 14.10.2026, privat geprüft; [Website](https://www.anime2you.de/) | Beschriebene Nutzung gebührenfrei gestattet | Original-Meta-Vorschau, Direktlink, Aktualisierung und begrenzte Aufbewahrung; Publisher-Zustimmung für Bilder mit ausdrücklichem Drittmaterial-Vorbehalt. |
-| AniNews | [Impressum](https://www.aninews.de/impressum/), `info@aninews.de` | Anfrage am 12.10.2026 versendet; keine Zusage | Gleicher genauer Nutzungsumfang wie Anime2You; kein Artikelvolltext in der App. |
+| AniNews | [Impressum](https://www.aninews.de/impressum/), `info@aninews.de` | Anfrage am 12.10.2026 versendet; keine Zusage. Seit 15.10.2026 kein Abruf (Feed, robots.txt, Artikel), bis eine Freigabe vorliegt | Gleicher genauer Nutzungsumfang wie Anime2You; kein Artikelvolltext in der App. |
 | MyAnimeList direkt / Jikan | [API agreement](https://myanimelist.net/static/apiagreement.html), [Support](https://myanimelist.net/about.php?go=support) | Anfrage am 12.10.2026 per Gmail an support@myanimelist.net versendet; Antwort ausstehend | Tenrai/Jikan umgehen keine Rechte der ursprünglichen Quelle. MAL-Bedingungen enthalten spezifische kommerzielle Regeln/Ausnahmen; das geplante Modell einzeln prüfen lassen. |
 | AnimeSchedule | [API terms](https://animeschedule.net/api-terms-of-use), [Kontakt](https://animeschedule.net/contact) | Schriftliche Klärung offen; Kontaktseite hier zugriffsbeschränkt | Token allein genügt nicht. Kein Zugriff über interne Endpunkte oder fremde Credentials. |
 | Crunchyroll DE/EN, ADN | [Crunchyroll](https://www.crunchyroll.com/tos), [ADN](https://animationdigitalnetwork.com/) | Feed-/Kalenderzugriff technisch vorhanden; Wiederverwendung und Monetarisierung nicht vollständig geklärt | Vor kommerziellem Start konkrete Freigabe für Abruf, Vorschauen, Bilder, Caching und abgeleitete Kalenderdaten einholen. |
@@ -268,3 +291,25 @@ Datenfreigabe sowie Store-/Datenschutzvorbereitung deaktiviert. Keine Zahlung,
 kein Werbe-SDK und kein Tracking wurden eingebaut. Ein erster kostenfreier Test
 ist nicht automatisch nichtkommerziell, wenn der Dienst bereits auf spätere
 Einnahmen ausgerichtet ist — diese Frage ist ausdrücklich Teil der Anfragen.
+
+## Not-Aus über das Quellenregister (ab 15.10.2026)
+
+Jede Quelle lässt sich ohne neues Deployment abschalten: In `public.source_rights`
+den `status` der Quelle auf `blocked` setzen. Danach wird sie nicht mehr kontaktiert.
+
+| Register-Schlüssel | Wirkt auf |
+| --- | --- |
+| `tenrai` | Stündliche MAL-News und Sendezeiten, Titelabgleich der Dub-Erkennung, Katalog-Gateway; die App weicht dann auch nicht mehr direkt auf Tenrai aus |
+| `jikan` | Offizielle MAL-API im Katalog-Gateway (dann nur noch Tenrai) |
+| `adn` | ADN-Folgenkalender, ADN News und ADN-Artikel der Dub-Erkennung |
+| `cr_de`, `cr_en` | Crunchyroll-News-Feeds der Dub-Erkennung |
+| `kitsu`, `tmdb`, `mydublist`, `anilist` | Jeweiliger Teil der Detail-Anreicherung (meldet dann „nicht verfügbar“) |
+
+Das ist **keine Freigabeprüfung**: Quellen mit `review_required` oder
+`permission_requested` laufen im Testbetrieb weiter. Anime2You, AniNews und die
+zusätzlichen Verlage (HIDIVE, Netflix, Joyn, ANN) brauchen weiterhin ausdrücklich
+`approved` plus `ingestion_enabled`. Die Server-Funktionen lesen das Register
+höchstens einmal pro Minute. Ist es nicht erreichbar, nutzen sie bis zu zehn
+Minuten den letzten Stand und lehnen danach ab. Die App folgt dem Sperrsignal des
+Katalog-Gateways; ist das Gateway selbst nicht erreichbar, bleibt ihr direkter
+Tenrai-Ausweichweg wie bisher aktiv.

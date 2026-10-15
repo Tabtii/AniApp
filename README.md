@@ -67,8 +67,8 @@ This runs in Supabase; phones do not crawl websites. Backend content updates rea
 | Additional details | Kitsu | Independent metadata, original airing dates and available trailers |
 | Japanese broadcasts | Tenrai / MyAnimeList schedules | Weekly estimates; reviewed pause notices take precedence |
 | Provider episodes | Official ADN calendar | Exact language/date/time for reviewed show-and-season mappings |
-| News | Anime2You, MyAnimeList via Tenrai, ADN News, AniNews, official Crunchyroll DE/EN RSS | Publisher meta-descriptions for Anime2You; short previews and original links for other sources |
-| Dub announcements | Supported Crunchyroll RSS, ADN, Anime2You and AniNews formats | Explicit, sufficiently evidenced DE/EN premiere or episode dates |
+| News | Anime2You, MyAnimeList via Tenrai, ADN News, official Crunchyroll DE/EN RSS (AniNews switched off until permission) | Publisher meta-descriptions for Anime2You; short previews and original links for other sources |
+| Dub announcements | Supported Crunchyroll RSS, ADN and Anime2You formats (AniNews parser kept, ingestion off until permission) | Explicit, sufficiently evidenced DE/EN premiere or episode dates |
 | Dub existence | MyDubList | Evidence that a dub exists; not proof of a local provider offer or release date |
 
 Netflix, aniverse and other providers may appear in supported news reports. This is **not** a comprehensive direct integration with every provider. TMDb and AniList adapters exist but are not active: TMDb needs a project-specific API credential; AniList additionally requires usage authorization.

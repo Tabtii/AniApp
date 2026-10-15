@@ -53,9 +53,10 @@ export function normalizeMal(data: Json, detail: boolean): Json {
   return {data: (data.data ?? []).map((entry: Json) => malAnime(entry.node)),
     pagination: {has_next_page: Boolean(data.paging?.next)}, source: 'myanimelist'};
 }
+// Register keys: the official MAL API is 'jikan' ("Jikan / MyAnimeList"), the fallback 'tenrai'.
 export async function fetchCatalog(path: string, query: Record<string, string>, clientId?: string,
-  fetcher: typeof fetch = fetch): Promise<Json> {
-  const official = clientId ? malUrl(path, query) : null;
+  fetcher: typeof fetch = fetch, blocked: Set<string> = new Set()): Promise<Json> {
+  const official = clientId && !blocked.has('jikan') ? malUrl(path, query) : null;
   if (official) {
     try {
       const result = await fetcher(official, {headers: {'X-MAL-CLIENT-ID': clientId!}, signal: AbortSignal.timeout(8000)});
@@ -63,6 +64,7 @@ export async function fetchCatalog(path: string, query: Record<string, string>, 
       // All errors fall back to read-only Tenrai, including missing catalog entries.
     } catch { /* Fallback below. */ }
   }
+  if (blocked.has('tenrai')) throw new Error('Catalog source blocked');
   const tenrai = new URL(`https://api.tenrai.org/v1/${path}`);
   Object.entries(query).forEach(([key, value]) => tenrai.searchParams.set(key, value));
   const result = await fetcher(tenrai, {headers: {'Accept': 'application/json'}, signal: AbortSignal.timeout(8000)});

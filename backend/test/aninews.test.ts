@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {rssNews} from '../../supabase/functions/content-sync/content.ts';
 import {loadAniNews} from '../../supabase/functions/content-sync/aninews.ts';
+const approved={status:'approved',ingestion_enabled:true};
 const now=new Date('2026-10-09T08:00:00Z'),url='https://www.aninews.de/news/123/new-season';
 const item=(category='Anime',link=url)=>`<item><title>Neue Staffel angekündigt</title><link>${link}</link><pubDate>Thu, 08 Oct 2026 12:00:00 GMT</pubDate><category><![CDATA[${category}]]></category><description>Eine neue Anime-Staffel wurde angekündigt.</description></item>`;
 const feed=`<rss>${item()}${item('Games','https://www.aninews.de/news/124/game')}</rss>`;
@@ -14,11 +15,18 @@ test('AniNews imports only anime stories from its own source and never confuses 
 test('AniNews verifies article identity/images, daily caching and robots before crawling',async()=>{
  const calls:string[]=[];
  const fetcher:typeof fetch=async(input,init)=>{const u=String(input);calls.push(u);assert.equal(init?.redirect,'error');return new Response(u.endsWith('robots.txt')?'User-agent: *\nAllow: /':u.endsWith('/feed')?feed:article);};
- const result=await loadAniNews(fetcher,[],now,async()=>{});assert.equal(result.rows.length,1);assert.ok(result.rows[0].image_url);assert.equal(calls.length,3);
- calls.length=0;const cached=await loadAniNews(fetcher,result.rows,now,async()=>{});assert.equal(cached.cached,1);assert.equal(calls.length,2);
- await assert.rejects(loadAniNews(async()=>new Response('User-agent: *\nDisallow: /'),[],now,async()=>{}),/robots/);
- await assert.rejects(loadAniNews(async(input)=>new Response(String(input).endsWith('robots.txt')?'User-agent: *\nAllow: /':String(input).endsWith('/feed')?feed:article.replace('content="article"','content="website"')),[],now,async()=>{}),/verified/);
+ const result=await loadAniNews(approved,fetcher,[],now,async()=>{});assert.equal(result.rows.length,1);assert.ok(result.rows[0].image_url);assert.equal(calls.length,3);
+ calls.length=0;const cached=await loadAniNews(approved,fetcher,result.rows,now,async()=>{});assert.equal(cached.cached,1);assert.equal(calls.length,2);
+ await assert.rejects(loadAniNews(approved,async()=>new Response('User-agent: *\nDisallow: /'),[],now,async()=>{}),/robots/);
+ await assert.rejects(loadAniNews(approved,async(input)=>new Response(String(input).endsWith('robots.txt')?'User-agent: *\nAllow: /':String(input).endsWith('/feed')?feed:article.replace('content="article"','content="website"')),[],now,async()=>{}),/verified/);
 });
 test('AniNews stops on denied access and does not erase existing data',async()=>{
- let calls=0;await assert.rejects(loadAniNews(async()=>{calls++;return new Response('',{status:403});},[],now,async()=>{}));assert.equal(calls,1);
+ let calls=0;await assert.rejects(loadAniNews(approved,async()=>{calls++;return new Response('',{status:403});},[],now,async()=>{}));assert.equal(calls,1);
+});
+
+test('AniNews makes no request without an approved, enabled permission',async()=>{
+ for(const permission of [undefined,{status:'permission_requested',ingestion_enabled:false},{status:'approved',ingestion_enabled:false},{status:'review_required',ingestion_enabled:true}]){
+  let calls=0;const result=await loadAniNews(permission,async()=>{calls++;return new Response('');},[],now,async()=>{});
+  assert.equal(result.state,'permission_pending');assert.equal(result.rows.length,0);assert.equal(calls,0);
+ }
 });

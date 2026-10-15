@@ -1,5 +1,7 @@
 import {acceptsPublishableKey} from '../catalog/auth.ts';
 import {Enrichment,validateInput} from './providers.ts';
+import {registerReader} from '../_shared/source-rights.ts';
+const register=registerReader(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 const service=new Enrichment({tmdbToken:Deno.env.get('TMDB_READ_ACCESS_TOKEN'),tmdbKey:Deno.env.get('TMDB_API_KEY'),
   anilistApproved:Deno.env.get('ANILIST_USAGE_APPROVED')==='true'});
 const headers={'Content-Type':'application/json','Access-Control-Allow-Origin':'*',
@@ -21,7 +23,8 @@ Deno.serve(async(req:Request)=>{
   catch{return reply({error:'Invalid enrichment request'},400);}
   if(active>=8)return reply({error:'Please retry shortly'},429);
   active++;
-  try{return reply(input.mode==='calendar'?await service.calendar():await service.detail(input.malId,input.language,input.region));}
+  try{const blocked=await register();
+    return reply(input.mode==='calendar'?await service.calendar(blocked):await service.detail(input.malId,input.language,input.region,blocked));}
   catch{return reply({error:'Enrichment temporarily unavailable'},503);}
   finally{active--;}
 });

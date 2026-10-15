@@ -6,6 +6,7 @@ import {reviewedPauses} from './reviewed-pauses.ts';
 import {loadAniNews} from './aninews.ts';
 import {syncDubAnnouncements} from './dub-sync.ts';
 import {broadcastEvents, malNews, type Row} from './content.ts';
+import {blockedSources} from '../_shared/source-rights.ts';
 const url=Deno.env.get('SUPABASE_URL')!;
 const secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 async function db(path:string,body:unknown,method='POST') {
@@ -36,7 +37,12 @@ Deno.serve(async req=> {
   // Quarter-hour jobs refresh only Anime2You; other providers keep hourly cadence.
   const sources=scope==='anime2you'?['anime2you']:['anime2you','myanimelist','schedule','adn','adn_news','aninews','dub_announcements'];
   try{report.anime2you_retention=await db('rpc/prune_anime2you_content',{});}catch{return reply({error:'Content retention unavailable'},503);}
+  // Kill switch: test-phase sources stop as soon as the register marks them blocked.
+  const registerKey:Record<string,string>={myanimelist:'tenrai',schedule:'tenrai',adn:'adn',adn_news:'adn'};
+  let blocked:Set<string>;
+  try{blocked=blockedSources(await db('source_rights?select=source_key,status',undefined,'GET'));}catch{return reply({error:'Source register unavailable'},503);}
   for(const name of sources) {
+    if(registerKey[name]&&blocked.has(registerKey[name])){report[name]={state:'blocked'};successes++;continue;}
     try {
       if(name==='anime2you') {
         const rights=await db('source_rights?source_key=eq.anime2you&select=*',undefined,'GET');
@@ -51,10 +57,11 @@ Deno.serve(async req=> {
         const rows=malNews(value.data);if(!rows.length)throw new Error('No recent news');
         await db('news?on_conflict=source_url',rows);report[name]={count:rows.length};
       } else if(name==='aninews') {
+        const rights=await db('source_rights?source_key=eq.aninews&select=status,ingestion_enabled',undefined,'GET');
         const known=await db('news?source_name=eq.AniNews&select=source_url,checked_at&limit=100',undefined,'GET');
-        const data=await loadAniNews(fetch,known);
+        const data=await loadAniNews(rights[0],fetch,known);
         if(data.rows.length)await db('news?on_conflict=source_url',data.rows);
-        report[name]={count:data.rows.length,cached:data.cached,failed:data.failed};
+        report[name]={...('state' in data?{state:data.state}:{}),count:data.rows.length,cached:data.cached,failed:data.failed};
       } else if(name==='adn_news') {
         const known=await db('news?source_name=eq.ADN%20News&select=source_url,checked_at&order=checked_at.desc&limit=100',undefined,'GET');
         const data=await crawlAdnNews(fetch,known);

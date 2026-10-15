@@ -113,4 +113,37 @@ void main() {
     );
     catalog.dispose();
   });
+
+  test(
+    'a catalog source switched off on the server is not fetched directly',
+    () async {
+      var directCalls = 0;
+      final backend = SupabaseClient(
+        'https://example.supabase.co',
+        'test-key',
+        authOptions: const AuthClientOptions(autoRefreshToken: false),
+        httpClient: MockClient(
+          (_) async => http.Response(
+            '{"error":"Catalog source is switched off","blocked":true}',
+            403,
+            headers: {'content-type': 'application/json'},
+          ),
+        ),
+      );
+      final catalog = Catalog(
+        backend: backend,
+        client: MockClient((_) async {
+          directCalls++;
+          return http.Response('{"data":[]}', 200);
+        }),
+      );
+      await expectLater(
+        catalog.search('test', 1),
+        throwsA(isA<CatalogException>()),
+      );
+      expect(directCalls, 0);
+      catalog.dispose();
+      await backend.dispose();
+    },
+  );
 }

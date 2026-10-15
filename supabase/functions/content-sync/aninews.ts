@@ -1,7 +1,9 @@
 import {rssNews,sourceImage,cleanText,type Row} from './content.ts';
 import {robotPolicy} from './adn-news.ts';
 const origin='https://www.aninews.de';
-export async function loadAniNews(fetcher:typeof fetch=fetch,known:Row[]=[],now=new Date(),pause=(ms:number)=>new Promise(r=>setTimeout(r,ms))) {
+export async function loadAniNews(permission:Row|undefined,fetcher:typeof fetch=fetch,known:Row[]=[],now=new Date(),pause=(ms:number)=>new Promise(r=>setTimeout(r,ms))) {
+  // No request at all, robots.txt included, until AniNews has granted permission.
+  if(permission?.status!=='approved'||permission.ingestion_enabled!==true)return {state:'permission_pending',rows:[] as Row[],cached:0,failed:[] as string[]};
   let robots='',last=0;const deadline=Date.now()+45000;
   const read=async(path:string)=>{
     if(!['/robots.txt','/feed'].includes(path)&&!/^\/news\/\d+\/[a-z0-9-]+\/?$/.test(path))throw new Error('Unapproved AniNews path');

@@ -1,11 +1,14 @@
 import {fetchCatalog, validateRequest} from './providers.ts';
 import {acceptsPublishableKey} from './auth.ts';
+import {registerReader} from '../_shared/source-rights.ts';
 
 const headers = {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info'};
 const cache = new Map<string, {until: number; value: unknown}>();
 const clients = new Map<string, {until: number; count: number}>();
 let nextUpstreamAt = 0;
+const register = registerReader(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+const registerKey: Record<string, string> = {myanimelist: 'jikan', tenrai: 'tenrai'};
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', {headers});
   if (req.method !== 'POST') return new Response('{}', {status: 405, headers});
@@ -25,18 +28,23 @@ Deno.serve(async (req: Request) => {
     if (text.length > 4096) return respond({error: 'Request too large'}, 413);
     input = validateRequest(JSON.parse(text));
   } catch { return respond({error: 'Invalid catalog request'}, 400); }
+  // The kill switch also applies to cached answers from a source blocked since.
+  let blocked: Set<string>;
+  try { blocked = await register(); } catch { return respond({error: 'Catalog is temporarily unavailable'}, 503); }
   const key = JSON.stringify(input);
   const found = cache.get(key);
-  if (found && found.until > now) return respond(found.value);
+  if (found && found.until > now && !blocked.has(registerKey[(found.value as {source?: string}).source ?? ''])) return respond(found.value);
   // Isolate-wide upstream budget; persistent gateway quotas are required at larger scale.
   if (now < nextUpstreamAt) return respond({error: 'Please retry shortly'}, 429);
   nextUpstreamAt = now + 1000;
   try {
-    const value = await fetchCatalog(input.path, input.query, Deno.env.get('MAL_CLIENT_ID'));
+    const value = await fetchCatalog(input.path, input.query, Deno.env.get('MAL_CLIENT_ID'), fetch, blocked);
     if (cache.size >= 500) cache.delete(cache.keys().next().value!);
     cache.set(key, {until: Date.now() + 15 * 60000, value});
     return respond(value);
   } catch (error) {
+    // Tells the app not to fall back to a direct Tenrai request either.
+    if (error instanceof Error && error.message === 'Catalog source blocked') return respond({error: 'Catalog source is switched off', blocked: true}, 403);
     console.error('Catalog upstream failed:', error instanceof Error ? error.message : 'Unknown error');
     return respond({error: 'Catalog is temporarily unavailable'}, 503);
   }
