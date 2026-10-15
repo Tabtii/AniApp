@@ -1095,4 +1095,17 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get privacyNotice =>
       'Für dein Konto speichern wir deine E-Mail-Adresse und deine Listen. Details stehen in den Datenschutzhinweisen.';
+
+  @override
+  String get healthOk => 'Läuft';
+
+  @override
+  String get healthDegraded => 'Gestört';
+
+  @override
+  String get healthPending => 'Noch nicht geprüft';
+
+  @override
+  String get healthStale =>
+      'Veraltet – seit über 3 Stunden keine erfolgreiche Prüfung';
 }

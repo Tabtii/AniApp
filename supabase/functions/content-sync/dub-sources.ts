@@ -60,7 +60,11 @@ export function parsePage(html:string,url:string):Document {
     const a=attributes(m[0]);if(m[1].toLowerCase()==='meta')meta[a.property??a.name]=a.content;
     else if(a.rel==='canonical')canonical=a.href;
   }
-  if(articleIdentity(canonical||meta['og:url'])?.url!==id.url||meta['og:type']!=='article')throw new Error('Article identity missing/mismatched');
+  // Distinct reasons, so the source status shows what changed on the page.
+  const declared=canonical||meta['og:url'];
+  if(!declared)throw new Error('Article identity missing (no canonical/og:url)');
+  if(articleIdentity(declared)?.url!==id.url)throw new Error('Article identity mismatched');
+  if(meta['og:type']!=='article')throw new Error(`Article type unexpected (${String(meta['og:type']??'none').slice(0,40)})`);
   const date=new Date(meta['article:published_time']);
   if(!meta['og:title']||!Number.isFinite(date.getTime()))throw new Error('Article metadata missing');
   const stripped=html.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'');

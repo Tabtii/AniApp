@@ -8,7 +8,7 @@
 
 **Current app:** `0.5.0+15` · Flutter · Deutsch / English · Development preview
 
-[Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
+[**Current status**](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/STATUS.md) · [Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
 
 > The current Flutter app lives on **`feature/anime-companion`**, in PR #1. The `master` branch still contains the original Kotlin application. Use the development branch to build or explore the current app.
 
@@ -29,11 +29,11 @@ source muting and optional hidden news previews. Follow DE/EN dubs for **in-app*
 announcement/date-change messages. An authenticated reviewer queue verifies
 ambiguous announcements and preserves audit history.
 
-**Data rights:** six project-specific enquiries were sent on 12 October 2026.
-Gmail was rechecked on 13 October: Tenrai permits API-service use but does not
-license the underlying content; the other five enquiries remain unanswered.
-No blanket commercial approval is claimed. Additional official publisher
-collectors stay disabled until approved.
+**Data rights:** Anime2You granted written permission on 14 October 2026 and
+Tenrai permits API-service use without licensing the underlying content. Further
+enquiries (12 and 15 October) are open; see the rights register for the current
+list. No blanket commercial approval is claimed. Sources without permission stay
+disabled, and any source can be switched off through the source register.
 [Rights register](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/DATA_RIGHTS.md) · [Implementation and remaining gates](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/COMPANION_0_4.md)
 
 ## What you can do

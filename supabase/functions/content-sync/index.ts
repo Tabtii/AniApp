@@ -7,6 +7,7 @@ import {loadAniNews} from './aninews.ts';
 import {syncDubAnnouncements} from './dub-sync.ts';
 import {broadcastEvents, malNews, type Row} from './content.ts';
 import {blockedSources} from '../_shared/source-rights.ts';
+import {importHealth} from './health.ts';
 const url=Deno.env.get('SUPABASE_URL')!;
 const secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 async function db(path:string,body:unknown,method='POST') {
@@ -111,6 +112,10 @@ Deno.serve(async req=> {
     }
   }catch{report.additional_sources={state:'unavailable'};}
   try { report.dub_alerts={delivered:await db('rpc/deliver_due_dub_alerts',{})}; await db('rpc/refresh_source_status',{}); } catch { report.dub_alerts={error:'Inbox/status refresh unavailable'}; }
+  // Tenrai has no dub documents, so its import result is its whole status.
+  for(const [key,state] of Object.entries(importHealth(report)))if(key==='tenrai'||state==='degraded'){
+    try{await db('source_status?on_conflict=source_key',{source_key:key,checked_at:new Date().toISOString(),state});}catch{report.source_status={error:'Status update unavailable'};}
+  }
   await db('rpc/finish_content_sync',{p_report:report});
   return reply({status:successes===sources.length && !Object.values(report).some(r=>(r as {failed?:unknown[]})?.failed?.length)?'ok':'partial',sources:report},successes?200:503);
 });

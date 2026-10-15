@@ -1,5 +1,7 @@
 # AniApp 0.5.0 — reliability and everyday use
 
+> **Historical release notes.** This page describes the state at this release. For the current state see [STATUS.md](STATUS.md).
+
 This change targets `feature/anime-companion`, the current Flutter application.
 The original Kotlin app on `master` is not the implementation base.
 
@@ -37,7 +39,7 @@ The migration was applied to the connected **AniApp** project on **13 October 20
 
 Live verification passed: invoker permissions and RLS, authenticated insert/update/idempotent retry, rejection of stale updates/deletes, valid deletion, and account isolation. All synthetic write tests ran inside a rolled-back transaction. The existing three watchlist rows retained an identical fingerprint of all original fields, and every row now has revision/update metadata. Public REST checks returned HTTP 200 for filtered news and an empty personal list; anonymous sync was rejected with HTTP 401 / SQLSTATE 42501.
 
-The security advisor reported **no new findings**. Two pre-existing warnings remain outside this migration: [`pg_net` installed in `public`](https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public) and [leaked-password protection disabled](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). These settings were not changed. The app PR remains unmerged; the previously successful Android/iOS builds contain the same application code.
+The security advisor reported **no new findings**. Two pre-existing warnings remain outside this migration: [`pg_net` installed in `public`](https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public) and [leaked-password protection disabled](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). These settings were not changed. At the time of this note the app PR was unmerged; the previously successful Android/iOS builds contain the same application code.
 
 For pre-existing rows the initial `updated_at` is migration time; historical edit ordering cannot be recovered. Future writes receive real update timestamps. The unread badge is capped at 100 fetched rows. News and calendar content still need network access; only watchlist state and pending operations are durable offline.
 
