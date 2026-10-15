@@ -2065,6 +2065,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account stores your email address and your lists. See the privacy policy for details.'**
   String get privacyNotice;
+
+  /// No description provided for @offlineSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline – saved copy from {date}'**
+  String offlineSnapshot(String date);
 }
 
 class _AppLocalizationsDelegate

@@ -38,6 +38,46 @@ Future<void> openSource(BuildContext context, String value) async {
   }
 }
 
+// Shown above content that comes from the device cache, never from the server.
+class OfflineNotice extends StatelessWidget {
+  const OfflineNotice(
+    this.savedAt, {
+    super.key,
+    this.margin = const EdgeInsets.fromLTRB(20, 0, 20, 12),
+  });
+  final DateTime savedAt;
+  final EdgeInsets margin;
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      margin: margin,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: scheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.cloud_off_rounded,
+            size: 18,
+            color: scheme.onSecondaryContainer,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              context.l10n.offlineSnapshot(shortDate(savedAt, context)),
+              style: TextStyle(color: scheme.onSecondaryContainer),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class EmptyPanel extends StatelessWidget {
   const EmptyPanel(
     this.text, {

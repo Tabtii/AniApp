@@ -1095,4 +1095,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get privacyNotice =>
       'Für dein Konto speichern wir deine E-Mail-Adresse und deine Listen. Details stehen in den Datenschutzhinweisen.';
+
+  @override
+  String offlineSnapshot(String date) {
+    return 'Offline – gespeicherter Stand vom $date';
+  }
 }

@@ -5,7 +5,58 @@ mixin _Content on _Settings {
   SupabaseClient? get backend;
   List<WatchEntry> get entries;
 
+  // The last successful news and calendar results survive a restart. Offline,
+  // they are returned with their age (set below) instead of an error; past
+  // events are dropped from a cached calendar. Null means the data is fresh.
+  DateTime? newsCachedAt, calendarCachedAt;
+
   Future<List<Map<String, dynamic>>> news() async {
+    final filters = jsonEncode([
+      newsLanguages,
+      region,
+      providers,
+      mutedSources,
+      personalNews ? entries.map((e) => e.anime.id).toList() : null,
+    ]);
+    try {
+      final rows = await _loadNews();
+      newsCachedAt = null;
+      if (backend != null) await _saveCache('news_cache', filters, rows);
+      return rows;
+    } catch (_) {
+      final cached = _readCache('news_cache', filters);
+      if (cached == null) rethrow;
+      newsCachedAt = cached.$1;
+      return [for (final r in cached.$2) Map<String, dynamic>.from(r as Map)];
+    }
+  }
+
+  Future<void> _saveCache(String key, String filters, List<Object?> rows) =>
+      preferences.setString(
+        key,
+        jsonEncode({
+          'filters': filters,
+          'saved_at': DateTime.now().toUtc().toIso8601String(),
+          'rows': rows,
+        }),
+      );
+
+  (DateTime, List<dynamic>)? _readCache(String key, String filters) {
+    try {
+      final raw = preferences.getString(key);
+      if (raw == null) return null;
+      final value = jsonDecode(raw) as Map;
+      if (value['filters'] != filters) return null;
+      return (
+        DateTime.parse(value['saved_at'] as String).toLocal(),
+        value['rows'] as List,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _loadNews() async {
     if (backend == null) return [];
     final rows = List<Map<String, dynamic>>.from(
       await backend!
@@ -82,8 +133,27 @@ mixin _Content on _Settings {
   }
 
   Future<List<ReleaseEvent>> calendarReleases() async {
-    final results = await Future.wait([releases(), _aniSchedule()]);
-    return mergeJapanSchedule(results[0], results[1]);
+    final filters = jsonEncode([region, dubLanguages, languageMode]);
+    try {
+      final results = await Future.wait([releases(), _aniSchedule()]);
+      final merged = mergeJapanSchedule(results[0], results[1]);
+      calendarCachedAt = null;
+      if (backend != null) {
+        await _saveCache('calendar_cache', filters, [
+          for (final e in merged) e.data,
+        ]);
+      }
+      return merged;
+    } catch (_) {
+      final cached = _readCache('calendar_cache', filters);
+      if (cached == null) rethrow;
+      calendarCachedAt = cached.$1;
+      final now = DateTime.now();
+      return [
+        for (final e in cached.$2)
+          ReleaseEvent(Map<String, dynamic>.from(e as Map)),
+      ].where((e) => e.isUpcoming(now)).toList();
+    }
   }
 
   Future<List<ReleaseEvent>> _loadReleases(int? animeId) async {

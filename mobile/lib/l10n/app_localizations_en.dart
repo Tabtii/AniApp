@@ -1088,4 +1088,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get privacyNotice =>
       'Your account stores your email address and your lists. See the privacy policy for details.';
+
+  @override
+  String offlineSnapshot(String date) {
+    return 'Offline – saved copy from $date';
+  }
 }

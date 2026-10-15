@@ -460,5 +460,7 @@
   "newsPersonalHint": "News for your list",
   "privacyPolicy": "Privacy policy",
   "contactSupport": "Contact & support",
-  "privacyNotice": "Your account stores your email address and your lists. See the privacy policy for details."
+  "privacyNotice": "Your account stores your email address and your lists. See the privacy policy for details.",
+  "offlineSnapshot": "Offline – saved copy from {date}",
+  "@offlineSnapshot": {"placeholders": {"date": {"type": "String"}}}
 }
