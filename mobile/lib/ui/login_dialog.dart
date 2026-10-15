@@ -4,6 +4,8 @@ import '../l10n/strings.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'brand.dart';
+import 'common.dart';
+import '../data/legal.dart';
 import 'visuals.dart';
 
 enum LoginMode { signIn, register, recovery, newPassword }
@@ -425,6 +427,23 @@ class _LoginDialogState extends State<LoginDialog> {
                                       ),
                                     ),
                                   ),
+                                if (_register) ...[
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    context.l10n.privacyNotice,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: TextButton(
+                                      onPressed: () =>
+                                          openSource(context, privacyUrl),
+                                      child: Text(context.l10n.privacyPolicy),
+                                    ),
+                                  ),
+                                ],
                                 const SizedBox(height: 16),
                                 FilledButton(
                                   onPressed: _busy ? null : _submit,

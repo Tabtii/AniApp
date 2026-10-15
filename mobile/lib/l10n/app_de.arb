@@ -457,5 +457,8 @@
   "watchActions": "Titel verwalten",
   "discoverFirst": "Ersten Anime entdecken",
   "changesToReview": "Änderungen prüfen",
-  "newsPersonalHint": "News zu deiner Liste"
+  "newsPersonalHint": "News zu deiner Liste",
+  "privacyPolicy": "Datenschutz",
+  "contactSupport": "Kontakt & Support",
+  "privacyNotice": "Für dein Konto speichern wir deine E-Mail-Adresse und deine Listen. Details stehen in den Datenschutzhinweisen."
 }

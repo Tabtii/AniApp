@@ -187,3 +187,16 @@ A fresh install from all repository migrations passes the backend suite
 re-run `list_migrations` and confirm only the pending file is new. The cron
 migrations still contain this project's URL; a separate test project must point
 them at its own URL.
+
+## Privacy policy and support (2026-10-15)
+
+- `docs/PRIVACY.md` is a DE/EN draft derived from the actual data flow: no
+  analytics/tracking SDKs, Supabase in Frankfurt (eu-central-1), local settings,
+  optional account data, direct image/Tenrai requests from the device.
+- Profile links to *Datenschutz* and *Kontakt & Support*; registration shows a
+  short notice with a link. URLs default to the repository and can be set per
+  build with `--dart-define=PRIVACY_URL=...` and `--dart-define=SUPPORT_URL=...`.
+- Account deletion now also removes a reviewer invitation stored by e-mail.
+- Open before a public release: controller name/address/contact, minimum age,
+  Supabase DPA, final e-mail provider, a public (non-GitHub) support channel and
+  a hosted privacy URL for the store listings.

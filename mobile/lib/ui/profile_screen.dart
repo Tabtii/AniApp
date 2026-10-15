@@ -9,6 +9,7 @@ import 'sources_screen.dart';
 import 'companion_screens.dart';
 import '../data/list_transfer.dart';
 import 'dart:convert';
+import '../data/legal.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.store});
@@ -398,6 +399,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute<void>(builder: (_) => const SourcesScreen()),
           ),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.privacy_tip_outlined),
+          title: Text(context.l10n.privacyPolicy),
+          trailing: const Icon(Icons.open_in_new_rounded),
+          onTap: () => openSource(context, privacyUrl),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.support_agent_rounded),
+          title: Text(context.l10n.contactSupport),
+          trailing: const Icon(Icons.open_in_new_rounded),
+          onTap: () => openSource(context, supportUrl),
         ),
       ],
     );

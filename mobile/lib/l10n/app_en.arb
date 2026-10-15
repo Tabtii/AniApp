@@ -457,5 +457,8 @@
   "watchActions": "Manage title",
   "discoverFirst": "Discover your first anime",
   "changesToReview": "Review changes",
-  "newsPersonalHint": "News for your list"
+  "newsPersonalHint": "News for your list",
+  "privacyPolicy": "Privacy policy",
+  "contactSupport": "Contact & support",
+  "privacyNotice": "Your account stores your email address and your lists. See the privacy policy for details."
 }

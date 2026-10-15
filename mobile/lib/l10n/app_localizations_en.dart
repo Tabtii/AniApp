@@ -1078,4 +1078,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newsPersonalHint => 'News for your list';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get contactSupport => 'Contact & support';
+
+  @override
+  String get privacyNotice =>
+      'Your account stores your email address and your lists. See the privacy policy for details.';
 }

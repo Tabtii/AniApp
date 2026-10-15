@@ -2047,6 +2047,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'News for your list'**
   String get newsPersonalHint;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact & support'**
+  String get contactSupport;
+
+  /// No description provided for @privacyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account stores your email address and your lists. See the privacy policy for details.'**
+  String get privacyNotice;
 }
 
 class _AppLocalizationsDelegate

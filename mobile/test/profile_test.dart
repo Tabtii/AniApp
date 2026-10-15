@@ -76,4 +76,35 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     store.dispose();
   });
+
+  testWidgets('profile and registration link to the privacy policy', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final store = AppStore(
+      await SharedPreferences.getInstance(),
+      backend: GuestBackend(),
+    );
+    await store.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: ProfileScreen(store: store)),
+      ),
+    );
+    await tester.tap(find.text('Anmelden oder registrieren'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Datenschutzhinweisen'), findsNothing);
+    await tester.tap(find.text('Konto erstellen').first);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Datenschutzhinweisen'), findsOneWidget);
+    await tester.tap(find.byTooltip('Schließen'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Kontakt & Support'), 300);
+    expect(find.text('Datenschutz'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+    store.dispose();
+  });
 }
