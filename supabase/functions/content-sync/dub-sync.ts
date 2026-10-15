@@ -52,7 +52,10 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
   }
   if(discovered.size)await db('dub_source_documents?on_conflict=source_url',[...discovered.values()]);
   report.discovered=discovered.size;
-  const query=new URLSearchParams({select:'*',next_check_at:`lte.${now.toISOString()}`,watch_until:`gte.${now.toISOString()}`,order:'next_check_at.asc,source_url.asc',limit:'8'});
+  // Retries are scheduled in whole hours from a run's start; hourly runs start a few seconds
+  // apart, so a small tolerance keeps a retry from slipping to the following run.
+  const dueBy=new Date(now.getTime()+2*60000).toISOString();
+  const query=new URLSearchParams({select:'*',next_check_at:`lte.${dueBy}`,watch_until:`gte.${now.toISOString()}`,order:'next_check_at.asc,source_url.asc',limit:'8'});
   const due:Row[]=await db(`dub_source_documents?${query}`,undefined,'GET');
   const matches:Row[]=await db('dub_title_matches?select=*&limit=5000',undefined,'GET');
   const identities=new Map(matches.map(m=>[m.title_key,m]));

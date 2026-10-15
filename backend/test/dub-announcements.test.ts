@@ -158,3 +158,17 @@ test('removed articles end their observation instead of degrading the source',as
     assert.equal(w.body.error,null);assert.equal(w.body.watch_until,'2026-10-10T10:00:00.000Z');assert.ok(!w.body.checked_at);
   }
 });
+
+test('articles scheduled a few seconds after the run start are still due',async()=>{
+  const paths:string[]=[];
+  const db=async(path:string,_body:any,method='POST')=>{
+    if(method!=='GET')return null;
+    paths.push(path);
+    return path.startsWith('source_rights?')?[{source_key:'anime2you',status:'approved',ingestion_enabled:true}]:[];
+  };
+  const fetcher=(async()=>new Response('<rss><channel></channel></rss>')) as typeof fetch;
+  await syncDubAnnouncements(db,fetcher,new Date('2026-10-10T10:00:00Z'),async()=>{});
+  const query=new URLSearchParams(paths.find(p=>p.startsWith('dub_source_documents?select=*'))!.split('?')[1]);
+  assert.equal(query.get('next_check_at'),'lte.2026-10-10T10:02:00.000Z');
+  assert.equal(query.get('watch_until'),'gte.2026-10-10T10:00:00.000Z');
+});
