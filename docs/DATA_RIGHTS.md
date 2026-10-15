@@ -37,7 +37,30 @@ Prüfentscheidungen bleiben erhalten; vollständige Artikel werden nicht gespeic
 | AniNews | Anfrage versendet; noch keine Antwort gefunden. Import seit 15.10.2026 abgeschaltet, gespeicherte Vorschauen entfernt. |
 | MyAnimeList | Anfrage versendet; noch keine Antwort gefunden. |
 
-Zwei Antworten, vier offene Anfragen. Keine neue E-Mail wurde gesendet.
+Zwei Antworten, vier offene Anfragen aus der ersten Runde.
+
+### Zweite Anfragerunde — 15.10.2026 (DE/EN priorisiert)
+
+Am 15.10.2026 wurden acht weitere Anfragen per Gmail versendet. Sie beschreiben
+denselben Nutzungsumfang wie die Anime2You-Anfrage (Titel, Datum, Quelle, Direktlink,
+Meta-Beschreibung statt eigener/KI-Zusammenfassungen, Vorschaubild separat,
+belegte Kalenderfakten) und nehmen keine Konditionen an. Kein Adapter wurde dafür
+aktiviert; jede Quelle bleibt bis zu einer schriftlichen Antwort gesperrt.
+
+| Quelle | Kontakt und Herkunft der Adresse | Zweck |
+| --- | --- | --- |
+| Crunchyroll News | `editorial@crunchyroll.com`, Betreff PARTNERSHIP (offizielle News-About-Seite) | Bereits genutzte DE/EN-RSS-Feeds, Vorschauen, Dub-Termine |
+| ADN | `contact@animedigitalnetwork.fr` (offizieller App-Store-Entwicklerkontakt, Viz Media Europe), Bitte um Weiterleitung an das DE-Team | Bereits genutzter Folgenkalender und ADN News |
+| Anime News Network | `hello@animenewsnetwork.com` (offizielle Kontaktseite, Business Development) | Englische News |
+| Anime UK News | `hello@animeuknews.net` (offizielle Kontaktseite) | Englische/UK-News und UK-Termine |
+| Anime Corner | `business@animecorner.me` (offizielle Kontaktseite) | Englische News |
+| LiveChart.me | `contact@livechart.me` (offizielle Kontaktseite) | Sende-/Streamingtermine und Verschiebungen |
+| aniSearch | `info@anisearch.com` (eigene Facebook-Seite; Impressum hier nicht abrufbar) | Deutsche Titel, Synchro-/Veröffentlichungsangaben, News |
+| AnimeNachrichten | `info@animenachrichten.de` (offizieller Play-Store-Eintrag der eigenen App) | Deutsche News; Impressum verlangt schriftliche Zustimmung |
+
+Nicht angeschrieben: AnimeSchedule (nur Kontaktformular, keine Adresse belegbar),
+Kitsu (kein aktueller, belegter Kontakt gefunden), TVmaze (Lizenz CC BY-SA bereits
+dokumentiert; vor Nutzung Attribution/ShareAlike umsetzen).
 Private Nachrichten, Kontoadressen und Gmail-IDs bleiben außerhalb des Repositorys.
 
 ## Dokumentierte Grundlage und tatsächliche Anfragen
@@ -47,9 +70,9 @@ Private Nachrichten, Kontoadressen und Gmail-IDs bleiben außerhalb des Reposito
 | MyDubList JSON-Datensätze | [README / Lizenz](https://github.com/Joelis57/MyDubList#attribution--license) | CC BY 4.0 ausdrücklich dokumentiert; kommerzielle Nutzung der lizenzierten Datensätze möglich | Quellenname, Link, Lizenz und Änderungshinweis sind in der App vorhanden. Keine daraus abgeleitete Bilder-, Provider- oder Terminlizenz. |
 | AniList | [Terms](https://docs.anilist.co/guide/terms-of-use), `contact@anilist.co` | Anfrage am 12.10.2026 über Gmail versendet; keine Zusage | Tracker-/Wettbewerbsregel ausdrücklich angesprochen. Die Umsatzgrenze hebt diese nicht auf. Adapter bleibt deaktiviert. |
 | Tenrai / MAL-Katalog | [Bedingungen §§ 3, 6](https://tenrai.org/terms), Antwort vom 12.10.2026 privat geprüft | API-Dienst auch kommerziell erlaubt; Inhaltsrechte ausdrücklich nicht erteilt | Teilfreigabe dokumentiert. MAL-Metadaten, Texte, News und Bilder bleiben separat zu klären; keine pauschale kommerzielle Inhaltsfreigabe. |
-| TMDb / JustWatch | [FAQ](https://developer.themoviedb.org/docs/faq), `sales@themoviedb.org` | Anfrage am 12.10.2026 versendet; keine Zusage. Seit 15.10.2026 kein Abruf (Feed, robots.txt, Artikel), bis eine Freigabe vorliegt | Nichtkommerzielle Bedingungen mit Attribution dokumentiert; Entwicklungsphase mit Monetarisierungsabsicht, Bilder und JustWatch separat klären. Keine Bestellung oder kostenpflichtige Lizenz angenommen. |
+| TMDb / JustWatch | [FAQ](https://developer.themoviedb.org/docs/faq), `sales@themoviedb.org` | Anfrage am 12.10.2026 versendet; keine Zusage | Nichtkommerzielle Bedingungen mit Attribution dokumentiert; Entwicklungsphase mit Monetarisierungsabsicht, Bilder und JustWatch separat klären. Keine Bestellung oder kostenpflichtige Lizenz angenommen. |
 | Anime2You | Schriftliche Antwort vom 14.10.2026, privat geprüft; [Website](https://www.anime2you.de/) | Beschriebene Nutzung gebührenfrei gestattet | Original-Meta-Vorschau, Direktlink, Aktualisierung und begrenzte Aufbewahrung; Publisher-Zustimmung für Bilder mit ausdrücklichem Drittmaterial-Vorbehalt. |
-| AniNews | [Impressum](https://www.aninews.de/impressum/), `info@aninews.de` | Anfrage am 12.10.2026 versendet; keine Zusage | Gleicher genauer Nutzungsumfang wie Anime2You; kein Artikelvolltext in der App. |
+| AniNews | [Impressum](https://www.aninews.de/impressum/), `info@aninews.de` | Anfrage am 12.10.2026 versendet; keine Zusage. Seit 15.10.2026 kein Abruf (Feed, robots.txt, Artikel), bis eine Freigabe vorliegt | Gleicher genauer Nutzungsumfang wie Anime2You; kein Artikelvolltext in der App. |
 | MyAnimeList direkt / Jikan | [API agreement](https://myanimelist.net/static/apiagreement.html), [Support](https://myanimelist.net/about.php?go=support) | Anfrage am 12.10.2026 per Gmail an support@myanimelist.net versendet; Antwort ausstehend | Tenrai/Jikan umgehen keine Rechte der ursprünglichen Quelle. MAL-Bedingungen enthalten spezifische kommerzielle Regeln/Ausnahmen; das geplante Modell einzeln prüfen lassen. |
 | AnimeSchedule | [API terms](https://animeschedule.net/api-terms-of-use), [Kontakt](https://animeschedule.net/contact) | Schriftliche Klärung offen; Kontaktseite hier zugriffsbeschränkt | Token allein genügt nicht. Kein Zugriff über interne Endpunkte oder fremde Credentials. |
 | Crunchyroll DE/EN, ADN | [Crunchyroll](https://www.crunchyroll.com/tos), [ADN](https://animationdigitalnetwork.com/) | Feed-/Kalenderzugriff technisch vorhanden; Wiederverwendung und Monetarisierung nicht vollständig geklärt | Vor kommerziellem Start konkrete Freigabe für Abruf, Vorschauen, Bilder, Caching und abgeleitete Kalenderdaten einholen. |
