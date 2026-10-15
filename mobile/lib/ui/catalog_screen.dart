@@ -71,6 +71,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
     }
   }
 
+  // An empty query returns to the season view instead of an unfiltered search.
+  void _submitSearch() {
+    if (loading) return;
+    searching = search.text.trim().isNotEmpty;
+    page = 1;
+    _load();
+  }
+
   @override
   void dispose() {
     widget.store.removeListener(_changed);
@@ -219,22 +227,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     suffixIcon: IconButton(
                       tooltip: context.l10n.search,
                       icon: const Icon(Icons.arrow_forward_rounded),
-                      onPressed: loading
-                          ? null
-                          : () {
-                              searching = true;
-                              page = 1;
-                              _load();
-                            },
+                      onPressed: loading ? null : _submitSearch,
                     ),
                   ),
-                  onSubmitted: (_) {
-                    if (!loading) {
-                      searching = true;
-                      page = 1;
-                      _load();
-                    }
-                  },
+                  onSubmitted: (_) => _submitSearch(),
                 ),
               ),
             ),
