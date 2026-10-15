@@ -17,7 +17,7 @@ test('approved crawler respects robots before reading an index',async()=>{
 });
 const annFeed=`<?xml version="1.0"?><rss version="2.0"><channel><title>ANN</title>
 <item><title>Frieren Season 2 English Dub Premieres</title><link>https://www.animenewsnetwork.com/news/2026-10-14/frieren-season-2-english-dub/.231000?utm_source=rss</link>
-<description><![CDATA[Crunchyroll announced the <b>English dub</b> premiere.]]></description><pubDate>Tue, 14 Oct 2026 15:00:00 -0400</pubDate></item>
+<description>Crunchyroll announced the &lt;cite&gt;English dub&lt;/cite&gt; premiere.</description><pubDate>Tue, 14 Oct 2026 15:00:00 -0400</pubDate></item>
 <item><title>Off-site link</title><link>https://evil.test/news/2026-10-14/x</link><pubDate>Tue, 14 Oct 2026 15:00:00 -0400</pubDate></item>
 <item><title>Old story</title><link>https://www.animenewsnetwork.com/news/2026-08-01/old/.1</link><pubDate>Sat, 01 Aug 2026 10:00:00 +0000</pubDate></item>
 </channel></rss>`;
