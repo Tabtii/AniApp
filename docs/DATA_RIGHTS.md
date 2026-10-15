@@ -50,7 +50,7 @@ aktiviert; jede Quelle bleibt bis zu einer schriftlichen Antwort gesperrt.
 | Quelle | Kontakt und Herkunft der Adresse | Zweck |
 | --- | --- | --- |
 | Crunchyroll News | `editorial@crunchyroll.com`, Betreff PARTNERSHIP (offizielle News-About-Seite) | Bereits genutzte DE/EN-RSS-Feeds, Vorschauen, Dub-Termine |
-| ADN | `contact@animedigitalnetwork.fr` (offizieller App-Store-Entwicklerkontakt, Viz Media Europe), Bitte um Weiterleitung an das DE-Team | Bereits genutzter Folgenkalender und ADN News |
+| ADN | `contact@animedigitalnetwork.fr` (offizieller App-Store-Entwicklerkontakt, Viz Media Europe), Bitte um Weiterleitung an das DE-Team; Support (Ticket #7775) verwies am 15.10. an `camille.claude@animedigitalnetwork.fr`, Anfrage dort am 15.10. auf Englisch gestellt | Bereits genutzter Folgenkalender und ADN News |
 | Anime News Network | `hello@animenewsnetwork.com` (offizielle Kontaktseite, Business Development) | Englische News |
 | Anime UK News | `hello@animeuknews.net` (offizielle Kontaktseite) | Englische/UK-News und UK-Termine |
 | Anime Corner | `business@animecorner.me` (offizielle Kontaktseite) | Englische News |

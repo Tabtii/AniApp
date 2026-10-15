@@ -58,6 +58,7 @@ function declaredPath(value:string):string {
   try{const u=new URL(value);return (u.hostname+u.pathname+(u.search?'?…':'')).replace(/[^\w./:?…-]/g,'').slice(0,120);}
   catch{return 'unparseable';}
 }
+export class ArticleGone extends Error {}
 export function parsePage(html:string,url:string):Document {
   const id=articleIdentity(url);if(!id)throw new Error('Unapproved announcement URL');
   const meta:Record<string,string>={};let canonical='';
@@ -71,6 +72,8 @@ export function parsePage(html:string,url:string):Document {
   // Relative URLs and a differing trailing slash still name the same article.
   let resolved='';try{resolved=new URL(declared,url).href;}catch{/* reported below */}
   const bare=(v?:string)=>v?.replace(/\/$/,'');
+  // Crunchyroll serves removed articles as its news index; that is not a source fault.
+  if(id.source.startsWith('cr_')&&/^https:\/\/(?:www\.)?crunchyroll\.com\/(?:(?:de|en)\/)?news\/?$/.test(resolved))throw new ArticleGone('Article removed (canonical points to news index)');
   if(bare(articleIdentity(resolved)?.url)!==bare(id.url))throw new Error(`Article identity mismatched (${declaredPath(resolved)})`);
   if(meta['og:type']!=='article')throw new Error(`Article type unexpected (${String(meta['og:type']??'none').slice(0,40)})`);
   const date=new Date(meta['article:published_time']);

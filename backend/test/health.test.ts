@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {importHealth} from '../../supabase/functions/content-sync/health.ts';
-import {parsePage} from '../../supabase/functions/content-sync/dub-sources.ts';
+import {ArticleGone,parsePage} from '../../supabase/functions/content-sync/dub-sources.ts';
 
 test('import health marks a register key degraded when any of its imports failed', () => {
   assert.deepEqual(importHealth({myanimelist:{count:15},schedule:{count:97},adn:{count:48,failed:[]},adn_news:{count:1,failed:[]},
@@ -25,6 +25,14 @@ test('article parse errors name the failed check', () => {
   assert.throws(()=>parsePage(page('<link rel="canonical" href="https://www.crunchyroll.com/de/news/latest/2026/10/5/other"><meta property="og:type" content="article">'),url),
     /mismatched \(www\.crunchyroll\.com\/de\/news\/latest\/2026\/10\/5\/other\)/);
   assert.throws(()=>parsePage(page('<link rel="canonical" href="javascript:alert(document.cookie)"><meta property="og:type" content="article">'),url),/mismatched \(alertdocument\.cookie\)/);
+});
+
+test('a Crunchyroll canonical pointing at the news index marks the article removed', () => {
+  const url='https://www.crunchyroll.com/de/news/latest/2026/10/5/example-article';
+  for(const href of ['https://www.crunchyroll.com/news','https://www.crunchyroll.com/de/news/','/news'])
+    assert.throws(()=>parsePage(`<html><head><link rel="canonical" href="${href}"></head></html>`,url),(e:unknown)=>e instanceof ArticleGone);
+  assert.throws(()=>parsePage('<html><head><link rel="canonical" href="https://www.crunchyroll.com/de/news/latest"></head></html>',url),
+    (e:unknown)=>!(e instanceof ArticleGone)&&/mismatched/.test(String(e)));
 });
 
 test('canonical URLs that differ only by trailing slash or are relative still match', () => {

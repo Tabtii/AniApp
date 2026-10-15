@@ -1,6 +1,6 @@
 import {sourceImage,type Row} from './content.ts';
 import {extractDubs,exactAnime,titleKey,PARSER_VERSION,type Document,type Candidate} from './dub-parser.ts';
-import {feeds,parseFeed,parsePage,feedNews,articleIdentity,announcementReader} from './dub-sources.ts';
+import {feeds,parseFeed,parsePage,feedNews,articleIdentity,announcementReader,ArticleGone,SourceError} from './dub-sources.ts';
 import {reviewedDubIdentities} from './dub-identities.ts';
 import {blockedSources} from '../_shared/source-rights.ts';
 type Database=(path:string,body:unknown,method?:string)=>Promise<any>;
@@ -15,7 +15,7 @@ export function proposal(candidate:Candidate,match:Row|null,url:string):Row {
 }
 export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetch,now=new Date(),pause=(ms:number)=>new Promise(r=>setTimeout(r,ms))) {
   const deadline=Date.now()+45000,read=announcementReader(fetcher,deadline,pause);
-  const report={published:0,review:0,conflicts:0,checked:0,unchanged:0,discovered:0,failed:[] as Row[]};
+  const report={published:0,review:0,conflicts:0,checked:0,unchanged:0,discovered:0,removed:0,failed:[] as Row[]};
   // Publishers asked for permission are read only once approved and enabled.
   // Other test-phase sources stop only when the register marks them blocked.
   const rights:Row[]=await db('source_rights?select=source_key,status,ingestion_enabled',undefined,'GET');
@@ -128,6 +128,11 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
         content_hash:hash,parser_version:PARSER_VERSION,etag:response?.headers.get('etag')??null,last_modified:response?.headers.get('last-modified')??null,error:null},'PATCH');
       report.checked++;
     }catch(e){
+      // A removed article ends its observation; existing reviewed releases stay untouched.
+      if(e instanceof ArticleGone||(e instanceof SourceError&&[404,410].includes(e.status))){
+        await db(`dub_source_documents?source_url=eq.${encodeURIComponent(url)}`,{last_attempt_at:now.toISOString(),watch_until:now.toISOString(),error:null},'PATCH');
+        report.removed++;continue;
+      }
       const error=e instanceof Error?e.message:'Unavailable';report.failed.push({source:url,error});
       await db(`dub_source_documents?source_url=eq.${encodeURIComponent(url)}`,{last_attempt_at:now.toISOString(),next_check_at:new Date(now.getTime()+6*3600000).toISOString(),error:error.slice(0,500)},'PATCH');
     }
