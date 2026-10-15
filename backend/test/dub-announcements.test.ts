@@ -131,3 +131,30 @@ test('official RSS subscription uses only its published path and still honors fe
   await assert.rejects(read(feeds[1].url),/blocked/);
   assert.deepEqual(calls,[feeds[0].url]);
 });
+
+test('removed articles end their observation instead of degrading the source',async()=>{
+  const gone='https://www.crunchyroll.com/de/news/announcements/2026/10/2/removed-article',missing='https://www.anime2you.de/news/103/missing/';
+  const watched=[{source_url:gone,source_key:'cr_de',parser_version:1},{source_url:missing,source_key:'anime2you',parser_version:1}];
+  const writes:{path:string;body:any}[]=[];
+  const db=async(path:string,body:any,method='POST')=>{
+    if(method==='GET'){
+      if(path.startsWith('source_rights?'))return [{source_key:'anime2you',status:'approved',ingestion_enabled:true}];
+      if(path.startsWith('dub_source_documents?'))return watched;
+      return [];
+    }
+    writes.push({path,body});return null;
+  };
+  const fetcher=(async(url:any)=>{
+    if(String(url).endsWith('/robots.txt'))return new Response('User-agent: *\nAllow: /');
+    if(url===gone)return new Response('<html><head><link rel="canonical" href="https://www.crunchyroll.com/news"><meta property="og:type" content="website"></head></html>');
+    if(url===missing)return new Response('Not found',{status:404});
+    return new Response('<rss><channel></channel></rss>');
+  }) as typeof fetch;
+  const report=await syncDubAnnouncements(db,fetcher,new Date('2026-10-10T10:00:00Z'),async()=>{});
+  assert.equal(report.removed,2);
+  assert.ok(!report.failed.some(r=>r.source===gone||r.source===missing));
+  for(const url of [gone,missing]){
+    const w=writes.find(x=>x.path===`dub_source_documents?source_url=eq.${encodeURIComponent(url)}`)!;
+    assert.equal(w.body.error,null);assert.equal(w.body.watch_until,'2026-10-10T10:00:00.000Z');assert.ok(!w.body.checked_at);
+  }
+});

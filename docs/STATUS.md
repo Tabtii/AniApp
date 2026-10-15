@@ -17,7 +17,7 @@ their release and are kept for history.
 
 | Function | Version | Notes |
 | --- | --- | --- |
-| `content-sync` | 15 | Hourly import, Anime2You every 15 minutes, register kill switch, import health in `source_status` |
+| `content-sync` | 17 | Hourly import, Anime2You every 15 minutes, register kill switch, import health in `source_status`, removed articles leave observation |
 | `catalog` | 4 | Kill switch; tells the app not to fall back when Tenrai is blocked |
 | `anime-enrichment` | 5 | Kill switch for Kitsu, TMDb, MyDubList, AniList |
 | `companion-account` | 2 | Export, deletion (incl. reviewer invitation), reviewer queue |
@@ -37,7 +37,8 @@ their release and are kept for history.
 - **Running under review in the test phase:** Tenrai/MAL, ADN, Crunchyroll DE/EN, Kitsu.
 - **Off until permission:** AniNews, AniList, TMDb, HIDIVE, Netflix, Joyn, ANN, AnimeSchedule.
 - **Open enquiries:** first round 12 Oct (AniList, TMDb, AniNews, MyAnimeList);
-  second round 15 Oct (Crunchyroll, ADN – ticket #7775, ANN, Anime UK News,
+  second round 15 Oct (Crunchyroll, ADN – ticket #7775, referred by support to
+  Camille Claude, re-sent in English 15 Oct; ANN, Anime UK News,
   Anime Corner, LiveChart.me, aniSearch, AnimeNachrichten).
 
 ## Data protection and accounts
@@ -53,6 +54,6 @@ their release and are kept for history.
 | --- | --- |
 | P0 | Own SMTP (e.g. Gmail app password) and end-to-end auth test; fill privacy placeholders |
 | P1 | Physical Android/iPhone acceptance; signed Android release and TestFlight |
-| P1 | Crunchyroll pages that left the RSS feed fail identity checks (diagnostics deployed with source monitoring) |
+| P2 | Crunchyroll: articles whose canonical points to the news index are treated as removed (v17); watch the remaining "mismatched" cases |
 | P1 | Apply the two pending migrations; decide on leaked-password protection |
-| P2 | Search improvements, push notifications, further sources |
+| P2 | Push notifications, further sources |
