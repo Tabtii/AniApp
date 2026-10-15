@@ -10,21 +10,24 @@ their release and are kept for history.
 | --- | --- |
 | App version | `0.5.0+15` (Flutter, Android + iOS, DE/EN) |
 | Development branch | `feature/anime-companion`; `master` still holds the original Kotlin app |
-| Merged since 0.5 | Anime2You permission and retention (#3), source kill switch, AniNews off and migration history alignment (#4), privacy policy and support links (#5), watchlist pagination (#6) |
+| Merged since 0.5 | Anime2You permission and retention (#3), source kill switch, AniNews off and migration history alignment (#4), privacy policy and support links (#5), watchlist pagination (#6), source monitoring (#7), status docs (#8), advisor migration (#9), AppStore split (#10), offline news/calendar cache (#11), inbox count/paging (#12) |
 | Release to `master` | Open: PR #1 is a draft; no store build yet |
 
 ## Live backend (Supabase, Frankfurt)
 
 | Function | Version | Notes |
 | --- | --- | --- |
-| `content-sync` | 14 | Hourly import, Anime2You every 15 minutes, register kill switch |
+| `content-sync` | 15 | Hourly import, Anime2You every 15 minutes, register kill switch, import health in `source_status` |
 | `catalog` | 4 | Kill switch; tells the app not to fall back when Tenrai is blocked |
 | `anime-enrichment` | 5 | Kill switch for Kitsu, TMDb, MyDubList, AniList |
 | `companion-account` | 2 | Export, deletion (incl. reviewer invitation), reviewer queue |
 
-- Migrations: repository and live history use the same versions. Only
-  `20261015060000_aninews_ingestion_off` is pending (removes 19 stored AniNews
-  previews); ingestion itself is already off in code.
+- Migrations: repository and live history use the same versions. Two are
+  pending: `20261015060000_aninews_ingestion_off` (removes 19 stored AniNews
+  previews; ingestion itself is already off in code) and
+  `20261015090000_security_advisor_fixes` (moves `pg_net` out of `public`,
+  indexes the audit actor). Database writes from the assistant session hang,
+  so they need to be applied by the owner or once write access works.
 - Any source can be switched off by setting `source_rights.status = 'blocked'`
   (see `DATA_RIGHTS.md`).
 
@@ -51,5 +54,5 @@ their release and are kept for history.
 | P0 | Own SMTP (e.g. Gmail app password) and end-to-end auth test; fill privacy placeholders |
 | P1 | Physical Android/iPhone acceptance; signed Android release and TestFlight |
 | P1 | Crunchyroll pages that left the RSS feed fail identity checks (diagnostics deployed with source monitoring) |
-| P1 | Split `app_store.dart`; review Supabase security advisor warnings |
-| P2 | Durable news/calendar cache, search improvements, push notifications, further sources |
+| P1 | Apply the two pending migrations; decide on leaked-password protection |
+| P2 | Search improvements, push notifications, further sources |
