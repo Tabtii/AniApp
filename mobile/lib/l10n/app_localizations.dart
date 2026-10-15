@@ -2065,6 +2065,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account stores your email address and your lists. See the privacy policy for details.'**
   String get privacyNotice;
+
+  /// No description provided for @healthOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get healthOk;
+
+  /// No description provided for @healthDegraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Disrupted'**
+  String get healthDegraded;
+
+  /// No description provided for @healthPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked yet'**
+  String get healthPending;
+
+  /// No description provided for @healthStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Stale – no successful check for over 3 hours'**
+  String get healthStale;
 }
 
 class _AppLocalizationsDelegate

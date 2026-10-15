@@ -333,6 +333,21 @@ class _FollowDubButtonState extends State<FollowDubButton> {
   );
 }
 
+// Imports run hourly, so a check older than three hours means the source or
+// the import job is stuck, even if the last recorded state was fine.
+String healthLabel(BuildContext context, Map health, DateTime now) {
+  final checked = DateTime.tryParse(health['checked_at'] as String? ?? '');
+  if (health['state'] == 'pending' || checked == null) {
+    return context.l10n.healthPending;
+  }
+  final label = now.difference(checked) > const Duration(hours: 3)
+      ? context.l10n.healthStale
+      : health['state'] == 'ok'
+      ? context.l10n.healthOk
+      : context.l10n.healthDegraded;
+  return '$label · ${shortDate(checked, context)}';
+}
+
 class SourceHealthScreen extends StatefulWidget {
   const SourceHealthScreen({super.key, required this.store});
   final AppStore store;
@@ -393,9 +408,7 @@ class _SourceHealthScreenState extends State<SourceHealthScreen> {
                       for (final h in health.where(
                         (h) => h['source_key'] == r['source_key'],
                       ))
-                        Text(
-                          '${h['state']} · ${shortDate(DateTime.tryParse(h['checked_at'] as String? ?? ''), context)}',
-                        ),
+                        Text(healthLabel(context, h as Map, DateTime.now())),
                     ],
                   ),
                   trailing: const Icon(Icons.open_in_new),
