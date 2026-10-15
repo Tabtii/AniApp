@@ -34,7 +34,7 @@ Prüfentscheidungen bleiben erhalten; vollständige Artikel werden nicht gespeic
 | Tenrai | Antwort vom 12.10.: API-Dienst kommerziell/nichtkommerziell erlaubt, keine Rechte an zugrunde liegenden Inhalten. |
 | AniList | Anfrage versendet; noch keine Antwort gefunden. |
 | TMDb / JustWatch | Anfrage versendet; noch keine Antwort gefunden. |
-| AniNews | Anfrage versendet; noch keine Antwort gefunden. |
+| AniNews | Anfrage versendet; noch keine Antwort gefunden. Import seit 15.10.2026 abgeschaltet, gespeicherte Vorschauen entfernt. |
 | MyAnimeList | Anfrage versendet; noch keine Antwort gefunden. |
 
 Zwei Antworten, vier offene Anfragen. Keine neue E-Mail wurde gesendet.
@@ -47,7 +47,7 @@ Private Nachrichten, Kontoadressen und Gmail-IDs bleiben außerhalb des Reposito
 | MyDubList JSON-Datensätze | [README / Lizenz](https://github.com/Joelis57/MyDubList#attribution--license) | CC BY 4.0 ausdrücklich dokumentiert; kommerzielle Nutzung der lizenzierten Datensätze möglich | Quellenname, Link, Lizenz und Änderungshinweis sind in der App vorhanden. Keine daraus abgeleitete Bilder-, Provider- oder Terminlizenz. |
 | AniList | [Terms](https://docs.anilist.co/guide/terms-of-use), `contact@anilist.co` | Anfrage am 12.10.2026 über Gmail versendet; keine Zusage | Tracker-/Wettbewerbsregel ausdrücklich angesprochen. Die Umsatzgrenze hebt diese nicht auf. Adapter bleibt deaktiviert. |
 | Tenrai / MAL-Katalog | [Bedingungen §§ 3, 6](https://tenrai.org/terms), Antwort vom 12.10.2026 privat geprüft | API-Dienst auch kommerziell erlaubt; Inhaltsrechte ausdrücklich nicht erteilt | Teilfreigabe dokumentiert. MAL-Metadaten, Texte, News und Bilder bleiben separat zu klären; keine pauschale kommerzielle Inhaltsfreigabe. |
-| TMDb / JustWatch | [FAQ](https://developer.themoviedb.org/docs/faq), `sales@themoviedb.org` | Anfrage am 12.10.2026 versendet; keine Zusage | Nichtkommerzielle Bedingungen mit Attribution dokumentiert; Entwicklungsphase mit Monetarisierungsabsicht, Bilder und JustWatch separat klären. Keine Bestellung oder kostenpflichtige Lizenz angenommen. |
+| TMDb / JustWatch | [FAQ](https://developer.themoviedb.org/docs/faq), `sales@themoviedb.org` | Anfrage am 12.10.2026 versendet; keine Zusage. Seit 15.10.2026 kein Abruf (Feed, robots.txt, Artikel), bis eine Freigabe vorliegt | Nichtkommerzielle Bedingungen mit Attribution dokumentiert; Entwicklungsphase mit Monetarisierungsabsicht, Bilder und JustWatch separat klären. Keine Bestellung oder kostenpflichtige Lizenz angenommen. |
 | Anime2You | Schriftliche Antwort vom 14.10.2026, privat geprüft; [Website](https://www.anime2you.de/) | Beschriebene Nutzung gebührenfrei gestattet | Original-Meta-Vorschau, Direktlink, Aktualisierung und begrenzte Aufbewahrung; Publisher-Zustimmung für Bilder mit ausdrücklichem Drittmaterial-Vorbehalt. |
 | AniNews | [Impressum](https://www.aninews.de/impressum/), `info@aninews.de` | Anfrage am 12.10.2026 versendet; keine Zusage | Gleicher genauer Nutzungsumfang wie Anime2You; kein Artikelvolltext in der App. |
 | MyAnimeList direkt / Jikan | [API agreement](https://myanimelist.net/static/apiagreement.html), [Support](https://myanimelist.net/about.php?go=support) | Anfrage am 12.10.2026 per Gmail an support@myanimelist.net versendet; Antwort ausstehend | Tenrai/Jikan umgehen keine Rechte der ursprünglichen Quelle. MAL-Bedingungen enthalten spezifische kommerzielle Regeln/Ausnahmen; das geplante Modell einzeln prüfen lassen. |

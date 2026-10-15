@@ -51,10 +51,11 @@ Deno.serve(async req=> {
         const rows=malNews(value.data);if(!rows.length)throw new Error('No recent news');
         await db('news?on_conflict=source_url',rows);report[name]={count:rows.length};
       } else if(name==='aninews') {
+        const rights=await db('source_rights?source_key=eq.aninews&select=status,ingestion_enabled',undefined,'GET');
         const known=await db('news?source_name=eq.AniNews&select=source_url,checked_at&limit=100',undefined,'GET');
-        const data=await loadAniNews(fetch,known);
+        const data=await loadAniNews(rights[0],fetch,known);
         if(data.rows.length)await db('news?on_conflict=source_url',data.rows);
-        report[name]={count:data.rows.length,cached:data.cached,failed:data.failed};
+        report[name]={...('state' in data?{state:data.state}:{}),count:data.rows.length,cached:data.cached,failed:data.failed};
       } else if(name==='adn_news') {
         const known=await db('news?source_name=eq.ADN%20News&select=source_url,checked_at&order=checked_at.desc&limit=100',undefined,'GET');
         const data=await crawlAdnNews(fetch,known);

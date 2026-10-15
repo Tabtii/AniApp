@@ -15,11 +15,13 @@ export function proposal(candidate:Candidate,match:Row|null,url:string):Row {
 export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetch,now=new Date(),pause=(ms:number)=>new Promise(r=>setTimeout(r,ms))) {
   const deadline=Date.now()+45000,read=announcementReader(fetcher,deadline,pause);
   const report={published:0,review:0,conflicts:0,checked:0,unchanged:0,discovered:0,failed:[] as Row[]};
-  const rights:Row[]=await db('source_rights?source_key=eq.anime2you&select=status,ingestion_enabled',undefined,'GET');
-  const anime2youEnabled=rights[0]?.status==='approved'&&rights[0]?.ingestion_enabled===true;
+  // Publishers asked for permission are read only once approved and enabled.
+  const rights:Row[]=await db('source_rights?source_key=in.(anime2you,aninews)&select=source_key,status,ingestion_enabled',undefined,'GET');
+  const gated=new Set(['anime2you','aninews']);
+  const enabled=(source:string)=>!gated.has(source)||rights.some(r=>r.source_key===source&&r.status==='approved'&&r.ingestion_enabled===true);
   const incoming=new Map<string,Document>();
   for(const f of feeds){
-    if(f.source==='anime2you'&&!anime2youEnabled)continue;
+    if(!enabled(f.source))continue;
     try{
       const documents=parseFeed((await read(f.url)).body,f.source,now);
       if(!documents.length)throw new Error('Empty recent announcement feed');
@@ -40,7 +42,7 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
   const discoveries:Row[]=[...[...incoming.values()].map(d=>({source_url:d.url,headline:d.headline,published_at:d.published_at})),...knownNews,...existingEvents];
   for(const r of discoveries){
     const id=articleIdentity(r.source_url);if(!id||existingUrls.has(id.url))continue;
-    if(id.source==='anime2you'&&!anime2youEnabled)continue;
+    if(!enabled(id.source))continue;
     const doc=incoming.get(id.url);
     const priority=doc&&extractDubs(doc).some(c=>!c.reason)?3:r.title?2:doc?1:0;
     discovered.set(id.url,{source_url:id.url,source_key:id.source,headline:(r.headline??r.title??'').slice(0,500),published_at:r.published_at??null,
@@ -73,7 +75,7 @@ export async function syncDubAnnouncements(db:Database,fetcher:typeof fetch=fetc
     return match.mal_id?match:null;
   }
   for(const watched of due){
-    if(watched.source_key==='anime2you'&&!anime2youEnabled)continue;
+    if(!enabled(watched.source_key))continue;
     if(Date.now()+1500>deadline)break;
     const url=watched.source_url;
     try{

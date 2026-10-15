@@ -84,7 +84,7 @@ test('hourly worker revisits articles that left the feed; 304 and outages preser
   const writes:{path:string;body:any;method:string}[]=[],requests:{url:string;headers:any}[]=[];
   const db=async(path:string,body:any,method='POST')=>{
     if(method==='GET'){
-      if(path.startsWith('source_rights?'))return [{status:'approved',ingestion_enabled:true}];
+      if(path.startsWith('source_rights?'))return [{source_key:'anime2you',status:'approved',ingestion_enabled:true}];
       if(path.startsWith('dub_source_documents?select=source_url'))return watched;
       if(path.startsWith('dub_source_documents?'))return watched;
       return [];
@@ -105,6 +105,23 @@ test('hourly worker revisits articles that left the feed; 304 and outages preser
   assert.ok(writes.every(w=>w.path.startsWith('dub_source_documents?')));
   assert.ok(writes.some(w=>w.body.error==='Announcement HTTP 503'&&!w.body.checked_at));
   assert.ok(writes.some(w=>w.body.error===null&&w.body.checked_at));
+});
+
+test('dub worker never fetches AniNews feeds or watched articles without permission',async()=>{
+  const watched=[{source_url:'https://www.aninews.de/news/201/dub/',source_key:'aninews',parser_version:1}];
+  const requests:string[]=[];
+  const db=async(path:string,_body:any,method='POST')=>{
+    if(method!=='GET')return null;
+    if(path.startsWith('source_rights?'))return [{source_key:'anime2you',status:'approved',ingestion_enabled:true},
+      {source_key:'aninews',status:'permission_requested',ingestion_enabled:false}];
+    if(path.startsWith('dub_source_documents?'))return watched;
+    return [];
+  };
+  const fetcher=(async(url:any)=>{requests.push(String(url));
+    return String(url).endsWith('/robots.txt')?new Response('User-agent: *\nAllow: /'):new Response('<rss><channel></channel></rss>');}) as typeof fetch;
+  await syncDubAnnouncements(db,fetcher,new Date('2026-10-10T10:00:00Z'),async()=>{});
+  assert.ok(requests.some(u=>u.startsWith('https://www.anime2you.de/')));
+  assert.ok(!requests.some(u=>u.startsWith('https://www.aninews.de/')));
 });
 
 test('official RSS subscription uses only its published path and still honors feed access denials',async()=>{
