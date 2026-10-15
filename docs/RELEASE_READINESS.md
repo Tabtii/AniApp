@@ -200,3 +200,12 @@ them at its own URL.
 - Open before a public release: controller name/address/contact, minimum age,
   Supabase DPA, final e-mail provider, a public (non-GitHub) support channel and
   a hosted privacy URL for the store listings.
+
+## Supabase advisor findings (checked 2026-10-15)
+
+| Finding | Handling |
+| --- | --- |
+| `pg_net` registered in `public` (security, WARN) | Migration `20261015090000_security_advisor_fixes` re-creates it in `extensions`. Its functions stay in schema `net`, so the cron jobs keep working. **Pending:** not yet applied live. |
+| Leaked-password protection disabled (security, WARN) | Dashboard setting (Authentication → Policies / password security). Depends on the Supabase plan; owner decision. |
+| `dub_review_audit.actor` foreign key without index (performance, INFO) | Index added in the same migration. |
+| `news_title_time`, `dub_candidates_review` never used (performance, INFO) | Kept: the project is young and both serve planned queries. Re-check after real usage. |
