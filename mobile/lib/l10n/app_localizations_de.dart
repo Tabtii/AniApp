@@ -1110,5 +1110,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Veraltet – seit über 3 Stunden keine erfolgreiche Prüfung';
 
   @override
+  String offlineSnapshot(String date) {
+    return 'Offline – gespeicherter Stand vom $date';
+  }
+
+  @override
   String get loadOlder => 'Ältere laden';
 }

@@ -2090,6 +2090,12 @@ abstract class AppLocalizations {
   /// **'Stale – no successful check for over 3 hours'**
   String get healthStale;
 
+  /// No description provided for @offlineSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline – saved copy from {date}'**
+  String offlineSnapshot(String date);
+
   /// No description provided for @loadOlder.
   ///
   /// In en, this message translates to:
