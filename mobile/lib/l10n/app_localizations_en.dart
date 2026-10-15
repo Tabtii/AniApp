@@ -1100,4 +1100,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get healthStale => 'Stale – no successful check for over 3 hours';
+
+  @override
+  String offlineSnapshot(String date) {
+    return 'Offline – saved copy from $date';
+  }
 }

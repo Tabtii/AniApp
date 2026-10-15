@@ -218,6 +218,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(top: 8, bottom: 24),
                 children: [
+                  if (widget.store.calendarCachedAt != null)
+                    OfflineNotice(widget.store.calendarCachedAt!),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                     child: Text(
@@ -622,6 +624,11 @@ class _NewsScreenState extends State<NewsScreen> {
                 itemBuilder: (context, i) => Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    if (i == 0 && widget.store.newsCachedAt != null)
+                      OfflineNotice(
+                        widget.store.newsCachedAt!,
+                        margin: const EdgeInsets.only(bottom: 12),
+                      ),
                     NewsCard(
                       news: rows[i],
                       featured: i == 0 && !widget.store.spoilerSafe,

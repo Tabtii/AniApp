@@ -464,5 +464,7 @@
   "healthOk": "Running",
   "healthDegraded": "Disrupted",
   "healthPending": "Not checked yet",
-  "healthStale": "Stale – no successful check for over 3 hours"
+  "healthStale": "Stale – no successful check for over 3 hours",
+  "offlineSnapshot": "Offline – saved copy from {date}",
+  "@offlineSnapshot": {"placeholders": {"date": {"type": "String"}}}
 }
