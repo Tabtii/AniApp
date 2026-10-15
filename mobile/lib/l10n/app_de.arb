@@ -461,5 +461,9 @@
   "privacyPolicy": "Datenschutz",
   "contactSupport": "Kontakt & Support",
   "privacyNotice": "Für dein Konto speichern wir deine E-Mail-Adresse und deine Listen. Details stehen in den Datenschutzhinweisen.",
+  "healthOk": "Läuft",
+  "healthDegraded": "Gestört",
+  "healthPending": "Noch nicht geprüft",
+  "healthStale": "Veraltet – seit über 3 Stunden keine erfolgreiche Prüfung",
   "offlineSnapshot": "Offline – gespeicherter Stand vom {date}"
 }

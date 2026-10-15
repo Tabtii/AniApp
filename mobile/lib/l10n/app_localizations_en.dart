@@ -1090,6 +1090,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your account stores your email address and your lists. See the privacy policy for details.';
 
   @override
+  String get healthOk => 'Running';
+
+  @override
+  String get healthDegraded => 'Disrupted';
+
+  @override
+  String get healthPending => 'Not checked yet';
+
+  @override
+  String get healthStale => 'Stale – no successful check for over 3 hours';
+
+  @override
   String offlineSnapshot(String date) {
     return 'Offline – saved copy from $date';
   }

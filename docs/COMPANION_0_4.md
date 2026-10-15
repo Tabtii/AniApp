@@ -1,5 +1,7 @@
 # AniApp 0.4.0 — implementation and operational notes
 
+> **Historical release notes.** This page describes the state at this release. For the current state see [STATUS.md](STATUS.md).
+
 ## Implemented
 
 - **Today:** personal continue-watching cards, atomic +1 progress, undo,
@@ -36,7 +38,7 @@
 
 ## Important limits
 
-Offline merge policy is **last replayed absolute value wins**, not a CRDT: two
+Offline merge policy (0.4 only; replaced in 0.5 by revision-based conflict detection, see `COMPANION_0_5.md`) was **last replayed absolute value wins**, not a CRDT: two
 simultaneously edited devices may conflict. Only the watchlist/progress is
 promised offline; news, accounts and dates require a connection. A failed disk
 write reports an error and restores the preceding in-memory state. Import limits
