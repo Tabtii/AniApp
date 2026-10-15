@@ -22,12 +22,13 @@ their release and are kept for history.
 | `anime-enrichment` | 5 | Kill switch for Kitsu, TMDb, MyDubList, AniList |
 | `companion-account` | 2 | Export, deletion (incl. reviewer invitation), reviewer queue |
 
-- Migrations: repository and live history use the same versions. Two are
-  pending: `20261015060000_aninews_ingestion_off` (removes 19 stored AniNews
-  previews; ingestion itself is already off in code) and
-  `20261015090000_security_advisor_fixes` (moves `pg_net` out of `public`,
-  indexes the audit actor). Database writes from the assistant session hang,
-  so they need to be applied by the owner or once write access works.
+- Migrations: repository and live history use the same versions, all applied.
+  `20261015060000_aninews_ingestion_off` and `20261015090000_security_advisor_fixes`
+  were run by the owner in the SQL editor on 15 Oct and recorded in the
+  migration history; do not apply them again. AniNews previews are gone,
+  `pg_net` lives in `extensions`, the audit actor is indexed. The only open
+  security advisor finding is leaked-password protection (owner decision).
+- ANN is approved and enabled in `source_rights` (15 Oct); it reads only its newsfeed.
 - Any source can be switched off by setting `source_rights.status = 'blocked'`
   (see `DATA_RIGHTS.md`).
 
@@ -55,5 +56,5 @@ their release and are kept for history.
 | P0 | Own SMTP (e.g. Gmail app password) and end-to-end auth test; fill privacy placeholders |
 | P1 | Physical Android/iPhone acceptance; signed Android release and TestFlight |
 | P2 | Crunchyroll: articles whose canonical points to the news index are treated as removed (v17); watch the remaining "mismatched" cases |
-| P1 | Apply the two pending migrations; decide on leaked-password protection |
+| P1 | Decide on leaked-password protection (only remaining security advisor finding) |
 | P2 | Push notifications, further sources |
