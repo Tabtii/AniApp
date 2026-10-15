@@ -166,3 +166,24 @@ notices remain unchanged. Mobile code/version is unchanged by this server update
 - Retention deletes Anime2You news and scrubs copied source evidence after
   30 days. Independent cron cleanup also runs if the importer is unavailable.
   Structured release events, watchlists and review decisions remain intact.
+
+## Migration history aligned with the live project (2026-10-15)
+
+The repository migration files now use the version numbers registered in the
+live AniApp project (`supabase_migrations.schema_migrations`). A read-only check
+compared every live statement with the repository file:
+
+- 9 of 11 applied migrations are byte-identical.
+- `restrict_auto_rls_function` and `isolate_content_sync_internals` differ only
+  in comments and line breaks; the executed SQL is the same.
+- Seven files were renamed to the live versions. Live order runs
+  `content_sync_schedule` before `live_content_sync`; the cron job only calls the
+  function later and does not depend on the tables at creation time.
+- `20261015060000_aninews_ingestion_off` is in the repository but **not yet
+  applied** live. It is the only pending migration.
+
+A fresh install from all repository migrations passes the backend suite
+(73 tests, embedded Postgres without pg_cron). Before any `supabase db push`,
+re-run `list_migrations` and confirm only the pending file is new. The cron
+migrations still contain this project's URL; a separate test project must point
+them at its own URL.
