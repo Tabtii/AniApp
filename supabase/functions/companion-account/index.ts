@@ -34,7 +34,11 @@ Deno.serve(async req=>{
    // Account deletion is separate from logout and requires a recent sign-in.
    if(body.confirm!=='DELETE'||!user.last_sign_in_at||Date.now()-Date.parse(user.last_sign_in_at)>600000)return reply({error:'Sign in again, then confirm deletion within 10 minutes'},409);
    const r=await fetch(`${base}/auth/v1/admin/users/${user.id}`,{method:'DELETE',headers:{apikey:service,Authorization:`Bearer ${service}`},signal:AbortSignal.timeout(12000)});
-   return r.ok?reply({deleted:true}):reply({error:'Deletion failed'},503);
+   if(!r.ok)return reply({error:'Deletion failed'},503);
+   // A reviewer invitation is keyed by e-mail address and has no user foreign key.
+   if(typeof user.email==='string')await fetch(`${base}/rest/v1/companion_reviewer_invitations?email=eq.${encodeURIComponent(user.email.toLowerCase())}`,
+    {method:'DELETE',headers:{apikey:service,Authorization:`Bearer ${service}`},signal:AbortSignal.timeout(12000)}).catch(()=>undefined);
+   return reply({deleted:true});
   }
   if(user.email_confirmed_at && typeof user.email==='string'){
    const invitations=await db(`companion_reviewer_invitations?email=eq.${encodeURIComponent(user.email.toLowerCase())}&select=email&limit=1`);
