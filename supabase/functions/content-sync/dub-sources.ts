@@ -53,6 +53,11 @@ function contentDiv(html:string):string|null {
   }
   throw new Error('Incomplete article body');
 }
+// Page-declared URL for the error column: host and path only, restricted characters.
+function declaredPath(value:string):string {
+  try{const u=new URL(value);return (u.hostname+u.pathname+(u.search?'?…':'')).replace(/[^\w./:?…-]/g,'').slice(0,120);}
+  catch{return 'unparseable';}
+}
 export function parsePage(html:string,url:string):Document {
   const id=articleIdentity(url);if(!id)throw new Error('Unapproved announcement URL');
   const meta:Record<string,string>={};let canonical='';
@@ -63,7 +68,10 @@ export function parsePage(html:string,url:string):Document {
   // Distinct reasons, so the source status shows what changed on the page.
   const declared=canonical||meta['og:url'];
   if(!declared)throw new Error('Article identity missing (no canonical/og:url)');
-  if(articleIdentity(declared)?.url!==id.url)throw new Error('Article identity mismatched');
+  // Relative URLs and a differing trailing slash still name the same article.
+  let resolved='';try{resolved=new URL(declared,url).href;}catch{/* reported below */}
+  const bare=(v?:string)=>v?.replace(/\/$/,'');
+  if(bare(articleIdentity(resolved)?.url)!==bare(id.url))throw new Error(`Article identity mismatched (${declaredPath(resolved)})`);
   if(meta['og:type']!=='article')throw new Error(`Article type unexpected (${String(meta['og:type']??'none').slice(0,40)})`);
   const date=new Date(meta['article:published_time']);
   if(!meta['og:title']||!Number.isFinite(date.getTime()))throw new Error('Article metadata missing');

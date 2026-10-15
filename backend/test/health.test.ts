@@ -21,4 +21,18 @@ test('article parse errors name the failed check', () => {
   assert.throws(()=>parsePage(page('<meta property="og:type" content="article">'),url),/no canonical/);
   assert.throws(()=>parsePage(page(`<link rel="canonical" href="${url}"><meta property="og:type" content="website">`),url),/type unexpected \(website\)/);
   assert.throws(()=>parsePage(page('<link rel="canonical" href="https://www.crunchyroll.com/de/news/latest/2026/10/5/other"><meta property="og:type" content="article">'),url),/mismatched/);
+
+  assert.throws(()=>parsePage(page('<link rel="canonical" href="https://www.crunchyroll.com/de/news/latest/2026/10/5/other"><meta property="og:type" content="article">'),url),
+    /mismatched \(www\.crunchyroll\.com\/de\/news\/latest\/2026\/10\/5\/other\)/);
+  assert.throws(()=>parsePage(page('<link rel="canonical" href="javascript:alert(document.cookie)"><meta property="og:type" content="article">'),url),/mismatched \(alertdocument\.cookie\)/);
+});
+
+test('canonical URLs that differ only by trailing slash or are relative still match', () => {
+  const url='https://www.crunchyroll.com/de/news/latest/2026/10/5/example-article';
+  const page=(href:string)=>`<html><head><link rel="canonical" href="${href}"><meta property="og:type" content="article">
+    <meta property="og:title" content="Example"><meta property="article:published_time" content="2026-10-05T10:00:00Z"></head>
+    <body><article>${'Text '.repeat(40)}</article></body></html>`;
+  for(const href of [url+'/','/de/news/latest/2026/10/5/example-article','https://crunchyroll.com/de/news/latest/2026/10/5/example-article'])
+    assert.equal(parsePage(page(href),url).url,url);
+  assert.equal(parsePage(page(url),url+'/').url,url+'/');
 });
