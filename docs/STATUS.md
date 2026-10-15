@@ -33,9 +33,9 @@ their release and are kept for history.
 
 ## Sources and permissions
 
-- **Approved:** Anime2You (written permission 14 Oct), MyDubList (CC BY 4.0).
+- **Approved:** Anime2You (written permission 14 Oct), Anime News Network (written permission 15 Oct; feed only, max. one request per minute), MyDubList (CC BY 4.0).
 - **Running under review in the test phase:** Tenrai/MAL, ADN, Crunchyroll DE/EN, Kitsu.
-- **Off until permission:** AniNews, AniList, TMDb, HIDIVE, Netflix, Joyn, ANN, AnimeSchedule.
+- **Off until permission:** AniNews, AniList, TMDb, HIDIVE, Netflix, Joyn, AnimeSchedule. ANN stays off until its feed adapter and register entry are switched on.
 - **Open enquiries:** first round 12 Oct (AniList, TMDb, AniNews, MyAnimeList);
   second round 15 Oct (Crunchyroll, ADN – ticket #7775, referred by support to
   Camille Claude, re-sent in English 15 Oct; ANN, Anime UK News,
