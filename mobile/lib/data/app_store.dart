@@ -71,6 +71,7 @@ class AppStore extends ChangeNotifier with _Settings, _Companion, _Content {
   @override
   bool get signedIn => _userId != null;
   static const supportedLanguages = ['de', 'en'];
+  static const inboxPage = 60;
   bool isSaved(int id) => entries.any((e) => e.anime.id == id);
   @override
   void _notify() {

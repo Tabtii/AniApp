@@ -1108,4 +1108,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get healthStale =>
       'Veraltet – seit über 3 Stunden keine erfolgreiche Prüfung';
+
+  @override
+  String get loadOlder => 'Ältere laden';
 }

@@ -58,14 +58,18 @@ mixin _Companion on _Settings {
     _notify();
   }
 
-  Future<List<Map<String, dynamic>>> inbox() async {
+  // Newest first; the screen raises [limit] page by page to show older ones.
+  Future<List<Map<String, dynamic>>> inbox({
+    int limit = AppStore.inboxPage,
+  }) async {
     if (!signedIn || backend == null) return [];
     return await backend!
         .from('release_inbox')
         .select()
         .eq('user_id', _userId!)
         .order('created_at', ascending: false)
-        .limit(60);
+        .order('id')
+        .limit(limit);
   }
 
   Future<void> markRead(String id) async {

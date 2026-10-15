@@ -1100,4 +1100,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get healthStale => 'Stale – no successful check for over 3 hours';
+
+  @override
+  String get loadOlder => 'Load older';
 }

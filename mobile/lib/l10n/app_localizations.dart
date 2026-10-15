@@ -2089,6 +2089,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stale – no successful check for over 3 hours'**
   String get healthStale;
+
+  /// No description provided for @loadOlder.
+  ///
+  /// In en, this message translates to:
+  /// **'Load older'**
+  String get loadOlder;
 }
 
 class _AppLocalizationsDelegate
