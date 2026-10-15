@@ -1,10 +1,11 @@
 import {collectOfficialNews,officialSources,type OfficialKey} from './official-news.ts';
+import {collectAnime2You} from './anime2you.ts';
 import {loadAdn,saveAdn} from './adn.ts';
 import {crawlAdnNews} from './adn-news.ts';
 import {reviewedPauses} from './reviewed-pauses.ts';
 import {loadAniNews} from './aninews.ts';
 import {syncDubAnnouncements} from './dub-sync.ts';
-import {broadcastEvents, rssNews, malNews, type Row} from './content.ts';
+import {broadcastEvents, malNews, type Row} from './content.ts';
 const url=Deno.env.get('SUPABASE_URL')!;
 const secret=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 async function db(path:string,body:unknown,method='POST') {
@@ -22,6 +23,9 @@ Deno.serve(async req=> {
   if(req.method!=='POST') return reply({error:'POST required'},405);
   const token=req.headers.get('x-sync-token');
   if(!token || token.length>100) return reply({error:'Unauthorized'},401);
+  let scope:string;
+  try{const body=await req.json();scope=body?.scope??'all';}catch{return reply({error:'Invalid JSON'},400);}
+  if(!['all','anime2you'].includes(scope))return reply({error:'Invalid scope'},400);
   let claim;
   try{claim=await db('rpc/begin_content_sync',{p_token:token});}catch{return reply({error:'Sync unavailable'},503);}
   if(claim==='denied') return reply({error:'Unauthorized'},401);
@@ -29,12 +33,18 @@ Deno.serve(async req=> {
   const report:Record<string,unknown>={};
   let successes=0;
   // Sources fail independently; existing published data survives failed imports.
-  const sources=['anime2you','myanimelist','schedule','adn','adn_news','aninews','dub_announcements'];
+  // Quarter-hour jobs refresh only Anime2You; other providers keep hourly cadence.
+  const sources=scope==='anime2you'?['anime2you']:['anime2you','myanimelist','schedule','adn','adn_news','aninews','dub_announcements'];
+  try{report.anime2you_retention=await db('rpc/prune_anime2you_content',{});}catch{return reply({error:'Content retention unavailable'},503);}
   for(const name of sources) {
     try {
       if(name==='anime2you') {
-        const rows=rssNews(await source('https://www.anime2you.de/feed/'));
-        await db('news?on_conflict=source_url',rows);report[name]={count:rows.length};
+        const rights=await db('source_rights?source_key=eq.anime2you&select=*',undefined,'GET');
+        const known=await db('news?source_name=eq.Anime2You&select=*&order=published_at.desc&limit=1000',undefined,'GET');
+        const result=await collectAnime2You(rights[0],known);
+        if(result.rows.length)await db('news?on_conflict=source_url',result.rows);
+        for(const url of result.removed)await db(`news?source_name=eq.Anime2You&source_url=eq.${encodeURIComponent(url)}`,undefined,'DELETE');
+        report[name]={state:result.state,count:result.rows.length,metadata_checked:result.checked,removed:result.removed.length,failed:result.failed};
       } else if(name==='myanimelist') {
         const value=JSON.parse(await source('https://api.tenrai.org/v1/news?limit=15'));
         if(!Array.isArray(value.data))throw new Error('Invalid news response');
@@ -79,7 +89,7 @@ Deno.serve(async req=> {
   }
   // Additional publishers are strictly permission-gated, including the first fetch.
   // The existing prototype sources retain their documented review-required status.
-  try {
+  if(scope==='all')try {
     const rights=await db('source_rights?select=source_key,status,ingestion_enabled',undefined,'GET');
     for(const key of Object.keys(officialSources) as OfficialKey[]) {
       try {

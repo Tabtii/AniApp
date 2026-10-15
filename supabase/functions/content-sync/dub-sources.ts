@@ -70,19 +70,19 @@ export function parsePage(html:string,url:string):Document {
   return {...id,headline:meta['og:title'],published_at:date.toISOString(),body};
 }
 export class SourceError extends Error {constructor(public status:number){super(`Announcement HTTP ${status}`);}}
-export function announcementReader(fetcher:typeof fetch=fetch,deadline=Date.now()+40000,pause=(ms:number)=>new Promise(r=>setTimeout(r,ms))){
+export function announcementReader(fetcher:typeof fetch=fetch,deadline=Date.now()+40000,pause=(ms:number)=>new Promise(r=>setTimeout(r,ms)),anime2youRedirects=false){
   const robots=new Map<string,string>(),last=new Map<string,number>(),blocked=new Set<string>();
   async function request(url:string,headers:Record<string,string>={}){
     if(Date.now()+250>deadline)throw new Error('Announcement crawl budget exhausted');
-    const response=await fetcher(url,{redirect:'error',headers:{'User-Agent':'AniApp/0.3.6 (+https://github.com/Tabtii/AniApp)',Accept:'application/rss+xml, text/html, text/plain',...headers},signal:AbortSignal.timeout(Math.min(6000,deadline-Date.now()))});
-    if(response.status===304)return {response,body:''};
+    const response=await fetcher(url,{redirect:anime2youRedirects?'manual':'error',headers:{'User-Agent':'AniApp/0.3.6 (+https://github.com/Tabtii/AniApp)',Accept:'application/rss+xml, text/html, text/plain',...headers},signal:AbortSignal.timeout(Math.min(6000,deadline-Date.now()))});
+    if(response.status===304||[301,302,303,307,308].includes(response.status))return {response,body:'',url};
     if(!response.ok)throw new SourceError(response.status);
     const reader=response.body?.getReader();if(!reader)throw new Error('Empty announcement response');
     const decoder=new TextDecoder();let size=0,body='';
     for(;;){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>1500000){await reader.cancel();throw new Error('Announcement response too large');}body+=decoder.decode(value,{stream:true});}
-    return {response,body:body+decoder.decode()};
+    return {response,body:body+decoder.decode(),url};
   }
-  return async(url:string,headers:Record<string,string>={})=>{
+  return async function read(url:string,headers:Record<string,string>={},redirects=0):Promise<{response:Response;body:string;url:string}>{
     const allowed=feeds.some(f=>f.url===url)||articleIdentity(url)?.url===url;
     if(!allowed)throw new Error('Unapproved announcement fetch');
     const u=new URL(url);if(blocked.has(u.origin))throw new Error('Source blocked for this run');
@@ -107,7 +107,16 @@ export function announcementReader(fetcher:typeof fetch=fetch,deadline=Date.now(
       const wait=Math.max(0,policy.delay*1000-(Date.now()-(last.get(u.origin)??0)));
       if(wait>8000||Date.now()+wait+250>deadline)throw new Error('Announcement crawl budget exhausted');
       if(wait)await pause(wait);last.set(u.origin,Date.now());
-      return await request(url,headers);
+      const result=await request(url,headers);
+      if([301,302,303,307,308].includes(result.response.status)){
+        const target=new URL(result.response.headers.get('location')??'',url).href;
+        const from=articleIdentity(url),to=articleIdentity(target);
+        const articleId=(value:string)=>new URL(value).pathname.split('/')[2];
+        if(!anime2youRedirects||redirects>=2||from?.source!=='anime2you'||to?.source!=='anime2you'||articleId(url)!==articleId(target)||target===url)throw new Error('Unapproved article redirect');
+        // Re-enter normal origin, robots, rate and budget checks for every hop.
+        return await read(to.url,headers,redirects+1);
+      }
+      return result;
     }catch(e){if(e instanceof SourceError&&[401,403,429].includes(e.status))blocked.add(u.origin);throw e;}
   };
 }

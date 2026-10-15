@@ -67,7 +67,7 @@ This runs in Supabase; phones do not crawl websites. Backend content updates rea
 | Additional details | Kitsu | Independent metadata, original airing dates and available trailers |
 | Japanese broadcasts | Tenrai / MyAnimeList schedules | Weekly estimates; reviewed pause notices take precedence |
 | Provider episodes | Official ADN calendar | Exact language/date/time for reviewed show-and-season mappings |
-| News | Anime2You, MyAnimeList via Tenrai, ADN News, AniNews, official Crunchyroll DE/EN RSS | Short previews with original source links |
+| News | Anime2You, MyAnimeList via Tenrai, ADN News, AniNews, official Crunchyroll DE/EN RSS | Publisher meta-descriptions for Anime2You; short previews and original links for other sources |
 | Dub announcements | Supported Crunchyroll RSS, ADN, Anime2You and AniNews formats | Explicit, sufficiently evidenced DE/EN premiere or episode dates |
 | Dub existence | MyDubList | Evidence that a dub exists; not proof of a local provider offer or release date |
 
@@ -149,3 +149,12 @@ AniApp began as **AniMe**, an Android training project for Syntax Institute. The
 
 See [LICENSE](https://github.com/Tabtii/AniApp/blob/master/LICENSE).
 
+
+### Anime2You permission update (14 October 2026)
+
+Anime2You has approved the described AniApp feed/news/calendar use without fees.
+Its feed is checked every 15 minutes; previews use original publisher metadata,
+corrections replace existing entries, and news/source-text caches expire after
+30 days. Images retain publisher links and permission; the publisher explicitly
+cannot grant third-party artwork rights. See [data rights](docs/DATA_RIGHTS.md).
+This is a backend update compatible with the existing AniApp 0.5 Android build.

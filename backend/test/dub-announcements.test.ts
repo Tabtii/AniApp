@@ -84,6 +84,7 @@ test('hourly worker revisits articles that left the feed; 304 and outages preser
   const writes:{path:string;body:any;method:string}[]=[],requests:{url:string;headers:any}[]=[];
   const db=async(path:string,body:any,method='POST')=>{
     if(method==='GET'){
+      if(path.startsWith('source_rights?'))return [{status:'approved',ingestion_enabled:true}];
       if(path.startsWith('dub_source_documents?select=source_url'))return watched;
       if(path.startsWith('dub_source_documents?'))return watched;
       return [];
