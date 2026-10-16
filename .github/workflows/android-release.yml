@@ -1,0 +1,41 @@
+name: Android release bundle
+# Manual only. Builds a signed app bundle (.aab) for the Play Console.
+# Needs the repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+# ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD (see docs/ANDROID_RELEASE.md).
+on:
+  workflow_dispatch:
+env:
+  FLUTTER_SUPPRESS_ANALYTICS: true
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.6'
+          cache: true
+      - name: Write upload key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          test -n "$KEYSTORE_BASE64" || { echo "Missing signing secrets"; exit 1; }
+          echo "$KEYSTORE_BASE64" | base64 -d > android/upload.jks
+          printf 'storeFile=upload.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "$STORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > android/key.properties
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build appbundle --release --dart-define-from-file=config/supabase.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aniapp-android-release-aab
+          path: mobile/build/app/outputs/bundle/release/app-release.aab
