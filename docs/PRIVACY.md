@@ -64,10 +64,10 @@ deinem Konto erhalten; die Einladung wird gelöscht.
   (EU)**. Grundlage ist der Auftragsverarbeitungsvertrag (DPA) von Supabase, der Bestandteil
   von deren Nutzungsbedingungen ist; für mögliche Übermittlungen in die USA gelten
   Standardvertragsklauseln.
-- **E-Mail-Versand** (Bestätigung, Passwort-Reset): über den SMTP-Dienst von
-  **Google (Gmail)**. Google erhält dabei deine E-Mail-Adresse und den Inhalt der
-  jeweiligen Systemmail. [VOR EINEM ÖFFENTLICHEN START PRÜFEN: eigener
-  Versanddienst bzw. Vertrag zur Auftragsverarbeitung für den Versand.]
+- **E-Mail-Versand** (Bestätigung, Passwort-Reset): über den Mailserver von
+  **STRATO** (STRATO AG, Deutschland). STRATO erhält dabei deine E-Mail-Adresse und
+  den Inhalt der jeweiligen Systemmail. [VOR VERÖFFENTLICHUNG PRÜFEN: Vertrag zur
+  Auftragsverarbeitung mit STRATO im Kundenbereich abgeschlossen bzw. bestätigt.]
 
 Wir verkaufen keine Daten und geben sie nicht zu Werbezwecken weiter.
 
@@ -146,9 +146,9 @@ the account after deletion, the invitation is deleted.
 **Hosting.** Supabase Inc. (USA) hosts database, authentication and server
 functions in the **Frankfurt (EU)** region under a data processing agreement with
 standard contractual clauses. Account emails (confirmation, password reset) are sent through
-the SMTP service of **Google (Gmail)**, which receives your email address and the
-content of that system email. [CHECK BEFORE A PUBLIC LAUNCH: dedicated sending
-service or a data processing agreement for email delivery.] We do not sell data.
+the mail server of **STRATO** (STRATO AG, Germany), which receives your email address
+and the content of that system email. [CHECK BEFORE PUBLICATION: data processing
+agreement with STRATO concluded or confirmed in the customer area.] We do not sell data.
 
 **Third parties contacted from your device.** Images are loaded directly from
 source servers (e.g. MyAnimeList, Anime2You, Crunchyroll, Animation Digital
