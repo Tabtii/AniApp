@@ -61,9 +61,9 @@ deinem Konto erhalten; die Einladung wird gelöscht.
 
 - **Supabase** (Supabase Inc., USA) betreibt Datenbank, Anmeldung und
   Server-Funktionen für uns. Die Daten liegen in der Region **Frankfurt am Main
-  (EU)**. Grundlage ist ein Auftragsverarbeitungsvertrag; für mögliche
-  Übermittlungen in die USA gelten Standardvertragsklauseln. [VOR VERÖFFENTLICHUNG
-  PRÜFEN: Abschluss des Supabase-DPA]
+  (EU)**. Grundlage ist der Auftragsverarbeitungsvertrag (DPA) von Supabase, der Bestandteil
+  von deren Nutzungsbedingungen ist; für mögliche Übermittlungen in die USA gelten
+  Standardvertragsklauseln.
 - **E-Mail-Versand** (Bestätigung, Passwort-Reset): derzeit über den
   Standard-Versand von Supabase. [SPÄTER: eigener Versanddienst, z. B. Google
   Gmail SMTP – dann hier ergänzen.]

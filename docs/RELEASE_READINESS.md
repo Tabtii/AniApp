@@ -197,9 +197,10 @@ them at its own URL.
   short notice with a link. URLs default to the repository and can be set per
   build with `--dart-define=PRIVACY_URL=...` and `--dart-define=SUPPORT_URL=...`.
 - Account deletion now also removes a reviewer invitation stored by e-mail.
-- Open before a public release: controller name/address/contact, minimum age,
-  Supabase DPA, final e-mail provider, a public (non-GitHub) support channel and
-  a hosted privacy URL for the store listings.
+- Controller details and minimum age (16) are filled in; the Supabase DPA is part
+  of Supabase's Terms of Service (no separate signature needed).
+- Open before a public release: final e-mail provider, a public (non-GitHub)
+  support channel and a hosted privacy URL for the store listings.
 
 ## Source monitoring (2026-10-15)
 
