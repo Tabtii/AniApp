@@ -9,9 +9,11 @@
 
 ## 1. Verantwortlicher
 
-[NAME DES VERANTWORTLICHEN]
-[LADUNGSFÄHIGE ANSCHRIFT]
-E-Mail: [KONTAKTADRESSE]
+Torben Wolff
+Hauptstr. 3
+63694 Limeshain
+Deutschland
+E-Mail: torbi95@gmail.com
 
 Ein Datenschutzbeauftragter ist nicht benannt.
 
@@ -106,7 +108,7 @@ dem EU-Staat deines Aufenthalts.
 
 ## 9. Kinder
 
-[VOR VERÖFFENTLICHUNG FESTLEGEN: Mindestalter für ein Konto, z. B. 16 Jahre.]
+Ein Konto ist ab **16 Jahren** vorgesehen. Die App ist ohne Konto (Gastmodus) nutzbar.
 
 ## 10. Änderungen
 
@@ -120,7 +122,7 @@ Wir passen diese Hinweise an, wenn sich die App oder die eingesetzten Dienste
 > **Draft for the test phase, 15 October 2026.** Placeholders in square brackets
 > must be completed and the text legally reviewed before a public store release.
 
-**Controller:** [NAME], [POSTAL ADDRESS], [CONTACT EMAIL].
+**Controller:** Torben Wolff, Hauptstr. 3, 63694 Limeshain, Germany, torbi95@gmail.com.
 
 **Overview.** AniApp works without an account (guest mode). It uses **no**
 analytics, tracking, advertising or crash-reporting services and builds no
@@ -161,4 +163,4 @@ Deletion: Profile → Account data → *Delete account permanently* (requires a 
 within the last 10 minutes). You may complain to a data protection supervisory
 authority.
 
-**Children.** [TO BE DECIDED: minimum age for an account.]
+**Children.** An account is intended for users aged **16 or older**. The app can be used without an account (guest mode).
