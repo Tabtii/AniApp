@@ -13,7 +13,7 @@ Torben Wolff
 Hauptstr. 3
 63694 Limeshain
 Deutschland
-E-Mail: torbi95@gmail.com
+E-Mail: info@tabtisworld.de
 
 Ein Datenschutzbeauftragter ist nicht benannt.
 
@@ -123,7 +123,7 @@ Wir passen diese Hinweise an, wenn sich die App oder die eingesetzten Dienste
 > **Draft for the test phase, 15 October 2026.** Placeholders in square brackets
 > must be completed and the text legally reviewed before a public store release.
 
-**Controller:** Torben Wolff, Hauptstr. 3, 63694 Limeshain, Germany, torbi95@gmail.com.
+**Controller:** Torben Wolff, Hauptstr. 3, 63694 Limeshain, Germany, info@tabtisworld.de.
 
 **Overview.** AniApp works without an account (guest mode). It uses **no**
 analytics, tracking, advertising or crash-reporting services and builds no
