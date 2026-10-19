@@ -61,12 +61,13 @@ deinem Konto erhalten; die Einladung wird gelöscht.
 
 - **Supabase** (Supabase Inc., USA) betreibt Datenbank, Anmeldung und
   Server-Funktionen für uns. Die Daten liegen in der Region **Frankfurt am Main
-  (EU)**. Grundlage ist ein Auftragsverarbeitungsvertrag; für mögliche
-  Übermittlungen in die USA gelten Standardvertragsklauseln. [VOR VERÖFFENTLICHUNG
-  PRÜFEN: Abschluss des Supabase-DPA]
-- **E-Mail-Versand** (Bestätigung, Passwort-Reset): derzeit über den
-  Standard-Versand von Supabase. [SPÄTER: eigener Versanddienst, z. B. Google
-  Gmail SMTP – dann hier ergänzen.]
+  (EU)**. Grundlage ist der Auftragsverarbeitungsvertrag (DPA) von Supabase, der Bestandteil
+  von deren Nutzungsbedingungen ist; für mögliche Übermittlungen in die USA gelten
+  Standardvertragsklauseln.
+- **E-Mail-Versand** (Bestätigung, Passwort-Reset): über den SMTP-Dienst von
+  **Google (Gmail)**. Google erhält dabei deine E-Mail-Adresse und den Inhalt der
+  jeweiligen Systemmail. [VOR EINEM ÖFFENTLICHEN START PRÜFEN: eigener
+  Versanddienst bzw. Vertrag zur Auftragsverarbeitung für den Versand.]
 
 Wir verkaufen keine Daten und geben sie nicht zu Werbezwecken weiter.
 
@@ -144,8 +145,10 @@ the account after deletion, the invitation is deleted.
 
 **Hosting.** Supabase Inc. (USA) hosts database, authentication and server
 functions in the **Frankfurt (EU)** region under a data processing agreement with
-standard contractual clauses. Account emails are currently sent through Supabase.
-[LATER: own email provider, e.g. Google Gmail SMTP.] We do not sell data.
+standard contractual clauses. Account emails (confirmation, password reset) are sent through
+the SMTP service of **Google (Gmail)**, which receives your email address and the
+content of that system email. [CHECK BEFORE A PUBLIC LAUNCH: dedicated sending
+service or a data processing agreement for email delivery.] We do not sell data.
 
 **Third parties contacted from your device.** Images are loaded directly from
 source servers (e.g. MyAnimeList, Anime2You, Crunchyroll, Animation Digital
