@@ -3,6 +3,8 @@ name: Android release bundle
 # Needs the repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
 # ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD (see docs/ANDROID_RELEASE.md).
 on:
+  push:
+    branches: [ ci/aab-build-2026-10-20 ]
   workflow_dispatch:
 env:
   FLUTTER_SUPPRESS_ANALYTICS: true
