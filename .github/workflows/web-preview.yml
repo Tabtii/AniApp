@@ -2,6 +2,8 @@ name: AniApp web preview
 # Baut die Flutter-App als Web-Build, damit die UI ohne Emulator
 # im Browser angesehen/getestet werden kann. Nur manuell.
 on:
+  push:
+    branches: [ci/web-preview]
   pull_request:
   workflow_dispatch:
 env:
