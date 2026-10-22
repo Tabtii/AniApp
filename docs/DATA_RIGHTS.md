@@ -289,9 +289,14 @@ Lizenzkontakt ohne passenden Versandauftrag angeschrieben.
 
 Premium-Komfortfunktionen, Werbung und Affiliate-Links bleiben bis zur passenden
 Datenfreigabe sowie Store-/Datenschutzvorbereitung deaktiviert. Keine Zahlung,
-kein Werbe-SDK und kein Tracking wurden eingebaut. Ein erster kostenfreier Test
-ist nicht automatisch nichtkommerziell, wenn der Dienst bereits auf spätere
-Einnahmen ausgerichtet ist — diese Frage ist ausdrücklich Teil der Anfragen.
+kein Werbe-SDK und kein Tracking wurden eingebaut.
+
+Stand 22.10.2026 betreibt der Projektinhaber AniApp als **nichtkommerzielles
+Passion-Projekt** und plant keine Einnahmen daraus (keine Werbung, keine
+Affiliate-Links, kein Abo). Die bisherigen Freigaben gelten daher nur für diesen
+nichtkommerziellen Betrieb. Eine spätere Monetarisierung würde eine neue Prüfung
+der Quellen auslösen; Quellen mit `commercial_allowed = false` (z. B. ADN) blieben
+davon ausgenommen, bis eine eigene schriftliche Zustimmung vorliegt.
 
 ## Not-Aus über das Quellenregister (ab 15.10.2026)
 
