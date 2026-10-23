@@ -6,13 +6,22 @@
 
 **Your anime companion for Android and iOS.** Discover anime, keep a watchlist, follow episode releases and read news in German or English — with real sources and clear language availability.
 
-**Current app:** `0.4.0+14` · Flutter · Deutsch / English · Development preview
+**Current app:** `0.5.0+15` · Flutter · Deutsch / English · Development preview
 
-[Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
+[**Current status**](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/STATUS.md) · [Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
 
 > The current Flutter app lives on **`feature/anime-companion`**, in PR #1. The `master` branch still contains the original Kotlin application. Use the development branch to build or explore the current app.
 
-## New in 0.4.0
+## New in 0.5.0
+
+Conflict-aware multi-device progress, safe undo, local-first startup, watchlist
+search/sorting/direct count editing, focused detail sections and tablet navigation.
+Personal news filters now run before the result limit. This version requires the
+new additive database migration before distribution. It was applied and verified
+on the connected AniApp backend on 13 October 2026; builds do not apply migrations.
+See [implementation, validation and rollout](docs/COMPANION_0_5.md).
+
+## Companion features from 0.4.0
 
 Personal **Today** screen, offline-first progress with retry, MAL XML / AniApp JSON
 import, list/account export, confirmed-calendar ICS export, provider filters,
@@ -20,9 +29,11 @@ source muting and optional hidden news previews. Follow DE/EN dubs for **in-app*
 announcement/date-change messages. An authenticated reviewer queue verifies
 ambiguous announcements and preserves audit history.
 
-**Data rights:** five project-specific permission enquiries were sent on
-12 October 2026. Replies are pending; no blanket commercial approval is claimed.
-Additional official publisher collectors stay disabled until approved.
+**Data rights:** Anime2You granted written permission on 14 October 2026 and
+Tenrai permits API-service use without licensing the underlying content. Further
+enquiries (12 and 15 October) are open; see the rights register for the current
+list. No blanket commercial approval is claimed. Sources without permission stay
+disabled, and any source can be switched off through the source register.
 [Rights register](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/DATA_RIGHTS.md) · [Implementation and remaining gates](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/COMPANION_0_4.md)
 
 ## What you can do
@@ -56,8 +67,8 @@ This runs in Supabase; phones do not crawl websites. Backend content updates rea
 | Additional details | Kitsu | Independent metadata, original airing dates and available trailers |
 | Japanese broadcasts | Tenrai / MyAnimeList schedules | Weekly estimates; reviewed pause notices take precedence |
 | Provider episodes | Official ADN calendar | Exact language/date/time for reviewed show-and-season mappings |
-| News | Anime2You, MyAnimeList via Tenrai, ADN News, AniNews, official Crunchyroll DE/EN RSS | Short previews with original source links |
-| Dub announcements | Supported Crunchyroll RSS, ADN, Anime2You and AniNews formats | Explicit, sufficiently evidenced DE/EN premiere or episode dates |
+| News | Anime2You, MyAnimeList via Tenrai, ADN News, official Crunchyroll DE/EN RSS (AniNews switched off until permission) | Publisher meta-descriptions for Anime2You; short previews and original links for other sources |
+| Dub announcements | Supported Crunchyroll RSS, ADN and Anime2You formats (AniNews parser kept, ingestion off until permission) | Explicit, sufficiently evidenced DE/EN premiere or episode dates |
 | Dub existence | MyDubList | Evidence that a dub exists; not proof of a local provider offer or release date |
 
 Netflix, aniverse and other providers may appear in supported news reports. This is **not** a comprehensive direct integration with every provider. TMDb and AniList adapters exist but are not active: TMDb needs a project-specific API credential; AniList additionally requires usage authorization.
@@ -116,7 +127,7 @@ npm test --prefix backend
 python -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-As of **12 October 2026**, the project has 45 passing Flutter tests, 61 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
+As of **13 October 2026**, the project has 54 passing Flutter tests, 64 passing backend tests and 6 passing Python tests. CI checks the app and backend, builds an Android debug APK and builds the iOS simulator app. Test fixtures are not production content.
 
 ## Before a public release
 
@@ -138,3 +149,12 @@ AniApp began as **AniMe**, an Android training project for Syntax Institute. The
 
 See [LICENSE](https://github.com/Tabtii/AniApp/blob/master/LICENSE).
 
+
+### Anime2You permission update (14 October 2026)
+
+Anime2You has approved the described AniApp feed/news/calendar use without fees.
+Its feed is checked every 15 minutes; previews use original publisher metadata,
+corrections replace existing entries, and news/source-text caches expire after
+30 days. Images retain publisher links and permission; the publisher explicitly
+cannot grant third-party artwork rights. See [data rights](docs/DATA_RIGHTS.md).
+This is a backend update compatible with the existing AniApp 0.5 Android build.
