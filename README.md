@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Tabtii/AniApp/feature/anime-companion/docs/brand/aniapp-mark.png" alt="AniApp logo" width="112">
+  <img src="https://raw.githubusercontent.com/Tabtii/AniApp/master/docs/brand/aniapp-mark.png" alt="AniApp logo" width="112">
 </p>
 
 # AniApp
@@ -8,9 +8,9 @@
 
 **Current app:** `0.5.0+15` · Flutter · Deutsch / English · Development preview
 
-[**Current status**](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/STATUS.md) · [Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) · [Development PR](https://github.com/Tabtii/AniApp/pull/1) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md)
+[**Current status**](https://github.com/Tabtii/AniApp/blob/master/docs/STATUS.md) · [Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/master/mobile) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/master/docs/RELEASE_READINESS.md)
 
-> The current Flutter app lives on **`feature/anime-companion`**, in PR #1. The `master` branch still contains the original Kotlin application. Use the development branch to build or explore the current app.
+> The `master` branch holds the current Flutter app. The original Kotlin project from 2023 is no longer in the tree; it is preserved in the git history (see [Original Kotlin project](#original-kotlin-project)).
 
 ## New in 0.5.0
 
@@ -34,7 +34,7 @@ Tenrai permits API-service use without licensing the underlying content. Further
 enquiries (12 and 15 October) are open; see the rights register for the current
 list. No blanket commercial approval is claimed. Sources without permission stay
 disabled, and any source can be switched off through the source register.
-[Rights register](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/DATA_RIGHTS.md) · [Implementation and remaining gates](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/COMPANION_0_4.md)
+[Rights register](https://github.com/Tabtii/AniApp/blob/master/docs/DATA_RIGHTS.md) · [Implementation and remaining gates](https://github.com/Tabtii/AniApp/blob/master/docs/COMPANION_0_4.md)
 
 ## What you can do
 
@@ -57,7 +57,7 @@ The backend checks supported sources in the existing **hourly content import**. 
 
 This runs in Supabase; phones do not crawl websites. Backend content updates reach the existing test app without an APK reinstall.
 
-**Coverage is partial.** Some older Crunchyroll pages do not provide readable article content, and not every provider publishes usable dub dates. English audio does not establish availability in every English-speaking country. [Source rules and limitations →](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/DATA_SOURCES.md)
+**Coverage is partial.** Some older Crunchyroll pages do not provide readable article content, and not every provider publishes usable dub dates. English audio does not establish availability in every English-speaking country. [Source rules and limitations →](https://github.com/Tabtii/AniApp/blob/master/docs/DATA_SOURCES.md)
 
 ## Live data sources
 
@@ -75,7 +75,7 @@ Netflix, aniverse and other providers may appear in supported news reports. This
 
 ## Try it on Android
 
-1. Open the latest successful [Android workflow run](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) for `feature/anime-companion`, then download its `aniapp-android-debug` artifact. GitHub sign-in may be required.
+1. Open the latest successful [Android workflow run](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) for `master`, then download its `aniapp-android-debug` artifact. GitHub sign-in may be required.
 2. Download and extract the ZIP, then install `app-debug.apk` on your Android device.
 3. Allow installation from that download source if Android asks. You can begin with the guest watchlist.
 
@@ -88,7 +88,7 @@ This is a **debug build**, not a Play Store release. GitHub artifacts expire; ne
 Use Flutter **3.47.6**, matching CI, plus the Android SDK or macOS/Xcode for iOS development.
 
 ```bash
-git clone --branch feature/anime-companion https://github.com/Tabtii/AniApp.git
+git clone https://github.com/Tabtii/AniApp.git
 cd AniApp/mobile
 flutter pub get
 flutter run --dart-define-from-file=config/supabase.json
@@ -96,7 +96,7 @@ flutter run --dart-define-from-file=config/supabase.json
 
 The checked-in configuration connects to the current AniApp backend and contains only the public project URL and publishable client key. To use your own backend, provide your own configuration file. Never put a database password, service-role key or provider secret in a mobile build.
 
-Without Supabase configuration, catalog browsing and the local guest watchlist remain available; shared news, calendar data and cloud features require the backend. See the [mobile setup guide](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/mobile/README.md).
+Without Supabase configuration, catalog browsing and the local guest watchlist remain available; shared news, calendar data and cloud features require the backend. See the [mobile setup guide](https://github.com/Tabtii/AniApp/blob/master/mobile/README.md).
 
 ## Project layout
 
@@ -104,11 +104,11 @@ Paths below refer to the development branch.
 
 | Path | Purpose |
 | --- | --- |
-| [`mobile/`](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/mobile) | Flutter app, Android/iOS projects, DE/EN localization and widget tests |
-| [`supabase/functions/`](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/supabase/functions) | Catalog gateway, enrichment and content import |
-| [`supabase/migrations/`](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/supabase/migrations) | Schema, access policies and server-only reconciliation |
-| [`backend/test/`](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/backend/test) | Source parsing, identity matching, reconciliation and database access tests |
-| [`docs/`](https://github.com/Tabtii/AniApp/tree/feature/anime-companion/docs) | Implementation history, data sources and release readiness |
+| [`mobile/`](https://github.com/Tabtii/AniApp/tree/master/mobile) | Flutter app, Android/iOS projects, DE/EN localization and widget tests |
+| [`supabase/functions/`](https://github.com/Tabtii/AniApp/tree/master/supabase/functions) | Catalog gateway, enrichment and content import |
+| [`supabase/migrations/`](https://github.com/Tabtii/AniApp/tree/master/supabase/migrations) | Schema, access policies and server-only reconciliation |
+| [`backend/test/`](https://github.com/Tabtii/AniApp/tree/master/backend/test) | Source parsing, identity matching, reconciliation and database access tests |
+| [`docs/`](https://github.com/Tabtii/AniApp/tree/master/docs) | Implementation history, data sources and release readiness |
 
 ## Checks
 
@@ -137,11 +137,11 @@ As of **13 October 2026**, the project has 54 passing Flutter tests, 64 passing 
 - Obtain outstanding data permissions and configure/test Firebase/APNs before enabling device push.
 - Prepare signed Android/iOS releases and store distribution.
 
-See [release readiness](https://github.com/Tabtii/AniApp/blob/feature/anime-companion/docs/RELEASE_READINESS.md) for the verified status and remaining work.
+See [release readiness](https://github.com/Tabtii/AniApp/blob/master/docs/RELEASE_READINESS.md) for the verified status and remaining work.
 
 ## Original Kotlin project
 
-AniApp began as **AniMe**, an Android training project for Syntax Institute. The Kotlin implementation and its 2023 screenshots are preserved as historical reference; those screenshots do not represent the current Flutter interface.
+AniApp began as **AniMe**, an Android training project for Syntax Institute. The Kotlin implementation and its 2023 screenshots were removed from the tree and are preserved in the git history; those screenshots do not represent the current Flutter interface.
 
 [Original project description and screenshots](https://github.com/Tabtii/AniApp/blob/559de9b49e0fa029213c5a3f789452ab357e6c33/README.md)
 
