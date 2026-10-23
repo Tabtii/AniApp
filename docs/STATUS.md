@@ -14,7 +14,8 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 | App version | `0.5.0+15` (Flutter, Android + iOS, DE/EN) |
 | Development branch | `feature/anime-companion`; `master` still holds the original Kotlin app |
 | Merged since 0.5 | Anime2You permission and retention (#3), source kill switch, AniNews off and migration history alignment (#4), privacy policy and support links (#5), watchlist pagination (#6), source monitoring (#7), status docs (#8), advisor migration (#9), AppStore split (#10), offline news/calendar cache (#11), inbox count/paging (#12), dub retry timing (#21), Android upload-key signing and release workflow (#22), privacy notice with controller, DPA and STRATO details (#23–#25, #28, #29), auth email templates DE/EN (#26, #27), ADN permission (#31) |
-| Release to `master` | Open: PR #1 is a draft; no store build yet |
+| Google Play | `0.5.0+15` is released to the closed test track and approved by Google (owner, 23 Oct); no production release yet |
+| Release to `master` | Open: PR #1 is a draft; `master` still holds the original Kotlin app |
 
 ## Live backend (Supabase, Frankfurt)
 
@@ -58,7 +59,7 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 
 | Priority | Item |
 | --- | --- |
-| P0 | Create the upload key (owner), build the signed `.aab`, set up the app in Play Console and start an internal test |
+| P0 | Run the closed test: invite testers, collect feedback on `0.5.0+15`; a new release in the same track would restart the review, so batch fixes |
 | P0 | Paste the remaining email templates into Supabase and test registration end to end |
 | P1 | Physical Android/iPhone acceptance; TestFlight |
 | P1 | Decide on leaked-password protection (only remaining security advisor finding) |
