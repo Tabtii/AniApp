@@ -14,7 +14,7 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 | App version | `0.5.0+15` (Flutter, Android + iOS, DE/EN) |
 | Development branch | `feature/anime-companion`; `master` still holds the original Kotlin app |
 | Merged since 0.5 | Anime2You permission and retention (#3), source kill switch, AniNews off and migration history alignment (#4), privacy policy and support links (#5), watchlist pagination (#6), source monitoring (#7), status docs (#8), advisor migration (#9), AppStore split (#10), offline news/calendar cache (#11), inbox count/paging (#12), dub retry timing (#21), Android upload-key signing and release workflow (#22), privacy notice with controller, DPA and STRATO details (#23–#25, #28, #29), auth email templates DE/EN (#26, #27), ADN permission (#31) |
-| Google Play | `0.5.0+15` is released to the closed test track and approved by Google (owner, 23 Oct); no production release yet |
+| Google Play | `0.5.0+15` (bundle uploaded 21 Oct) is available to testers in the closed test track "Alpha" (full roll-out, 3 countries/regions, Play Console 23 Oct); no production release yet |
 | Release to `master` | Open: PR #1 is a draft; `master` still holds the original Kotlin app |
 
 ## Live backend (Supabase, Frankfurt)
