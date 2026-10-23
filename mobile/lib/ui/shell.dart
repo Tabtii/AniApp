@@ -140,10 +140,18 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         actions: [
           ListenableBuilder(
             listenable: widget.store,
-            builder: (context, _) => Tag(
-              widget.store.region,
-              icon: Icons.language_rounded,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            builder: (context, _) => Tooltip(
+              message: '${context.l10n.region} / ${context.l10n.appLanguage}',
+              child: InkWell(
+                key: const ValueKey('region-language-chip'),
+                borderRadius: BorderRadius.circular(9),
+                onTap: () => _showRegionLanguageSheet(context, widget.store),
+                child: Tag(
+                  widget.store.region,
+                  icon: Icons.language_rounded,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ),
           ListenableBuilder(
@@ -249,4 +257,75 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
             ),
     );
   }
+}
+
+/// Region and app language are device-local preferences; the header chip is
+/// the quick way to change them without opening the profile.
+void _showRegionLanguageSheet(BuildContext context, AppStore store) {
+  showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    builder: (sheetContext) => SafeArea(
+      child: ListenableBuilder(
+        listenable: store,
+        builder: (context, _) => Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.l10n.appLanguage,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              DropdownButton<String>(
+                key: const ValueKey('sheet-app-language'),
+                isExpanded: true,
+                value: store.appLanguage,
+                items: [
+                  DropdownMenuItem(
+                    value: 'system',
+                    child: Text(context.l10n.systemLanguage),
+                  ),
+                  const DropdownMenuItem(value: 'de', child: Text('Deutsch')),
+                  const DropdownMenuItem(value: 'en', child: Text('English')),
+                ],
+                onChanged: (value) => store.setAppLanguage(value!),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                context.l10n.region,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              DropdownButton<String>(
+                key: const ValueKey('sheet-region'),
+                isExpanded: true,
+                value: store.region,
+                items: [
+                  DropdownMenuItem(
+                    value: 'DE',
+                    child: Text(context.l10n.germany),
+                  ),
+                  DropdownMenuItem(
+                    value: 'AT',
+                    child: Text(context.l10n.austria),
+                  ),
+                  DropdownMenuItem(
+                    value: 'CH',
+                    child: Text(context.l10n.switzerland),
+                  ),
+                  const DropdownMenuItem(value: 'US', child: Text('USA')),
+                  DropdownMenuItem(
+                    value: 'GB',
+                    child: Text(context.l10n.unitedKingdom),
+                  ),
+                ],
+                onChanged: (value) => store.setRegion(value!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
