@@ -35,13 +35,14 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 ## Sources and permissions
 
 - **Approved and enabled in `source_rights`:** Anime2You (written permission 14 Oct), Anime News Network (written permission 15 Oct; feed only, max. one request per minute), ADN calendar and News (written permission 22 Oct from its CTO, register set to `approved` the same day; images allowed, commercial use not covered), MyDubList (CC BY 4.0).
-- **Running under review in the test phase:** Tenrai/MAL, Crunchyroll DE/EN, Kitsu.
+- **Running under review in the test phase:** Crunchyroll DE/EN, Kitsu. The catalog uses the official MAL API (app registered as non-commercial, `MAL_CLIENT_ID` set) with Tenrai as fallback.
 - **Off until permission:** AniNews, AniList, TMDb, HIDIVE, Netflix, Joyn, AnimeSchedule.
 - **Open enquiries:** first round 12 Oct (AniList, TMDb, AniNews, MyAnimeList);
   second round 15 Oct (Crunchyroll; ANN, Anime UK News, Anime Corner,
   LiveChart.me, aniSearch, AnimeNachrichten); follow-ups on 16 Oct. MyAnimeList
-  answered on 21 Oct without an individual permission and asks for the app to be
-  registered at `myanimelist.net/apiconfig`. No answer means no use.
+  answered on 21 Oct without an individual permission and pointed to the app
+  registration at `myanimelist.net/apiconfig`, which is done (non-commercial).
+  No answer means no use.
 
 ## Data protection and accounts
 
@@ -63,5 +64,5 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 | P0 | Paste the remaining email templates into Supabase and test registration end to end |
 | P1 | Physical Android/iPhone acceptance; TestFlight |
 | P1 | Decide on leaked-password protection (only remaining security advisor finding) |
-| P2 | Decide on registering the app with MyAnimeList; wait for the remaining publisher answers |
+| P2 | German descriptions: set `TMDB_READ_ACCESS_TOKEN` (TMDb, non-commercial); wait for the remaining publisher answers |
 | P2 | Push notifications, further sources |
