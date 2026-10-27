@@ -21,10 +21,10 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 
 | Function | Version | Notes |
 | --- | --- | --- |
-| `content-sync` | 20 | Hourly import, Anime2You every 15 minutes, register kill switch, import health in `source_status`, removed articles leave observation, dub retries run up to two minutes early |
-| `catalog` | 4 | Kill switch; tells the app not to fall back when Tenrai is blocked |
-| `anime-enrichment` | 5 | Kill switch for Kitsu, TMDb, MyDubList, AniList |
-| `companion-account` | 2 | Export, deletion (incl. reviewer invitation), reviewer queue |
+| `content-sync` | 22 | Hourly import, Anime2You every 15 minutes, register kill switch, import health in `source_status`, removed articles leave observation, dub retries run up to two minutes early |
+| `catalog` | 6 | Kill switch; tells the app not to fall back when Tenrai is blocked |
+| `anime-enrichment` | 7 | Kill switch for Kitsu, TMDb, MyDubList, AniList |
+| `companion-account` | 4 | Export, deletion (incl. reviewer invitation), reviewer queue |
 
 - Migrations: repository and live history use the same versions, all applied
   (last: `20261015090000_security_advisor_fixes`). Do not apply them again.
@@ -36,7 +36,8 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 
 - **Approved and enabled in `source_rights`:** Anime2You (written permission 14 Oct), Anime News Network (written permission 15 Oct; feed only, max. one request per minute), ADN calendar and News (written permission 22 Oct from its CTO, register set to `approved` the same day; images allowed, commercial use not covered), MyDubList (CC BY 4.0).
 - **Running under review in the test phase:** Crunchyroll DE/EN, Kitsu. The catalog uses the official MAL API (app registered as non-commercial, `MAL_CLIENT_ID` set) with Tenrai as fallback.
-- **Off until permission:** AniNews, AniList, TMDb, HIDIVE, Netflix, Joyn, AnimeSchedule.
+- **Running on public non-commercial terms:** TMDb (German descriptions and streaming offers; token set 27 Oct, attribution on the Sources screen). Valid only while the project stays non-commercial.
+- **Off until permission:** AniNews, AniList, HIDIVE, Netflix, Joyn, AnimeSchedule.
 - **Open enquiries:** first round 12 Oct (AniList, TMDb, AniNews, MyAnimeList);
   second round 15 Oct (Crunchyroll; ANN, Anime UK News, Anime Corner,
   LiveChart.me, aniSearch, AnimeNachrichten); follow-ups on 16 Oct. MyAnimeList
@@ -64,5 +65,5 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 | P0 | Paste the remaining email templates into Supabase and test registration end to end |
 | P1 | Physical Android/iPhone acceptance; TestFlight |
 | P1 | Decide on leaked-password protection (only remaining security advisor finding) |
-| P2 | German descriptions: set `TMDB_READ_ACCESS_TOKEN` (TMDb, non-commercial); wait for the remaining publisher answers |
+| P2 | Ask TMDb to confirm that the personal/non-commercial key covers a free app distributed to testers; wait for the remaining publisher answers |
 | P2 | Push notifications, further sources |
