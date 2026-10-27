@@ -71,7 +71,7 @@ This runs in Supabase; phones do not crawl websites. Backend content updates rea
 | Dub announcements | Supported Crunchyroll RSS, ADN and Anime2You formats (AniNews parser kept, ingestion off until permission) | Explicit, sufficiently evidenced DE/EN premiere or episode dates |
 | Dub existence | MyDubList | Evidence that a dub exists; not proof of a local provider offer or release date |
 
-Netflix, aniverse and other providers may appear in supported news reports. This is **not** a comprehensive direct integration with every provider. TMDb and AniList adapters exist but are not active: TMDb needs a project-specific API credential; AniList additionally requires usage authorization.
+Netflix, aniverse and other providers may appear in supported news reports. This is **not** a comprehensive direct integration with every provider. German descriptions and streaming offers come from TMDb under its free non-commercial API terms (credit on the Sources screen). The AniList adapter exists but is not active; it requires usage authorization.
 
 ## Try it on Android
 
