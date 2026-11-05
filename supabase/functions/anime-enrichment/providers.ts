@@ -1,5 +1,7 @@
 // Read-only enrichment. MAL identity stays canonical; no title-based matches.
 import {kitsuDetails,kitsuLookupUrl} from './kitsu.ts';
+import {annDetails,annUrl,propertiesMatch,propertyLabelsUrl,readEntity,wikidataEntityUrl,wikidataItem,
+  wikidataSearchUrl,wikimediaHeaders,wikipediaSummary,wikipediaSummaryUrl} from './reference.ts';
 export type Json = Record<string, any>;
 export const mappingSource = 'https://github.com/Fribb/anime-lists';
 const mappingUrl = 'https://raw.githubusercontent.com/Fribb/anime-lists/master/anime-list-mini.json';
@@ -77,8 +79,12 @@ export class Enrichment {
   private pending = new Map<string,Promise<Cached>>();
   private aniNext = 0;
   private aniCooldown = 0;
+  private annNext = 0;
   constructor(private options:{tmdbToken?:string; tmdbKey?:string; anilistApproved?:boolean}, private fetcher:typeof fetch = fetch) {}
   private async json(url:string, init:RequestInit = {}, maxBytes=1_000_000):Promise<Json> {
+    return JSON.parse(await this.body(url,init,maxBytes));
+  }
+  private async body(url:string, init:RequestInit = {}, maxBytes=1_000_000):Promise<string> {
     const r = await this.fetcher(url,{...init,signal:AbortSignal.timeout(9000)});
     if (url === 'https://graphql.anilist.co' && r.status === 429) {
       const seconds = Number(r.headers.get('Retry-After'));
@@ -90,7 +96,7 @@ export class Enrichment {
     for (;;) {const {done,value}=await reader.read(); if(done)break; size+=value.length;
       if(size>maxBytes){await reader.cancel();throw new Error('Upstream too large');} chunks.push(value);}
     const bytes=new Uint8Array(size); let offset=0; for(const c of chunks){bytes.set(c,offset);offset+=c.length;}
-    return JSON.parse(new TextDecoder().decode(bytes));
+    return new TextDecoder().decode(bytes);
   }
   private cached(key:string, ttl:number, load:()=>Promise<Json>):Promise<Cached> {
     const existing=this.cache.get(key); if(existing && existing.until>Date.now()) return Promise.resolve(existing);
@@ -197,8 +203,53 @@ export class Enrichment {
       return {status:'ok',events:result.value.events.filter((e:Json)=>Date.parse(e.starts_at)>Date.now()),checked_at:result.checkedAt};
     }catch{return {status:'unavailable',events:[]};}
   }
+  // ANN allows one request per second per IP; queue briefly, otherwise skip this time.
+  private async annXml(annId:number):Promise<string> {
+    const wait=Math.max(0,this.annNext-Date.now());
+    if(wait>3000)throw new Error('ANN busy');
+    this.annNext=Math.max(Date.now(),this.annNext)+1100;
+    if(wait)await new Promise(r=>setTimeout(r,wait));
+    return this.body(annUrl(annId),{headers:{Accept:'application/xml'}},2_000_000);
+  }
+  // Wikidata maps the MAL ID to the German Wikipedia article and the ANN entry.
+  async reference(malId:number, blocked:Set<string>=new Set()):Promise<{wikipedia:Json; ann:Json}> {
+    const off={status:'unavailable'};
+    if(blocked.has('wikidata'))return {wikipedia:off,ann:off};
+    let ref;
+    try {
+      const labels=await this.cached('wikidata:properties',86400000,async()=>{
+        const value=await this.json(propertyLabelsUrl(),{headers:wikimediaHeaders});
+        if(!value?.entities)throw new Error('Invalid Wikidata properties');return {ok:propertiesMatch(value)};
+      });
+      if(!labels.value.ok)return {wikipedia:off,ann:off};
+      ref=(await this.cached(`wikidata:${malId}`,86400000,async()=>{
+        const qid=wikidataItem(await this.json(wikidataSearchUrl(malId),{headers:wikimediaHeaders}));
+        return {ref:qid?readEntity(await this.json(wikidataEntityUrl(qid),{headers:wikimediaHeaders}),qid,malId):null};
+      })).value.ref;
+    } catch {return {wikipedia:off,ann:off};}
+    if(!ref)return {wikipedia:{status:'unmapped'},ann:{status:'unmapped'}};
+    const wikidata=`https://www.wikidata.org/wiki/${ref.qid}`;
+    const wikipedia=async():Promise<Json>=>{
+      if(!ref.dewiki)return {status:'unmapped'};
+      if(blocked.has('wikipedia'))return off;
+      try {
+        const r=await this.cached(`wikipedia:${ref.dewiki}`,86400000,async()=>({summary:wikipediaSummary(await this.json(wikipediaSummaryUrl(ref.dewiki!),{headers:wikimediaHeaders}))}));
+        return r.value.summary?{status:'ok',...r.value.summary,wikidata,checked_at:r.checkedAt}:{status:'unmapped'};
+      } catch {return off;}
+    };
+    const ann=async():Promise<Json>=>{
+      if(!ref.annId)return {status:'unmapped'};
+      if(blocked.has('ann'))return off;
+      try {
+        const r=await this.cached(`ann:${ref.annId}`,86400000,async()=>({detail:annDetails(await this.annXml(ref.annId!),ref.annId!)}));
+        return r.value.detail?{status:'ok',...r.value.detail,checked_at:r.checkedAt}:{status:'unmapped'};
+      } catch {return off;}
+    };
+    const [w,a]=await Promise.all([wikipedia(),ann()]);
+    return {wikipedia:w,ann:a};
+  }
   async detail(malId:number, language:string,region:string,blocked:Set<string>=new Set()):Promise<Json>{
-    const [dub,streaming,anilist,kitsu]=await Promise.all([this.dub(malId,language,blocked),this.tmdb(malId,region,blocked),this.anilist(malId,blocked),this.kitsu(malId,blocked)]);
-    return {mal_id:malId,language,region,dub,streaming,anilist,kitsu};
+    const [dub,streaming,anilist,kitsu,reference]=await Promise.all([this.dub(malId,language,blocked),this.tmdb(malId,region,blocked),this.anilist(malId,blocked),this.kitsu(malId,blocked),this.reference(malId,blocked)]);
+    return {mal_id:malId,language,region,dub,streaming,anilist,kitsu,...reference};
   }
 }

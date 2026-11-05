@@ -1,5 +1,7 @@
 import 'content.dart';
 
+enum DescriptionSource { tmdb, wikipedia, catalog, ann, kitsu }
+
 class AnimeEnrichment {
   const AnimeEnrichment(this.data);
   final Map<String, dynamic> data;
@@ -16,6 +18,37 @@ class AnimeEnrichment {
   String? get banner =>
       anilist['banner'] as String? ?? kitsu['banner'] as String?;
   String? get synopsis => kitsu['synopsis'] as String?;
+  Map<String, dynamic> get wikipedia =>
+      Map<String, dynamic>.from(data['wikipedia'] as Map? ?? {});
+  Map<String, dynamic> get ann =>
+      Map<String, dynamic>.from(data['ann'] as Map? ?? {});
+
+  /// Picks the description to show and names its source for the credit line.
+  /// German readers get German texts first; the German Wikipedia is only used
+  /// for them. The catalog synopsis comes from MyAnimeList.
+  ({String text, DescriptionSource source})? description(
+    String? catalogSynopsis, {
+    required bool german,
+  }) {
+    String? usable(Object? value) =>
+        value is String && value.trim().isNotEmpty ? value.trim() : null;
+    final wiki = wikipedia['status'] == 'ok'
+        ? usable(wikipedia['extract'])
+        : null;
+    final annText = ann['status'] == 'ok' ? usable(ann['synopsis']) : null;
+    final candidates = [
+      (usable(overview), DescriptionSource.tmdb),
+      if (german) (wiki, DescriptionSource.wikipedia),
+      (usable(catalogSynopsis), DescriptionSource.catalog),
+      (annText, DescriptionSource.ann),
+      (usable(synopsis), DescriptionSource.kitsu),
+    ];
+    for (final (text, source) in candidates) {
+      if (text != null) return (text: text, source: source);
+    }
+    return null;
+  }
+
   ReleaseEvent? get nextRelease => anilist['next_release'] is Map
       ? ReleaseEvent(Map<String, dynamic>.from(anilist['next_release'] as Map))
       : null;

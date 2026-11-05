@@ -35,6 +35,11 @@ class _DetailScreenState extends State<DetailScreen> {
   String get _settings =>
       '${widget.store.region}|${widget.store.dubLanguages.join(',')}|${widget.store.languageMode}';
   late String _loadedSettings;
+  ({String text, DescriptionSource source})? get description =>
+      enrichment.description(
+        anime.synopsis,
+        german: widget.store.resolvedAppLanguage == 'de',
+      );
   int _loadVersion = 0;
   @override
   void initState() {
@@ -262,22 +267,52 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              enrichment.overview ??
-                  anime.synopsis ??
-                  enrichment.synopsis ??
-                  context.l10n.noSynopsis,
+              description?.text ?? context.l10n.noSynopsis,
               style: TextStyle(
                 height: 1.65,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            if (enrichment.overview != null)
+            if (description?.source == DescriptionSource.tmdb)
               TextButton(
                 onPressed: () => openSource(
                   context,
                   enrichment.streaming['source'] as String,
                 ),
                 child: Text(context.l10n.tmdbSynopsis),
+              ),
+            if (description?.source == DescriptionSource.wikipedia) ...[
+              const SizedBox(height: 8),
+              Text(
+                context.l10n.wikipediaExcerpt(
+                  enrichment.wikipedia['title'] as String,
+                ),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              Wrap(
+                children: [
+                  TextButton(
+                    onPressed: () => openSource(
+                      context,
+                      enrichment.wikipedia['url'] as String,
+                    ),
+                    child: Text(context.l10n.wikipediaSynopsis),
+                  ),
+                  TextButton(
+                    onPressed: () => openSource(
+                      context,
+                      enrichment.wikipedia['license'] as String,
+                    ),
+                    child: const Text('CC BY-SA 4.0'),
+                  ),
+                ],
+              ),
+            ],
+            if (description?.source == DescriptionSource.ann)
+              TextButton(
+                onPressed: () =>
+                    openSource(context, enrichment.ann['source'] as String),
+                child: Text(context.l10n.annSynopsis),
               ),
             if (enrichment.anilist['status'] == 'ok')
               TextButton(

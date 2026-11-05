@@ -15,6 +15,48 @@ import 'package:aniapp/ui/kitsu_panel.dart';
 import 'package:aniapp/ui/visuals.dart';
 
 void main() {
+  test(
+    'descriptions prefer German texts for German readers and name the source',
+    () {
+      const all = AnimeEnrichment({
+        'streaming': {'overview': ''},
+        'wikipedia': {
+          'status': 'ok',
+          'extract': 'Deutscher Artikel',
+          'title': 'Frieren',
+        },
+        'ann': {'status': 'ok', 'synopsis': 'ANN plot'},
+        'kitsu': {'synopsis': 'Kitsu stub'},
+      });
+      expect(
+        all.description('MAL text', german: true)?.source,
+        DescriptionSource.wikipedia,
+      );
+      expect(
+        all.description('MAL text', german: false)?.source,
+        DescriptionSource.catalog,
+      );
+      expect(all.description(null, german: false)?.text, 'ANN plot');
+      const tmdb = AnimeEnrichment({
+        'streaming': {'overview': 'TMDb Text'},
+        'wikipedia': {'status': 'ok', 'extract': 'Deutscher Artikel'},
+      });
+      expect(
+        tmdb.description('MAL text', german: true)?.source,
+        DescriptionSource.tmdb,
+      );
+      const unavailable = AnimeEnrichment({
+        'wikipedia': {'status': 'unavailable', 'extract': 'stale'},
+        'ann': {'status': 'unmapped'},
+        'kitsu': {'synopsis': 'Kitsu stub'},
+      });
+      expect(
+        unavailable.description('  ', german: true)?.source,
+        DescriptionSource.kitsu,
+      );
+      expect(AnimeEnrichment.empty.description(null, german: true), isNull);
+    },
+  );
   testWidgets('unreachable banner falls back to the catalog cover', (
     tester,
   ) async {
