@@ -1116,4 +1116,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get loadOlder => 'Ältere laden';
+
+  @override
+  String get wikipediaSynopsis => 'Deutsche Beschreibung: Wikipedia';
+
+  @override
+  String wikipediaExcerpt(String title) {
+    return 'Auszug aus dem Wikipedia-Artikel „$title“, als Text übernommen und gekürzt. Text unter CC BY-SA 4.0; Autorinnen und Autoren siehe Versionsgeschichte des Artikels.';
+  }
+
+  @override
+  String get annSynopsis => 'Beschreibung: Anime News Network';
+
+  @override
+  String get referenceInfo => 'Beschreibungen aus Nachschlagewerken';
+
+  @override
+  String get referenceAttribution =>
+      'Fehlt eine deutsche Beschreibung von TMDb, zeigt die App den Einleitungsabschnitt der deutschen Wikipedia (CC BY-SA 4.0, mit Link zu Artikel und Lizenz). Englische Beschreibungen können aus der Enzyklopädie von Anime News Network stammen, jeweils mit Link zum Eintrag. Die Zuordnung erfolgt über die MyAnimeList-ID in Wikidata (CC0), nie über den Titel.';
 }

@@ -466,5 +466,10 @@
   "healthPending": "Noch nicht geprüft",
   "healthStale": "Veraltet – seit über 3 Stunden keine erfolgreiche Prüfung",
   "offlineSnapshot": "Offline – gespeicherter Stand vom {date}",
-  "loadOlder": "Ältere laden"
+  "loadOlder": "Ältere laden",
+  "wikipediaSynopsis": "Deutsche Beschreibung: Wikipedia",
+  "wikipediaExcerpt": "Auszug aus dem Wikipedia-Artikel „{title}“, als Text übernommen und gekürzt. Text unter CC BY-SA 4.0; Autorinnen und Autoren siehe Versionsgeschichte des Artikels.",
+  "annSynopsis": "Beschreibung: Anime News Network",
+  "referenceInfo": "Beschreibungen aus Nachschlagewerken",
+  "referenceAttribution": "Fehlt eine deutsche Beschreibung von TMDb, zeigt die App den Einleitungsabschnitt der deutschen Wikipedia (CC BY-SA 4.0, mit Link zu Artikel und Lizenz). Englische Beschreibungen können aus der Enzyklopädie von Anime News Network stammen, jeweils mit Link zum Eintrag. Die Zuordnung erfolgt über die MyAnimeList-ID in Wikidata (CC0), nie über den Titel."
 }

@@ -46,6 +46,35 @@ class SourcesScreen extends StatelessWidget {
           child: const Text('Kitsu'),
         ),
         const Divider(height: 32),
+        Text(
+          context.l10n.referenceInfo,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 8),
+        Text(context.l10n.referenceAttribution),
+        TextButton(
+          onPressed: () => openSource(context, 'https://de.wikipedia.org'),
+          child: const Text('Wikipedia'),
+        ),
+        TextButton(
+          onPressed: () => openSource(
+            context,
+            'https://creativecommons.org/licenses/by-sa/4.0/deed.de',
+          ),
+          child: const Text('CC BY-SA 4.0'),
+        ),
+        TextButton(
+          onPressed: () => openSource(
+            context,
+            'https://www.animenewsnetwork.com/encyclopedia/',
+          ),
+          child: const Text('Anime News Network'),
+        ),
+        TextButton(
+          onPressed: () => openSource(context, 'https://www.wikidata.org'),
+          child: const Text('Wikidata'),
+        ),
+        const Divider(height: 32),
         Align(
           alignment: Alignment.centerLeft,
           child: Image.asset('assets/tmdb-logo.png', width: 100),
