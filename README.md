@@ -6,11 +6,18 @@
 
 **Your anime companion for Android and iOS.** Discover anime, keep a watchlist, follow episode releases and read news in German or English — with real sources and clear language availability.
 
-**Current app:** `0.5.0+15` · Flutter · Deutsch / English · Development preview
+**Current app:** `0.5.1+16` · Flutter · Deutsch / English · Development preview
 
 [**Current status**](https://github.com/Tabtii/AniApp/blob/master/docs/STATUS.md) · [Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/master/mobile) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/master/docs/RELEASE_READINESS.md)
 
 > The `master` branch holds the current Flutter app. The original Kotlin project from 2023 is no longer in the tree; it is preserved in the git history (see [Original Kotlin project](#original-kotlin-project)).
+
+## New in 0.5.1
+
+- The region chip in the header opens a sheet to change the app language and the region.
+- Better descriptions for new seasons: the German Wikipedia (CC BY-SA 4.0) for German
+  readers when TMDb has no text, and the Anime News Network encyclopedia as an English
+  fallback, each with its credit and link. Matching uses the MAL ID via Wikidata.
 
 ## New in 0.5.0
 

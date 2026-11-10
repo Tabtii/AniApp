@@ -39,4 +39,4 @@ Danach Workflow „Android release bundle“ manuell starten; das AAB liegt als 
 3. App-Inhalt: Datenschutzerklärung-URL, Datensicherheit, Zielgruppe, Anzeigen (keine), Inhaltseinstufung.
 4. Vor einem geschlossenen/öffentlichen Test: Platzhalter in `docs/PRIVACY.md` füllen und veröffentlichen.
 
-`versionCode` kommt aus `pubspec.yaml` (`version: 0.5.0+15`); pro Upload die Zahl nach dem `+` erhöhen.
+`versionCode` kommt aus `pubspec.yaml` (`version: 0.5.1+16`); pro Upload die Zahl nach dem `+` erhöhen.
