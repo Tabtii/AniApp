@@ -6,11 +6,17 @@
 
 **Your anime companion for Android and iOS.** Discover anime, keep a watchlist, follow episode releases and read news in German or English — with real sources and clear language availability.
 
-**Current app:** `0.5.1+16` · Flutter · Deutsch / English · Development preview
+**Current app:** `0.5.2+17` · Flutter · Deutsch / English · Development preview
 
 [**Current status**](https://github.com/Tabtii/AniApp/blob/master/docs/STATUS.md) · [Android test builds](https://github.com/Tabtii/AniApp/actions/workflows/flutter.yml) · [Flutter source](https://github.com/Tabtii/AniApp/tree/master/mobile) · [Coverage and release status](https://github.com/Tabtii/AniApp/blob/master/docs/RELEASE_READINESS.md)
 
 > The `master` branch holds the current Flutter app. The original Kotlin project from 2023 is no longer in the tree; it is preserved in the git history (see [Original Kotlin project](#original-kotlin-project)).
+
+## New in 0.5.2
+
+- The line under "Today" now reads "Region DE · Dubs: English" instead of "DE · English".
+- Feedback by email from the profile, next to the GitHub support link.
+- The in-app privacy link points to `master`.
 
 ## New in 0.5.1
 

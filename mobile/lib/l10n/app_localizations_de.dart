@@ -1134,4 +1134,12 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get referenceAttribution =>
       'Fehlt eine deutsche Beschreibung von TMDb, zeigt die App den Einleitungsabschnitt der deutschen Wikipedia (CC BY-SA 4.0, mit Link zu Artikel und Lizenz). Englische Beschreibungen können aus der Enzyklopädie von Anime News Network stammen, jeweils mit Link zum Eintrag. Die Zuordnung erfolgt über die MyAnimeList-ID in Wikidata (CC0), nie über den Titel.';
+
+  @override
+  String get feedbackByMail => 'Feedback per E-Mail';
+
+  @override
+  String todayScope(String region, String languages) {
+    return 'Region $region · Dubs: $languages';
+  }
 }

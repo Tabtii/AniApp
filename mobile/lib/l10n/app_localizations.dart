@@ -2131,6 +2131,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If TMDb has no German description, the app shows the lead section of the German Wikipedia (CC BY-SA 4.0, with links to the article and licence). English descriptions may come from the Anime News Network encyclopedia, each with a link to its entry. Titles are matched through the MyAnimeList ID recorded in Wikidata (CC0), never by title.'**
   String get referenceAttribution;
+
+  /// No description provided for @feedbackByMail.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback by email'**
+  String get feedbackByMail;
+
+  /// No description provided for @todayScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Region {region} · Dubs: {languages}'**
+  String todayScope(String region, String languages);
 }
 
 class _AppLocalizationsDelegate
