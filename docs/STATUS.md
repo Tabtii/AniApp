@@ -35,9 +35,10 @@ AniApp is run as a non-commercial passion project without planned revenue (see
 ## Sources and permissions
 
 - **Approved and enabled in `source_rights`:** Anime2You (written permission 14 Oct), Anime News Network (written permission 15 Oct; feed only, max. one request per minute), ADN calendar and News (written permission 22 Oct from its CTO, register set to `approved` the same day; images allowed, commercial use not covered), MyDubList (CC BY 4.0).
-- **Running under review in the test phase:** Crunchyroll DE/EN, Kitsu. The catalog uses the official MAL API (app registered as non-commercial, `MAL_CLIENT_ID` set) with Tenrai as fallback.
-- **Public terms, live in the backend since 5 Nov:** ANN encyclopedia (credit and link), German Wikipedia (CC BY-SA 4.0), Wikidata (CC0) for descriptions. The current app build ignores them; the next release shows them.
-- **Running on public non-commercial terms:** TMDb (German descriptions and streaming offers; token set 27 Oct, attribution on the Sources screen). Valid only while the project stays non-commercial.
+- **Running under review in the test phase:** Kitsu. The catalog uses the official MAL API (register `jikan` approved: app registered as non-commercial, `MAL_CLIENT_ID` set) with Tenrai as fallback.
+- **Switched off 12 Nov:** Crunchyroll DE/EN (`cr_de`, `cr_en` blocked) after three unanswered enquiries.
+- **Public terms, live in the backend since 5 Nov:** ANN encyclopedia (credit and link), German Wikipedia (CC BY-SA 4.0), Wikidata (CC0) for descriptions; `wikidata` and `wikipedia` are in the register since 12 Nov. The current app build ignores them; the next release shows them.
+- **Running on public non-commercial terms:** TMDb (register `tmdb` approved 12 Nov; German descriptions and streaming offers; token set 27 Oct, attribution on the Sources screen). Valid only while the project stays non-commercial.
 - **Off until permission:** AniNews, AniList, HIDIVE, Netflix, Joyn, AnimeSchedule.
 - **Open enquiries:** first round 12 Oct (AniList, TMDb, AniNews, MyAnimeList);
   second round 15 Oct (Crunchyroll; ANN, Anime UK News, Anime Corner,
