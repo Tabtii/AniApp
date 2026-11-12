@@ -414,6 +414,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           trailing: const Icon(Icons.open_in_new_rounded),
           onTap: () => openSource(context, supportUrl),
         ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.mail_outline_rounded),
+          title: Text(context.l10n.feedbackByMail),
+          subtitle: const Text(supportEmail),
+          onTap: () => openMail(context, supportEmail),
+        ),
       ],
     );
   }

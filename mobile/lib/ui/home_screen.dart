@@ -85,7 +85,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            '${store.region} · ${store.dubLanguages.map((e) => languageLabel(e, context)).join(' / ')}',
+            context.l10n.todayScope(
+              store.region,
+              store.dubLanguages
+                  .map((e) => languageLabel(e, context))
+                  .join(' / '),
+            ),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),

@@ -38,6 +38,24 @@ Future<void> openSource(BuildContext context, String value) async {
   }
 }
 
+// Opens the mail app; the address is also shown as text for devices without one.
+Future<void> openMail(BuildContext context, String address) async {
+  try {
+    final opened = await launchUrl(Uri(scheme: 'mailto', path: address));
+    if (!opened && context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.linkFailed)));
+    }
+  } catch (_) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.linkFailed)));
+    }
+  }
+}
+
 // Shown above content that comes from the device cache, never from the server.
 class OfflineNotice extends StatelessWidget {
   const OfflineNotice(

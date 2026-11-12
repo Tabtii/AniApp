@@ -1,6 +1,6 @@
 # AniApp mobile
 
-Shared Flutter application for **Android and iOS**, version **0.5.1+16**, with a German/English interface.
+Shared Flutter application for **Android and iOS**, version **0.5.2+17**, with a German/English interface.
 
 [Project overview](../README.md) · [Data sources](../docs/DATA_SOURCES.md) · [Release readiness](../docs/RELEASE_READINESS.md)
 
